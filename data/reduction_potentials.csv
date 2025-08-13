@@ -1,0 +1,10 @@
+half_reaction,E0_V,n_electrons,conditions
+"Ag+ + e- -> Ag(s)",0.80,1,aq
+"Cu2+ + 2e- -> Cu(s)",0.34,2,aq
+"Fe3+ + e- -> Fe2+",0.77,1,aq
+"2H+ + 2e- -> H2(g)",0.00,2,SHE
+"Cl2(g) + 2e- -> 2Cl-",1.36,2,aq
+"Zn2+ + 2e- -> Zn(s)",-0.76,2,aq
+"O2(g) + 4H+ + 4e- -> 2H2O(l)",1.23,4,aq
+"MnO4- + 8H+ + 5e- -> Mn2+ + 4H2O",1.51,5,acidic
+

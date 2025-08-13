@@ -1,0 +1,22 @@
+{
+    "R": 8.314462618,
+    "R_units": "J/(mol·K)",
+    "R_J_per_molK": 8.314462618,
+    "R_Latm_per_molK": 0.082057,
+    "standard_temperature": 298.15,
+    "standard_temperature_units": "K",
+    "standard_pressure": 101325,
+    "standard_pressure_units": "Pa",
+    "water": {
+        "c_ice_J_per_gK": 2.09,
+        "c_liquid_J_per_gK": 4.184,
+        "c_steam_J_per_gK": 2.03,
+        "T_fus_C": 0.0,
+        "T_boil_C": 100.0,
+        "deltaH_fus_J_per_g": 333.55,
+        "deltaH_vap_J_per_g": 2258.0,
+        "Kf_Ckg_per_mol": 1.86,
+        "Kb_Ckg_per_mol": 0.512,
+        "deltaHvap_kJ_per_mol": 40.65
+    }
+}

@@ -1,0 +1,7 @@
+streamlit>=1.28.0
+pint>=0.21
+periodictable>=2.0.0
+sympy>=1.12.0
+numpy>=1.24.0
+pytest>=7.0.0
+thermo>=0.4.0
