@@ -51,6 +51,15 @@ from calculators.lewis_structure import (
     render_lewis_structure_svg,
     render_lewis_structure_text,
 )
+from calculators.vsepr import render_vsepr_tab
+from calculators.imf import render_imf_tab
+from calculators.bond_enthalpy import render_bond_enthalpy_tab
+from calculators.le_chatelier import render_le_chatelier_tab
+from calculators.oxidation_states import render_oxidation_states_tab
+from calculators.graham import render_graham_tab
+from calculators.nuclear_decay import render_nuclear_decay_page
+from calculators.formelsamling import render_formelsamling_page
+from calculators.oploselighedsregler import render_oploselighedsregler_page
 from core.reaction import balance_equation
 from core.molecule_db import (
     search_substances,
@@ -81,6 +90,11 @@ NAVIGATION_OPTIONS = [
     "⚗️ Solutions",
     "⚡ Kinetics",
     "🔋 Electrochemistry",
+    "🔷 Geometri & Bindinger",
+    "⚗️ Ligevægt",
+    "☢️ Nuklear kemi",
+    "💧 Opløselighed & Beer-Lambert",
+    "📋 Formelsamling",
     "🔬 Molekyle database",
 ]
 
@@ -97,6 +111,11 @@ PAGE_LABEL_TO_QUERY = {
     "⚗️ Solutions": "solutions",
     "⚡ Kinetics": "kinetics",
     "🔋 Electrochemistry": "electrochemistry",
+    "🔷 Geometri & Bindinger": "geometri",
+    "⚗️ Ligevægt": "ligevaegt",
+    "☢️ Nuklear kemi": "nuklear",
+    "💧 Opløselighed & Beer-Lambert": "oploselig",
+    "📋 Formelsamling": "formelsamling",
     "🔬 Molekyle database": "molecule-db",
 }
 
@@ -156,8 +175,94 @@ def main():
         show_kinetics_page()
     elif page == "🔋 Electrochemistry":
         show_electrochemistry_page()
+    elif page == "🔷 Geometri & Bindinger":
+        show_geometri_page()
+    elif page == "⚗️ Ligevægt":
+        show_equilibrium_page()
+    elif page == "☢️ Nuklear kemi":
+        render_nuclear_decay_page()
+    elif page == "💧 Opløselighed & Beer-Lambert":
+        render_oploselighedsregler_page()
+    elif page == "📋 Formelsamling":
+        render_formelsamling_page()
     elif page == "🔬 Molekyle database":
         show_molecule_database_page()
+
+def show_geometri_page():
+    """Display the Geometry & Bonds page (VSEPR, IMF, Bond Enthalpy)."""
+    st.title("🔷 Geometri & Bindinger")
+    st.markdown("---")
+
+    subpage_labels = [
+        "🔷 VSEPR – Molekylgeometri",
+        "🔗 Intermolekylære kræfter (IMF)",
+        "⚡ Bindingsenthalpier – ΔH",
+    ]
+    subpage_to_query = {
+        "🔷 VSEPR – Molekylgeometri":         "vsepr",
+        "🔗 Intermolekylære kræfter (IMF)":   "imf",
+        "⚡ Bindingsenthalpier – ΔH":         "bond-enthalpy",
+    }
+    query_to_subpage = {v: k for k, v in subpage_to_query.items()}
+
+    query_sub_raw = st.query_params.get("geo_tab")
+    if isinstance(query_sub_raw, list):
+        query_sub_raw = query_sub_raw[0] if query_sub_raw else None
+    query_sub = str(query_sub_raw).strip() if query_sub_raw else ""
+    if "geo_subpage" not in st.session_state and query_sub in query_to_subpage:
+        st.session_state["geo_subpage"] = query_to_subpage[query_sub]
+
+    st.markdown(
+        """
+<style>
+.st-key-geo_subpage label[data-testid="stWidgetLabel"] {
+    position: absolute; width: 1px; height: 1px; padding: 0;
+    margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0;
+}
+.st-key-geo_subpage [data-testid="stRadio"] div[role="radiogroup"] {
+    display: flex; flex-wrap: wrap; gap: 0.35rem;
+    border-bottom: 1px solid #e2e8f0; margin-bottom: 0.8rem;
+}
+.st-key-geo_subpage [data-testid="stRadio"] label[data-baseweb="radio"] {
+    margin: 0; padding: 0.35rem 0.05rem 0.55rem 0.05rem;
+    border-bottom: 2px solid transparent; background: transparent; min-height: 0;
+}
+.st-key-geo_subpage [data-testid="stRadio"] label[data-baseweb="radio"] > div:first-child {
+    display: none !important;
+}
+.st-key-geo_subpage [data-testid="stRadio"] label[data-baseweb="radio"] p {
+    margin: 0; font-size: 1.02rem; color: #0f172a;
+}
+.st-key-geo_subpage [data-testid="stRadio"] label[data-baseweb="radio"]:has(input:checked) {
+    border-bottom-color: #ff4b4b;
+}
+.st-key-geo_subpage [data-testid="stRadio"] label[data-baseweb="radio"]:has(input:checked) p {
+    color: #ff4b4b; font-weight: 600;
+}
+</style>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    active_subpage = st.radio(
+        "GeoSubpageNav",
+        subpage_labels,
+        key="geo_subpage",
+        horizontal=True,
+        label_visibility="collapsed",
+    )
+
+    sel_q = subpage_to_query[active_subpage]
+    if st.query_params.get("geo_tab") != sel_q:
+        st.query_params["geo_tab"] = sel_q
+
+    if active_subpage == "🔷 VSEPR – Molekylgeometri":
+        render_vsepr_tab()
+    elif active_subpage == "🔗 Intermolekylære kræfter (IMF)":
+        render_imf_tab()
+    elif active_subpage == "⚡ Bindingsenthalpier – ΔH":
+        render_bond_enthalpy_tab()
+
 
 def show_fundamentals_page():
     """Display the fundamentals page."""
@@ -2636,24 +2741,89 @@ def show_pH_buffer_addition_tab():
 
 def show_equilibrium_page():
     """Display the equilibrium calculator page."""
-    st.title("⚖️ Equilibrium Calculator")
+    st.title("⚗️ Ligevægt")
     st.markdown("---")
-    
-    # Create tabs for different calculators
-    tab1, tab2, tab3, tab4 = st.tabs([
-        "ICE Table Solver", "Kc/Kp Conversion", "Reaction Quotient", "Solubility"
-    ])
-    
-    with tab1:
+
+    subpage_labels = [
+        "⚖️ Le Chateliers princip",
+        "🔢 Oxidationstrin",
+        "🧊 ICE Table",
+        "🔄 Kc/Kp konvertering",
+        "📊 Reaktionskvotient Q",
+        "💧 Opløselighed (Ksp)",
+    ]
+    subpage_to_query = {
+        "⚖️ Le Chateliers princip": "le-chatelier",
+        "🔢 Oxidationstrin":         "oxidation",
+        "🧊 ICE Table":              "ice",
+        "🔄 Kc/Kp konvertering":    "kc-kp",
+        "📊 Reaktionskvotient Q":    "qvsK",
+        "💧 Opløselighed (Ksp)":    "ksp",
+    }
+    query_to_subpage = {v: k for k, v in subpage_to_query.items()}
+
+    query_sub_raw = st.query_params.get("eq_tab")
+    if isinstance(query_sub_raw, list):
+        query_sub_raw = query_sub_raw[0] if query_sub_raw else None
+    query_sub = str(query_sub_raw).strip() if query_sub_raw else ""
+    if "eq_subpage" not in st.session_state and query_sub in query_to_subpage:
+        st.session_state["eq_subpage"] = query_to_subpage[query_sub]
+
+    st.markdown(
+        """
+<style>
+.st-key-eq_subpage label[data-testid="stWidgetLabel"] {
+    position: absolute; width: 1px; height: 1px; padding: 0;
+    margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0;
+}
+.st-key-eq_subpage [data-testid="stRadio"] div[role="radiogroup"] {
+    display: flex; flex-wrap: wrap; gap: 0.35rem;
+    border-bottom: 1px solid #e2e8f0; margin-bottom: 0.8rem;
+}
+.st-key-eq_subpage [data-testid="stRadio"] label[data-baseweb="radio"] {
+    margin: 0; padding: 0.35rem 0.05rem 0.55rem 0.05rem;
+    border-bottom: 2px solid transparent; background: transparent; min-height: 0;
+}
+.st-key-eq_subpage [data-testid="stRadio"] label[data-baseweb="radio"] > div:first-child {
+    display: none !important;
+}
+.st-key-eq_subpage [data-testid="stRadio"] label[data-baseweb="radio"] p {
+    margin: 0; font-size: 1.02rem; color: #0f172a;
+}
+.st-key-eq_subpage [data-testid="stRadio"] label[data-baseweb="radio"]:has(input:checked) {
+    border-bottom-color: #ff4b4b;
+}
+.st-key-eq_subpage [data-testid="stRadio"] label[data-baseweb="radio"]:has(input:checked) p {
+    color: #ff4b4b; font-weight: 600;
+}
+</style>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    active_subpage = st.radio(
+        "EqSubpageNav",
+        subpage_labels,
+        key="eq_subpage",
+        horizontal=True,
+        label_visibility="collapsed",
+    )
+
+    sel_q = subpage_to_query[active_subpage]
+    if st.query_params.get("eq_tab") != sel_q:
+        st.query_params["eq_tab"] = sel_q
+
+    if active_subpage == "⚖️ Le Chateliers princip":
+        render_le_chatelier_tab()
+    elif active_subpage == "🔢 Oxidationstrin":
+        render_oxidation_states_tab()
+    elif active_subpage == "🧊 ICE Table":
         show_ice_table_tab()
-    
-    with tab2:
+    elif active_subpage == "🔄 Kc/Kp konvertering":
         show_kc_kp_conversion_tab()
-    
-    with tab3:
+    elif active_subpage == "📊 Reaktionskvotient Q":
         show_reaction_quotient_tab()
-    
-    with tab4:
+    elif active_subpage == "💧 Opløselighed (Ksp)":
         show_solubility_tab()
 
 
@@ -3111,8 +3281,9 @@ def show_gas_laws_page():
         return base_mol / factors_to_mol[to_unit]
 
     # Sub-tabs for gases calculators
-    tab1, tab2, tab3, tab4, tab5 = st.tabs([
-        "Unit Conversion", "Ideal Gas Law", "Dalton's Law", "Gas Stoichiometry", "van der Waals"
+    tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
+        "Unit Conversion", "Ideal Gas Law", "Dalton's Law", "Gas Stoichiometry", "van der Waals",
+        "💨 Grahams lov", "🔁 Kombineret gaslov",
     ])
     
     with tab1:
@@ -3613,6 +3784,121 @@ def show_gas_laws_page():
             except Exception as e:
                 st.error(f"❌ **Error**: {str(e)}")
 
+    with tab6:
+        render_graham_tab()
+
+    with tab7:
+        _render_combined_gas_law_tab()
+
+
+def _render_combined_gas_law_tab():
+    """Combined / Boyle's / Charles's / Gay-Lussac gas law tab."""
+    st.markdown("## 🔁 Kombineret gaslov")
+    st.markdown(
+        r"$$\frac{P_1 V_1}{T_1} = \frac{P_2 V_2}{T_2}$$"
+    )
+    st.markdown(
+        "Angiv **tilstand 1** og to af tre variabler i **tilstand 2**. "
+        "Lad det ubekendte felt stå på 0 (beregnes automatisk). "
+        "Sæt en variabel til **ens** i begge tilstande for at simulere Boyles, Charles' eller Gay-Lussacs lov."
+    )
+    st.markdown("---")
+
+    col1, col2 = st.columns(2, gap="large")
+
+    p_units = {"atm": 1.0, "kPa": 101.325, "Pa": 101325.0, "bar": 101.325 / 1.01325, "mmHg": 760.0}
+    v_units = {"L": 1.0, "mL": 0.001, "m³": 1000.0, "dL": 0.1, "cL": 0.01}
+
+    def to_atm(p, unit): return p / p_units[unit]
+    def from_atm(p, unit): return p * p_units[unit]
+    def to_L(v, unit): return v * v_units[unit]
+    def from_L(v, unit): return v / v_units[unit]
+    def to_K(t, unit): return t + 273.15 if unit == "°C" else t
+
+    with col1:
+        st.markdown("### Tilstand 1")
+        p1_val = st.number_input("P₁:", value=1.0, min_value=0.0, key="cg_p1")
+        p1_u   = st.selectbox("Enhed P₁:", list(p_units.keys()), key="cg_p1u")
+        v1_val = st.number_input("V₁:", value=2.0, min_value=0.0, key="cg_v1")
+        v1_u   = st.selectbox("Enhed V₁:", list(v_units.keys()), key="cg_v1u")
+        t1_val = st.number_input("T₁:", value=25.0, key="cg_t1")
+        t1_u   = st.selectbox("Enhed T₁:", ["°C", "K"], key="cg_t1u")
+
+    with col2:
+        st.markdown("### Tilstand 2 (0 = ubekendt)")
+        p2_val = st.number_input("P₂ (0 = ubekendt):", value=2.0, min_value=0.0, key="cg_p2")
+        p2_u   = st.selectbox("Enhed P₂:", list(p_units.keys()), key="cg_p2u")
+        v2_val = st.number_input("V₂ (0 = ubekendt):", value=0.0, min_value=0.0, key="cg_v2")
+        v2_u   = st.selectbox("Enhed V₂:", list(v_units.keys()), key="cg_v2u")
+        t2_val = st.number_input("T₂ (0 = ubekendt):", value=100.0, key="cg_t2")
+        t2_u   = st.selectbox("Enhed T₂:", ["°C", "K"], key="cg_t2u")
+
+    if st.button("Beregn", type="primary", key="cg_run"):
+        # Convert to base units: atm, L, K
+        P1 = to_atm(p1_val, p1_u)
+        V1 = to_L(v1_val, v1_u)
+        T1 = to_K(t1_val, t1_u)
+
+        P2_in = to_atm(p2_val, p2_u) if p2_val != 0 else None
+        V2_in = to_L(v2_val, v2_u)   if v2_val != 0 else None
+        T2_in = to_K(t2_val, t2_u)   if t2_val != 0 else None
+
+        # Safety
+        if T1 <= 0:
+            st.error("T₁ skal være > 0 K.")
+            st.stop()
+
+        unknowns = [x for x in [P2_in, V2_in, T2_in] if x is None]
+        if len(unknowns) > 1:
+            st.error("Angiv mindst 2 kendte værdier i tilstand 2 (lad kun ét felt stå på 0).")
+            st.stop()
+
+        # P1V1/T1 = P2V2/T2  →  solve for missing
+        lhs = P1 * V1 / T1   # constant
+
+        steps = []
+        steps.append(f"**P₁ = {p1_val} {p1_u} = {P1:.4f} atm**")
+        steps.append(f"**V₁ = {v1_val} {v1_u} = {V1:.4f} L**")
+        steps.append(f"**T₁ = {t1_val} {t1_u} = {T1:.2f} K**")
+        steps.append(f"P₁V₁/T₁ = {P1:.4f} × {V1:.4f} / {T1:.2f} = **{lhs:.6f} atm·L/K**")
+
+        if P2_in is None:
+            # P2 = lhs × T2 / V2
+            T2 = T2_in; V2 = V2_in
+            P2 = lhs * T2 / V2
+            result_label = f"P₂ = {from_atm(P2, p2_u):.4g} {p2_u}"
+            steps.append(f"P₂ = (P₁V₁/T₁) × T₂/V₂ = {lhs:.6f} × {T2:.2f} / {V2:.4f} = {P2:.4f} atm = **{from_atm(P2, p2_u):.4g} {p2_u}**")
+        elif V2_in is None:
+            T2 = T2_in; P2 = P2_in
+            V2 = lhs * T2 / P2
+            result_label = f"V₂ = {from_L(V2, v2_u):.4g} {v2_u}"
+            steps.append(f"V₂ = (P₁V₁/T₁) × T₂/P₂ = {lhs:.6f} × {T2:.2f} / {P2:.4f} = {V2:.4f} L = **{from_L(V2, v2_u):.4g} {v2_u}**")
+        else:
+            P2 = P2_in; V2 = V2_in
+            T2 = P2 * V2 / lhs
+            t2_display = T2 - 273.15 if t2_u == "°C" else T2
+            result_label = f"T₂ = {t2_display:.2f} {t2_u} ({T2:.2f} K)"
+            steps.append(f"T₂ = P₂V₂ / (P₁V₁/T₁) = {P2:.4f} × {V2:.4f} / {lhs:.6f} = {T2:.2f} K = **{t2_display:.2f} {t2_u}**")
+
+        st.success(f"### {result_label}")
+        with st.expander("📋 Vis udledning", expanded=False):
+            for s in steps:
+                st.markdown(s)
+
+    st.markdown("---")
+    with st.expander("📚 Specialtilfælde", expanded=False):
+        st.markdown("""
+| Lov | Fast variabel | Relation |
+|-----|--------------|----------|
+| **Boyles lov** | T konstant | P₁V₁ = P₂V₂ |
+| **Charles' lov** | P konstant | V₁/T₁ = V₂/T₂ |
+| **Gay-Lussacs lov** | V konstant | P₁/T₁ = P₂/T₂ |
+| **Kombineret** | n konstant | P₁V₁/T₁ = P₂V₂/T₂ |
+
+**OBS:** T skal altid angives i **Kelvin** (K = °C + 273.15) — kalkulatoren konverterer automatisk.
+        """)
+
+
 def show_solutions_page():
     """Display the solutions calculator page."""
     st.title("⚗️ Solutions")
@@ -3942,11 +4228,12 @@ def show_electrochemistry_page():
         match_candidate_potential_value,
     )
 
-    tab1, tab2, tab3, tab4 = st.tabs([
+    tab1, tab2, tab3, tab4, tab5_faraday = st.tabs([
         "Build a Cell",
         "Nernst",
         "ΔG and K",
         "Redox Thermodynamics",
+        "⚡ Faradays lov",
     ])
 
     with tab1:
@@ -4337,6 +4624,179 @@ def show_electrochemistry_page():
                 render_step_block(given, formula, substitution, result, interpretation)
             except Exception as exc:
                 st.error(str(exc))
+
+    with tab5_faraday:
+        _render_faraday_tab()
+
+
+def _render_faraday_tab():
+    """Faraday's law of electrolysis tab."""
+    import math as _math
+    F_CONST = 96485.0  # C/mol
+
+    st.markdown("## ⚡ Faradays lov – Elektrolyse")
+    st.markdown(
+        r"$$m = \frac{M \cdot I \cdot t}{n \cdot F}$$"
+    )
+    st.markdown(
+        "Beregn den masse der afsættes (eller opløses) ved elektrolyse, "
+        "eller find strøm/tid ud fra ønsket masse."
+    )
+    st.markdown("---")
+
+    col1, col2 = st.columns([3, 2], gap="large")
+
+    COMMON_METALS = {
+        "Cu (kobber, Cu²⁺→Cu)":   ("Cu",  63.55,  2),
+        "Ag (sølv, Ag⁺→Ag)":      ("Ag",  107.87, 1),
+        "Au (guld, Au³⁺→Au)":     ("Au",  196.97, 3),
+        "Zn (zink, Zn²⁺→Zn)":     ("Zn",  65.38,  2),
+        "Ni (nikkel, Ni²⁺→Ni)":   ("Ni",  58.69,  2),
+        "Al (aluminium, Al³⁺→Al)":("Al",  26.98,  3),
+        "Fe (jern, Fe²⁺→Fe)":     ("Fe",  55.85,  2),
+        "Fe (jern, Fe³⁺→Fe)":     ("Fe",  55.85,  3),
+        "Pb (bly, Pb²⁺→Pb)":      ("Pb",  207.2,  2),
+        "Cr (krom, Cr³⁺→Cr)":     ("Cr",  52.00,  3),
+        "H₂ (brint, 2H⁺→H₂)":    ("H2",  2.016,  1),
+        "Cl₂ (klor, 2Cl⁻→Cl₂)":  ("Cl2", 70.90,  1),
+    }
+
+    with col1:
+        st.markdown("### Input")
+
+        preset = st.selectbox(
+            "Vælg metal/stof (udfylder M og n automatisk):",
+            ["Manuel input"] + list(COMMON_METALS.keys()),
+            key="far_preset",
+        )
+
+        if preset != "Manuel input":
+            sym, M_preset, n_preset = COMMON_METALS[preset]
+        else:
+            M_preset, n_preset = 63.55, 2
+
+        c_m, c_n = st.columns(2)
+        with c_m:
+            M = st.number_input("Molarmasse M (g/mol):", value=float(M_preset), min_value=0.1, key="far_M")
+        with c_n:
+            n_e = st.number_input("Elektroner per ion n:", value=int(n_preset), min_value=1, step=1, key="far_n")
+
+        unknown = st.radio(
+            "Ubekendt:",
+            ["m — masse afsat (g)", "I — strøm (A)", "t — tid"],
+            key="far_unknown",
+            horizontal=True,
+        )
+
+        c1, c2 = st.columns(2)
+        with c1:
+            if "I" not in unknown:
+                I_val = st.number_input("Strøm I (A):", value=2.0, min_value=0.0, key="far_I")
+            else:
+                I_val = None
+            if "t" not in unknown:
+                t_val_raw = st.number_input("Tid:", value=3600.0, min_value=0.0, key="far_t")
+                t_unit = st.selectbox("Tidsenhed:", ["s", "min", "h"], key="far_t_unit")
+                t_s = t_val_raw * {"s": 1, "min": 60, "h": 3600}[t_unit]
+            else:
+                t_val_raw = None; t_s = None; t_unit = "s"
+        with c2:
+            if "m" not in unknown:
+                m_val = st.number_input("Masse m (g):", value=2.37, min_value=0.0, key="far_m")
+            else:
+                m_val = None
+
+        run = st.button("Beregn", type="primary", key="far_run")
+
+    with col2:
+        st.markdown("### Formel og konstanter")
+        st.markdown(r"""
+**Faradays lov:**
+$$m = \frac{M \cdot I \cdot t}{n \cdot F}$$
+
+| Symbol | Betydning | Enhed |
+|--------|-----------|-------|
+| m | Masse afsat | g |
+| M | Molarmasse | g/mol |
+| I | Strømstyrke | A |
+| t | Tid | s |
+| n | Elektroner per ion | — |
+| F | Faradays konstant | 96485 C/mol |
+
+**Ladning:** Q = I × t (coulomb)
+
+**Mol elektroner:** $n_e = Q / F$
+
+**Mol stof:** $n_{stof} = n_e / n$
+        """)
+        st.info(f"F = {F_CONST:.0f} C/mol")
+
+    if run:
+        steps = []
+        steps.append(f"**M = {M:.3f} g/mol,  n = {n_e},  F = {F_CONST:.0f} C/mol**")
+
+        try:
+            if "m" in unknown:
+                Q = I_val * t_s
+                mol_e = Q / F_CONST
+                mol_sub = mol_e / n_e
+                m_result = mol_sub * M
+                steps.append(f"Q = I × t = {I_val} × {t_s:.0f} = {Q:.2f} C")
+                steps.append(f"mol e⁻ = Q/F = {Q:.2f}/{F_CONST:.0f} = {mol_e:.5f} mol")
+                steps.append(f"mol stof = mol e⁻ / n = {mol_e:.5f} / {n_e} = {mol_sub:.5f} mol")
+                steps.append(f"**m = mol × M = {mol_sub:.5f} × {M:.3f} = {m_result:.4f} g**")
+                st.success(f"### m = {m_result:.4f} g")
+
+            elif "I" in unknown:
+                Q_needed = (m_val * n_e * F_CONST) / M
+                I_result = Q_needed / t_s
+                steps.append(f"Q = m × n × F / M = {m_val} × {n_e} × {F_CONST:.0f} / {M:.3f} = {Q_needed:.2f} C")
+                steps.append(f"**I = Q / t = {Q_needed:.2f} / {t_s:.0f} = {I_result:.4f} A**")
+                st.success(f"### I = {I_result:.4f} A")
+
+            else:  # t unknown
+                Q_needed = (m_val * n_e * F_CONST) / M
+                t_result_s = Q_needed / I_val
+                t_display = t_result_s / 3600 if t_result_s > 3600 else (t_result_s / 60 if t_result_s > 120 else t_result_s)
+                t_unit_out = "h" if t_result_s > 3600 else ("min" if t_result_s > 120 else "s")
+                steps.append(f"Q = m × n × F / M = {m_val} × {n_e} × {F_CONST:.0f} / {M:.3f} = {Q_needed:.2f} C")
+                steps.append(f"**t = Q / I = {Q_needed:.2f} / {I_val} = {t_result_s:.2f} s = {t_display:.3f} {t_unit_out}**")
+                st.success(f"### t = {t_result_s:.2f} s  ({t_display:.3f} {t_unit_out})")
+
+        except Exception as e:
+            st.error(str(e))
+            st.stop()
+
+        with st.expander("📋 Vis udledning trin for trin", expanded=False):
+            for s in steps:
+                st.markdown(s)
+
+    st.markdown("---")
+    with st.expander("💡 Eksempler fra eksamen", expanded=False):
+        st.markdown("""
+**Eksempel 1:** 2.00 A i 1.00 time → masse Cu afsat (Cu²⁺, M=63.55, n=2)?
+
+Q = 2.00 × 3600 = 7200 C
+mol e⁻ = 7200 / 96485 = 0.07462 mol
+mol Cu = 0.07462 / 2 = 0.03731 mol
+m = 0.03731 × 63.55 = **2.37 g Cu**
+
+---
+
+**Eksempel 2:** Afsæt 1.00 g Ag (Ag⁺, M=107.87, n=1) med 0.500 A. Hvor lang tid?
+
+Q = 1.00 × 1 × 96485 / 107.87 = 894.6 C
+t = 894.6 / 0.500 = **1789 s ≈ 29.8 min**
+
+---
+
+**Eksempel 3:** Produktion af Al fra Al₂O₃ (Al³⁺, n=3, M=26.98). 1000 A i 24 h?
+
+Q = 1000 × 86400 = 8.64×10⁷ C
+mol Al = 8.64×10⁷ / (96485 × 3) = 298.5 mol
+m = 298.5 × 26.98 = **8055 g ≈ 8.06 kg**
+        """)
+
 
 def show_thermochemistry_page():
     """Display new Thermochemistry calculators (Part 4)."""
