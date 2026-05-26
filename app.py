@@ -123,13 +123,96 @@ PAGE_LABEL_TO_QUERY = {
 
 PAGE_QUERY_TO_LABEL = {value: key for key, value in PAGE_LABEL_TO_QUERY.items()}
 
+# Search index: maps user queries to specific calculators
+SEARCH_INDEX = [
+    {"title": "pH af stærk syre", "keywords": ["ph", "stærk syre", "saltsyre", "hcl", "hno3", "salpetersyre", "svovlsyre", "h2so4", "stærk", "syre"], "page": "acids-bases", "tab": "Strong Acids/Bases", "description": "Bruges til HCl, HNO₃, H₂SO₄ og andre syrer der ioniserer 100%"},
+    {"title": "pH af stærk base", "keywords": ["ph", "stærk base", "naoh", "koh", "base", "hydroxid"], "page": "acids-bases", "tab": "Strong Acids/Bases", "description": "Bruges til NaOH, KOH og andre baser der ioniserer 100%"},
+    {"title": "pH af svag syre", "keywords": ["ph", "svag syre", "ka", "eddikesyre", "ch3cooh", "hac", "svag", "syre", "acetic"], "page": "acids-bases", "tab": "Weak Acids/Bases", "description": "Bruges til eddikesyre, citronsyre og andre syrer med Ka-værdi"},
+    {"title": "pH af svag base", "keywords": ["ph", "svag base", "kb", "ammoniak", "nh3", "svag", "base", "amin"], "page": "acids-bases", "tab": "Weak Acids/Bases", "description": "Bruges til NH₃, aminer og andre baser med Kb-værdi"},
+    {"title": "Buffer pH (Henderson-Hasselbalch)", "keywords": ["buffer", "ph", "henderson", "hasselbalch", "bufferløsning", "acetat", "konjugeret"], "page": "acids-bases", "tab": "Buffers", "description": "Blanding af svag syre og dens konjugerede base"},
+    {"title": "Titrering", "keywords": ["titrering", "ækvivalenspunkt", "neutralisation", "titration", "halvækvivalenspunkt"], "page": "acids-bases", "tab": "Titrations", "description": "Beregn pH ved titrering af syre med base"},
+    {"title": "Molarmasse", "keywords": ["molarmasse", "molar masse", "g/mol", "molekylvægt", "h2o", "nacl", "formel", "sammensætning"], "page": "atoms-molar", "tab": None, "description": "Find molarmassen for en kemisk forbindelse"},
+    {"title": "Elektronkonfiguration", "keywords": ["elektron", "konfiguration", "orbital", "atom", "ion", "aufbau", "periodisk", "elektroner"], "page": "atoms-molar", "tab": None, "description": "Find elektronkonfiguration for atomer og ioner"},
+    {"title": "Balancer kemisk reaktion", "keywords": ["balancer", "reaktion", "ligning", "balance", "koefficient", "afstemning"], "page": "stoichiometry", "tab": "Balance Reaction", "description": "Balancer en kemisk reaktionsligning"},
+    {"title": "Begrænsende reaktant", "keywords": ["begrænsende", "limiting reagent", "reaktant", "udbytte", "yield", "overskud", "stofmængde"], "page": "stoichiometry", "tab": "Limiting Reagent", "description": "Find den begrænsende reaktant og det teoretiske udbytte"},
+    {"title": "Fortynding", "keywords": ["fortynding", "dilution", "koncentration", "c1v1", "c2v2", "molær"], "page": "stoichiometry", "tab": "Dilution", "description": "Beregn koncentration efter fortynding (C₁V₁ = C₂V₂)"},
+    {"title": "Redoxafstemning", "keywords": ["redox", "oxidation", "reduktion", "halv-reaktion", "oxidationstal", "afstemning"], "page": "stoichiometry", "tab": "Redoxafstemning", "description": "Afstem redoxreaktioner med halvreaktionsmetoden"},
+    {"title": "Ideal gaslov (PV=nRT)", "keywords": ["ideal gas", "pv=nrt", "tryk", "volumen", "temperatur", "mol", "gaslov", "p", "v", "n", "t"], "page": "gases", "tab": "Ideal Gas Law", "description": "Beregn P, V, n eller T med idealgasloven"},
+    {"title": "Daltons lov (partialtryk)", "keywords": ["dalton", "partialtryk", "gasblanding", "molfraktion", "partial"], "page": "gases", "tab": None, "description": "Find partialtryk i en gasblanding"},
+    {"title": "Van der Waals ligning", "keywords": ["van der waals", "reel gas", "real gas", "a", "b", "korrektionsfaktorer"], "page": "gases", "tab": None, "description": "Gaslov for reelle gasser med korrektionsfaktorer"},
+    {"title": "Enthalpi (ΔH)", "keywords": ["enthalpi", "δh", "varme", "reaktionsvarme", "eksoterm", "endoterm", "hess", "dannelsesenthalpi"], "page": "thermochemistry", "tab": None, "description": "Beregn reaktionsenthalpi for en kemisk reaktion"},
+    {"title": "Gibbs fri energi (ΔG)", "keywords": ["gibbs", "δg", "spontan", "fri energi", "δh", "δs", "temperaturafhængig", "ligevægtskonstant"], "page": "thermochemistry", "tab": None, "description": "Beregn ΔG og find ud af om reaktionen er spontan"},
+    {"title": "Kalorimetri (q = mcΔT)", "keywords": ["kalorimeter", "kalorimetri", "varmekapacitet", "q=mcδt", "specifik varme", "temperaturstigning", "flammekalorimeter"], "page": "thermochemistry", "tab": None, "description": "Beregn varmeoverførsel med q = mcΔT"},
+    {"title": "Opvarmnings-/afkølingskurve", "keywords": ["opvarmning", "afkøling", "faseskift", "smelteenthalpi", "kogepunkt", "kurve", "plateau"], "page": "thermochemistry", "tab": None, "description": "Beregn energi til opvarmning med faseovergange"},
+    {"title": "ICE-tabel (ligevægt)", "keywords": ["ice", "ligevægt", "kc", "kp", "equilibrium", "koncentration", "ice-tabel", "balance"], "page": "ligevaegt", "tab": None, "description": "Opsæt ICE-tabel og beregn ligevægtskoncentrationer"},
+    {"title": "Reaktionskvotient (Q)", "keywords": ["q", "reaktionskvotient", "ligevægt", "shift", "le chatelier", "kc vs q"], "page": "ligevaegt", "tab": None, "description": "Find Q og afgør hvilken retning reaktionen går"},
+    {"title": "Kc/Kp konvertering", "keywords": ["kc", "kp", "konvertering", "delta n", "gasreaktioner", "ligevægt"], "page": "ligevaegt", "tab": None, "description": "Konverter mellem Kc og Kp"},
+    {"title": "Cellespænding (E°)", "keywords": ["elektrokemi", "celle", "spænding", "e°", "emf", "oxidation", "reduktion", "batteri", "galvanisk"], "page": "electrochemistry", "tab": None, "description": "Beregn standardcellespænding og spontanitet"},
+    {"title": "Nernst ligning", "keywords": ["nernst", "cellespænding", "ikke-standard", "koncentration", "e"], "page": "electrochemistry", "tab": None, "description": "Beregn cellespænding under ikke-standardbetingelser"},
+    {"title": "Reaktionshastighed & kinetik", "keywords": ["kinetik", "hastighed", "rate", "orden", "halvliv", "half-life", "k", "arrhenius", "aktiveringsenergy"], "page": "kinetics", "tab": None, "description": "Beregn reaktionshastigheder og halveringstider"},
+    {"title": "Damptryk (Raoults lov)", "keywords": ["damptryk", "vapor pressure", "raoult", "fordampning", "molfraktion"], "page": "damptryk", "tab": None, "description": "Beregn damptryk med Raoults lov"},
+    {"title": "Kogepunktselevering / Frysepunktssænkning", "keywords": ["kogepunkt", "frysepunkt", "kolligative", "molalitet", "kb", "kf", "δtb", "δtf", "elevering", "sænkning"], "page": "koge-fryse", "tab": None, "description": "Beregn kogepunktselevering og frysepunktssænkning"},
+    {"title": "VSEPR geometri", "keywords": ["vsepr", "geometri", "form", "molekyle", "vinkel", "lineær", "tetrahedral", "trigonal", "bent"], "page": "geometri", "tab": "VSEPR", "description": "Find molekylegeometri og bindingsvinkler"},
+    {"title": "Lewis struktur", "keywords": ["lewis", "struktur", "elektroner", "binding", "lone pair", "oktett", "resonans"], "page": "geometri", "tab": "Lewis", "description": "Tegn Lewis-struktur for et molekyle eller ion"},
+    {"title": "Opløselighed og Ksp", "keywords": ["opløselighed", "ksp", "solubility", "fælding", "precipitation", "mættet"], "page": "oploselig", "tab": None, "description": "Beregn opløselighed og Ksp for svagt opløselige salte"},
+    {"title": "Nuklear henfald", "keywords": ["nuklear", "radioaktivitet", "henfald", "alpha", "beta", "gamma", "halvliv", "radioaktiv"], "page": "nuklear", "tab": None, "description": "Beregn radioaktivt henfald og halveringstid"},
+    {"title": "Formelsamling", "keywords": ["formel", "samling", "tabel", "oversigt", "konstanter", "alle formler"], "page": "formelsamling", "tab": None, "description": "Oversigt over alle kemiformler og konstanter"},
+    {"title": "Osmotisk tryk", "keywords": ["osmose", "osmotisk", "tryk", "van't hoff", "kolligativ", "membran"], "page": "koge-fryse", "tab": None, "description": "Beregn osmotisk tryk med van't Hoffs lov"},
+]
+
+
+def _search_calculators(query: str) -> list:
+    """Return ranked search results for a query string."""
+    q = query.lower().strip()
+    if len(q) < 2:
+        return []
+    results = []
+    for entry in SEARCH_INDEX:
+        score = 0
+        if q in entry["title"].lower():
+            score += 4
+        for kw in entry["keywords"]:
+            if q == kw:
+                score += 3
+            elif q in kw or kw in q:
+                score += 1
+        if score > 0:
+            results.append((score, entry))
+    results.sort(key=lambda x: -x[0])
+    return [e for _, e in results[:6]]
+
+
+def render_search_sidebar():
+    """Render a search bar in the sidebar and show navigation results."""
+    query = st.sidebar.text_input(
+        "🔍 Søg efter beregner",
+        key="sidebar_search_query",
+        placeholder="fx 'pH', 'buffer', 'gaslov'...",
+    )
+    if query:
+        hits = _search_calculators(query)
+        if hits:
+            for entry in hits:
+                tab_hint = f"  ›  *{entry['tab']}*" if entry["tab"] else ""
+                label = f"{entry['title']}{tab_hint}"
+                if st.sidebar.button(label, key=f"search_nav_{entry['title']}", help=entry["description"]):
+                    st.query_params["page"] = entry["page"]
+                    if "sidebar_search_query" in st.session_state:
+                        st.session_state["sidebar_search_query"] = ""
+                    st.rerun()
+        else:
+            st.sidebar.caption("Ingen resultater – prøv et andet søgeord.")
+    st.sidebar.markdown("---")
+
+
 def main():
     """Main application function."""
     
     # Sidebar navigation
     st.sidebar.title("🧪 Chemistry Calculator")
     st.sidebar.markdown("---")
-    
+    render_search_sidebar()
+
     # Keep navigation stable across query-param based interactions (e.g. periodic table element clicks).
     query_page_raw = st.query_params.get("page")
     if isinstance(query_page_raw, list):
@@ -266,95 +349,81 @@ def show_geometri_page():
         render_bond_enthalpy_tab()
 
 
+def _nav_card(label: str, page: str, description: str, key_suffix: str):
+    """Render a task card that navigates to the given page."""
+    if st.button(label, key=f"home_card_{key_suffix}", use_container_width=True, help=description):
+        st.query_params["page"] = page
+        st.rerun()
+
+
 def show_fundamentals_page():
-    """Display the fundamentals page."""
-    st.title("🏠 Chemistry Calculator Fundamentals")
+    """Display the home/landing page with task-oriented cards."""
+    st.title("🧪 Kemilommeregner")
+    st.markdown("#### Hvad vil du beregne?")
+    st.markdown(
+        "Brug søgefeltet i sidepanelet, eller klik direkte på en opgave herunder. "
+        "Alle beregnere viser trin-for-trin løsninger."
+    )
     st.markdown("---")
-    
-    col1, col2 = st.columns([2, 1])
-    
-    with col1:
-        st.markdown("""
-        ## Welcome to Chemistry Calculator!
-        
-        This application provides comprehensive tools for chemistry calculations commonly encountered in high school and introductory university courses.
-        
-        ### Available Calculators:
-        
-        **⚖️ Atoms & Molar Mass**
-        - Calculate molar masses of compounds
-        - Determine percentage composition
-        - Handle complex formulas with parentheses
-        
-        **🧮 Balancering og stofmængde**
-        - Balance chemical equations
-        - Calculate limiting reagents and theoretical yields
-        - Solve dilution problems
 
-        **📊 Gas Laws** (Coming Soon)
-        - Ideal gas law calculations
-        - Combined gas law
-        - Van der Waals equation
+    # ── Row 1 ────────────────────────────────────────────────────────────────
+    c1, c2, c3, c4 = st.columns(4)
+    with c1:
+        st.markdown("**🧪 Syrer & Baser**")
+        _nav_card("pH af stærk syre / base", "acids-bases", "HCl, NaOH m.fl. – ioniserer 100%", "sa")
+        _nav_card("pH af svag syre / base", "acids-bases", "Eddikesyre, ammoniak m.fl. – brug Ka / Kb", "wa")
+        _nav_card("Buffer pH", "acids-bases", "Henderson-Hasselbalch, blandingsberegning", "buf")
+        _nav_card("Titrering", "acids-bases", "pH ved titrering – syre + base", "titr")
+    with c2:
+        st.markdown("**🧮 Stofmængder & Reaktioner**")
+        _nav_card("Molarmasse", "atoms-molar", "Find g/mol for en kemisk forbindelse", "mm")
+        _nav_card("Balancer reaktion", "stoichiometry", "Afstem koefficienterne i en reaktionsligning", "bal")
+        _nav_card("Begrænsende reaktant", "stoichiometry", "Find limiting reagent og teoretisk udbytte", "lr")
+        _nav_card("Fortynding (C₁V₁ = C₂V₂)", "stoichiometry", "Beregn koncentration efter fortynding", "dil")
+    with c3:
+        st.markdown("**🔥 Termokemi**")
+        _nav_card("Enthalpi ΔH", "thermochemistry", "Reaktionsvarme, Hess's lov, dannelsesenthalpi", "dh")
+        _nav_card("Gibbs fri energi ΔG", "thermochemistry", "Spontanitet, ΔG = ΔH − TΔS", "dg")
+        _nav_card("Kalorimetri (q = mcΔT)", "thermochemistry", "Varmeoverførsel og temperaturændring", "cal")
+        _nav_card("Opvarmnings-/afkølingskurve", "thermochemistry", "Energi ved faseovergange", "heat")
+    with c4:
+        st.markdown("**📊 Gasser**")
+        _nav_card("Ideel gaslov PV = nRT", "gases", "Beregn P, V, n eller T", "ig")
+        _nav_card("Daltons lov (partialtryk)", "gases", "Partialtryk i en gasblanding", "dal")
+        _nav_card("Van der Waals", "gases", "Gaslov for reelle gasser", "vdw")
+        _nav_card("Gasstoichiometri", "gases", "Volumen og stofmængder i gasreaktioner", "gst")
 
-        **🔥 Thermochemistry**
-        - Includes Enthalpy, Gibbs (ΔG), calorimetry, and heating/cooling curves
-        
-        **🧪 Acids & Bases**
-        - Strong/weak acid/base pH calculations
-        - Buffer solutions and Henderson-Hasselbalch
-        - Titration point calculations
-        
-        **⚖️ Equilibrium**
-        - ICE table solver
-        - Kc/Kp conversions
-        - Reaction quotient and solubility
-        
-        **⚗️ Solutions** (Coming Soon)
-        - Molarity calculations
-        - Dilution problems
-        - Concentration conversions
-        
-        **⚡ Kinetics** (Coming Soon)
-        - Rate law calculations
-        - Half-life problems
-        - Activation energy
-        """)
-    
-    with col2:
-        st.markdown("""
-        ### Quick Tips:
-        
-        - Use the sidebar to navigate between calculators
-        - All calculations show step-by-step solutions
-        - Units are automatically converted as needed
-        - Results are displayed with appropriate significant figures
-        
-        ### Getting Started:
-        
-        1. Select a calculator from the sidebar
-        2. Enter your values with appropriate units
-        3. Click Calculate to see results
-        4. Expand "Show Steps" to see detailed work
-        """)
-        
-        # Example calculations
-        st.markdown("### Example Calculations:")
-        
-        if st.button("Calculate H₂O Molar Mass"):
-            try:
-                result, steps, metadata = calculate_molar_mass_with_steps("H2O")
-                st.success(f"H₂O Molar Mass: {result:.3f} g/mol")
-            except Exception as e:
-                st.error(f"Error: {e}")
-        
-        if st.button("Calculate Gibbs Example"):
-            try:
-                result, steps, metadata = calculate_gibbs_free_energy_with_steps(
-                    -100, "kJ/mol", 200, "J/(mol·K)", 298.15, "K"
-                )
-                st.success(f"ΔG: {result:.2f} kJ/mol")
-            except Exception as e:
-                st.error(f"Error: {e}")
+    st.markdown("---")
+
+    # ── Row 2 ────────────────────────────────────────────────────────────────
+    c5, c6, c7, c8 = st.columns(4)
+    with c5:
+        st.markdown("**⚗️ Ligevægt**")
+        _nav_card("ICE-tabel", "ligevaegt", "Opsæt ICE-tabel og find ligevægtskoncentrationer", "ice")
+        _nav_card("Reaktionskvotient Q", "ligevaegt", "Find Q og afgør reaktionsretning", "rq")
+        _nav_card("Kc / Kp konvertering", "ligevaegt", "Konverter mellem Kc og Kp", "kckp")
+        _nav_card("Le Chatelier's princip", "ligevaegt", "Forudsig ligevægtsforskydning", "lec")
+    with c6:
+        st.markdown("**🔋 Elektrokemi**")
+        _nav_card("Cellespænding E°", "electrochemistry", "Standardcellespænding og spontanitet", "ecell")
+        _nav_card("Nernst ligning", "electrochemistry", "E ved ikke-standardbetingelser", "nernst")
+        _nav_card("Faradays lov", "electrochemistry", "Elektrolyse – mængde stof vs. ladning", "farad")
+        _nav_card("Redoxafstemning", "stoichiometry", "Afstem redoxreaktioner med halvreaktioner", "redox")
+    with c7:
+        st.markdown("**🔷 Molekylestruktur**")
+        _nav_card("VSEPR geometri", "geometri", "Molekylegeometri og bindingsvinkler", "vsepr")
+        _nav_card("Lewis struktur", "geometri", "Tegn Lewis-struktur og find formal ladning", "lewis")
+        _nav_card("Intermolekylære kræfter", "geometri", "IMF – hydrogen-, dipol-, Londonbinding", "imf")
+        _nav_card("Elektronkonfiguration", "atoms-molar", "Aufbau, orbital-notation og ions", "ec")
+    with c8:
+        st.markdown("**🌡️ Andet**")
+        _nav_card("Kogepunktselevering / Frysepunkt", "koge-fryse", "Kolligative egenskaber og molalitet", "kf")
+        _nav_card("Damptryk (Raoult)", "damptryk", "Damptryk over opløsninger", "vp")
+        _nav_card("Kinetik & halvliv", "kinetics", "Reaktionshastighed, Arrhenius, halvliv", "kin")
+        _nav_card("Nuklear henfald", "nuklear", "α/β/γ-henfald og radioaktiv halveringstid", "nuc")
+
+    st.markdown("---")
+    st.caption("💡 Tip: Søg i sidepanelet øverst for at finde en specifik beregner hurtigt.")
 
 def format_formula_with_subscripts(formula: str) -> str:
     """
@@ -1884,7 +1953,13 @@ def show_strong_acids_bases_tab():
         ["Single strong acid", "Single strong base", "Mixture of strong acid + base"],
         horizontal=True
     )
-    
+    _strong_help = {
+        "Single strong acid": "💡 **Hvornår?** Stærke syrer (HCl, HNO₃, H₂SO₄) ioniserer 100% → pH = −log[H⁺].",
+        "Single strong base": "💡 **Hvornår?** Stærke baser (NaOH, KOH) ioniserer 100% → pOH = −log[OH⁻], pH = 14 − pOH.",
+        "Mixture of strong acid + base": "💡 **Hvornår?** Du blander en stærk syre og en stærk base. Beregner nettosyre/base efter neutralisation.",
+    }
+    st.info(_strong_help[mode])
+
     if mode == "Single strong acid":
         st.markdown("#### Strong Acid pH")
         concentration = st.number_input("Acid concentration (M):", value=0.1, step=0.01, min_value=1e-7, key="strong_acid_conc")
@@ -1956,14 +2031,19 @@ def show_strong_acids_bases_tab():
 def show_weak_acids_bases_tab():
     """Display the weak acids/bases tab."""
     st.markdown("### 🥶 Weak Acids & Bases")
-    
+
     # Mode selection
     mode = st.radio(
         "Calculation Mode:",
         ["Weak acid", "Weak base"],
         horizontal=True
     )
-    
+    _weak_help = {
+        "Weak acid": "💡 **Hvornår?** Svage syrer (eddikesyre, citronsyre) ioniserer kun delvist. Du skal kende Ka og startkoncentrationen.",
+        "Weak base": "💡 **Hvornår?** Svage baser (ammoniak, aminer) reagerer delvist med vand. Du skal kende Kb (eller Ka for den konjugerede syre).",
+    }
+    st.info(_weak_help[mode])
+
     if mode == "Weak acid":
         st.markdown("#### Weak Acid pH")
         col1, col2 = st.columns(2)
@@ -2008,7 +2088,12 @@ def show_weak_acids_bases_tab():
             horizontal=True,
             key="weak_base_method"
         )
-        
+        _kb_help = {
+            "Direct Kb value": "💡 Du kender Kb direkte (fx fra en tabel). Kb for NH₃ er 1,8 × 10⁻⁵.",
+            "Ka of conjugate acid": "💡 Du kender Ka for den konjugerede syre i stedet. Beregner Kb = Kw / Ka automatisk.",
+        }
+        st.caption(_kb_help[kb_method])
+
         if kb_method == "Direct Kb value":
             kb = st.number_input("Kb value:", value=1.8e-5, step=1e-6, min_value=1e-12, format="%.2e", key="weak_base_kb")
             ka_conjugate = None
@@ -2038,13 +2123,19 @@ def show_weak_acids_bases_tab():
 def show_buffers_tab():
     """Display the buffers tab."""
     st.markdown("### 🧪 Buffer Solutions")
-    
+
     # Mode selection
     mode = st.radio(
         "Buffer calculation mode:",
         ["Known concentrations", "Mixing solutions", "Target pH"],
         horizontal=True
     )
+    _buffer_help = {
+        "Known concentrations": "💡 **Hvornår?** Du kender allerede [HA] og [A⁻] i opløsningen og vil finde pH via Henderson-Hasselbalch.",
+        "Mixing solutions": "💡 **Hvornår?** Du blander en syreløsning og en baseløsning og vil finde pH af den resulterende buffer.",
+        "Target pH": "💡 **Hvornår?** Du ved hvilken pH du ønsker, og vil finde det rette forhold mellem syre og base.",
+    }
+    st.info(_buffer_help[mode])
     
     if mode == "Known concentrations":
         st.markdown("#### Buffer pH from Concentrations")
@@ -2128,13 +2219,18 @@ def show_buffers_tab():
 def show_titrations_tab():
     """Display the titrations tab."""
     st.markdown("### 🧪 Titration Calculations")
-    
+
     # Mode selection
     mode = st.radio(
         "Titration type:",
         ["Strong acid + Strong base", "Weak acid + Strong base"],
         horizontal=True
     )
+    _titr_help = {
+        "Strong acid + Strong base": "💡 **Hvornår?** Begge reaktanter ioniserer 100% (fx HCl + NaOH). Ækvivalenspunktet er ved pH = 7.",
+        "Weak acid + Strong base": "💡 **Hvornår?** Syren er svag (fx eddikesyre + NaOH). Ækvivalenspunktet er ved pH > 7, og du skal kende Ka.",
+    }
+    st.info(_titr_help[mode])
     
     if mode == "Strong acid + Strong base":
         st.markdown("#### Strong Acid + Strong Base")
@@ -4838,6 +4934,11 @@ def show_thermochemistry_page():
             c_val = None if c_custom == 0.0 else c_custom
         with col2:
             mode = st.radio("Temperature input", ["ΔT (K)", "T_initial/T_final (°C)"])
+            _cal_help = {
+                "ΔT (K)": "💡 Brug denne hvis du allerede kender temperaturforskellen direkte.",
+                "T_initial/T_final (°C)": "💡 Brug denne hvis du har start- og sluttemperatur – ΔT beregnes automatisk.",
+            }
+            st.caption(_cal_help[mode])
             if mode == "ΔT (K)":
                 deltaT = st.number_input("ΔT (K)", value=25.0)
                 T_i = None
