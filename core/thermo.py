@@ -97,6 +97,8 @@ def pressure_unit_conversion(value: float, from_unit: str, to_unit: str) -> floa
         base_value = value * 100000  # 1 bar = 100000 Pa
     elif from_unit == "kPa":
         base_value = value * 1000    # 1 kPa = 1000 Pa
+    elif from_unit == "MPa":
+        base_value = value * 1000000 # 1 MPa = 1000000 Pa
     elif from_unit == "Pa":
         base_value = value
     else:
@@ -109,6 +111,8 @@ def pressure_unit_conversion(value: float, from_unit: str, to_unit: str) -> floa
         return base_value / 100000
     elif to_unit == "kPa":
         return base_value / 1000
+    elif to_unit == "MPa":
+        return base_value / 1000000
     elif to_unit == "Pa":
         return base_value
     else:

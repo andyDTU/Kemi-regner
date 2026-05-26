@@ -1,0 +1,89 @@
+{
+  "H": {
+    "electronegativity": 2.2,
+    "ionizationEnergy": 1312.0,
+    "examNotes": "Hydrogen optraeder ofte som H+ i syre-base-kemi og som H2(g) i elementaer form."
+  },
+  "He": {
+    "ionizationEnergy": 2372.3,
+    "examNotes": "Aedelgas med meget lav reaktivitet."
+  },
+  "Li": {"electronegativity": 0.98, "ionizationEnergy": 520.2},
+  "Be": {"electronegativity": 1.57, "ionizationEnergy": 899.5},
+  "B": {"electronegativity": 2.04, "ionizationEnergy": 800.6},
+  "C": {"electronegativity": 2.55, "ionizationEnergy": 1086.5},
+  "N": {
+    "electronegativity": 3.04,
+    "ionizationEnergy": 1402.3,
+    "examNotes": "Elementaert nitrogen findes som N2 med meget staerk trippelbinding."
+  },
+  "O": {
+    "electronegativity": 3.44,
+    "ionizationEnergy": 1313.9,
+    "examNotes": "Elementaert oxygen findes som O2. Oxidationstal -2 er meget almindeligt."
+  },
+  "F": {
+    "electronegativity": 3.98,
+    "ionizationEnergy": 1681.0,
+    "examNotes": "Mest elektronegative grundstof; danner typisk -1."
+  },
+  "Ne": {"ionizationEnergy": 2080.7},
+  "Na": {
+    "electronegativity": 0.93,
+    "ionizationEnergy": 495.8,
+    "examNotes": "Alkalimetal med typisk oxidationstal +1."
+  },
+  "Mg": {"electronegativity": 1.31, "ionizationEnergy": 737.7},
+  "Al": {"electronegativity": 1.61, "ionizationEnergy": 577.5},
+  "Si": {"electronegativity": 1.90, "ionizationEnergy": 786.5},
+  "P": {"electronegativity": 2.19, "ionizationEnergy": 1011.8},
+  "S": {"electronegativity": 2.58, "ionizationEnergy": 999.6},
+  "Cl": {
+    "electronegativity": 3.16,
+    "ionizationEnergy": 1251.2,
+    "examNotes": "Elementaert chlor findes som Cl2. Typisk oxidationstal -1 i salte."
+  },
+  "Ar": {"ionizationEnergy": 1520.6},
+  "K": {"electronegativity": 0.82, "ionizationEnergy": 418.8},
+  "Ca": {"electronegativity": 1.00, "ionizationEnergy": 589.8},
+  "Sc": {"electronegativity": 1.36, "ionizationEnergy": 633.1},
+  "Ti": {"electronegativity": 1.54, "ionizationEnergy": 658.8},
+  "V": {"electronegativity": 1.63, "ionizationEnergy": 650.9},
+  "Cr": {"electronegativity": 1.66, "ionizationEnergy": 652.9},
+  "Mn": {"electronegativity": 1.55, "ionizationEnergy": 717.3},
+  "Fe": {
+    "electronegativity": 1.83,
+    "ionizationEnergy": 762.5,
+    "examNotes": "Fe2+/Fe3+ er centrale oxidationstrin i redox- og koordinationskemi."
+  },
+  "Co": {"electronegativity": 1.88, "ionizationEnergy": 760.4},
+  "Ni": {"electronegativity": 1.91, "ionizationEnergy": 737.1},
+  "Cu": {
+    "electronegativity": 1.90,
+    "ionizationEnergy": 745.5,
+    "examNotes": "Cu+/Cu2+ optraeder ofte i elektrokemi."
+  },
+  "Zn": {"electronegativity": 1.65, "ionizationEnergy": 906.4},
+  "Ga": {"electronegativity": 1.81, "ionizationEnergy": 578.8},
+  "Ge": {"electronegativity": 2.01, "ionizationEnergy": 762.0},
+  "As": {"electronegativity": 2.18, "ionizationEnergy": 947.0},
+  "Se": {"electronegativity": 2.55, "ionizationEnergy": 941.0},
+  "Br": {
+    "electronegativity": 2.96,
+    "ionizationEnergy": 1139.9,
+    "phase": "liquid"
+  },
+  "Kr": {"electronegativity": 3.00, "ionizationEnergy": 1350.8},
+  "Ag": {"electronegativity": 1.93, "ionizationEnergy": 731.0},
+  "I": {
+    "electronegativity": 2.66,
+    "ionizationEnergy": 1008.4,
+    "examNotes": "Elementaert iod optraeder som I2."
+  },
+  "Xe": {"electronegativity": 2.60, "ionizationEnergy": 1170.4},
+  "Pt": {"electronegativity": 2.28, "ionizationEnergy": 870.0},
+  "Au": {"electronegativity": 2.54, "ionizationEnergy": 890.1},
+  "Hg": {"electronegativity": 2.00, "ionizationEnergy": 1007.1, "phase": "liquid"},
+  "Pb": {"electronegativity": 2.33, "ionizationEnergy": 715.6},
+  "Rn": {"ionizationEnergy": 1037.0}
+}

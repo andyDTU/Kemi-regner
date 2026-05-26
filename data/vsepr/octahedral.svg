@@ -1,0 +1,17 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" width="360" height="220" viewBox="0 0 360 220">
+  <rect width="360" height="220" fill="#f7fafc"/>
+  <circle cx="180" cy="110" r="16" fill="#111827"/>
+  <circle cx="180" cy="35" r="12" fill="#2563eb"/>
+  <circle cx="180" cy="185" r="12" fill="#2563eb"/>
+  <circle cx="95" cy="110" r="12" fill="#2563eb"/>
+  <circle cx="265" cy="110" r="12" fill="#2563eb"/>
+  <circle cx="130" cy="60" r="12" fill="#2563eb"/>
+  <circle cx="230" cy="160" r="12" fill="#2563eb"/>
+  <line x1="180" y1="94" x2="180" y2="47" stroke="#1f2937" stroke-width="3"/>
+  <line x1="180" y1="126" x2="180" y2="173" stroke="#1f2937" stroke-width="3"/>
+  <line x1="164" y1="110" x2="107" y2="110" stroke="#1f2937" stroke-width="3"/>
+  <line x1="196" y1="110" x2="253" y2="110" stroke="#1f2937" stroke-width="3"/>
+  <line x1="170" y1="98" x2="140" y2="68" stroke="#1f2937" stroke-width="3"/>
+  <line x1="190" y1="122" x2="220" y2="152" stroke="#1f2937" stroke-width="3"/>
+  <text x="20" y="30" font-family="Segoe UI" font-size="20" fill="#0f172a">Octahedral (schematic)</text>
+</svg>

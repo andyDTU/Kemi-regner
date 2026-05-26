@@ -6,6 +6,7 @@ A comprehensive chemistry calculator built with Streamlit, designed for high sch
 
 ### 🎯 Implemented Calculators
 - **⚖️ Molar Mass**: Calculate molar masses and composition breakdown
+- **⚛️ Electron Configuration**: Parse element/ion input and compute orbital electron configuration (long + noble-gas notation)
 - **🔥 Gibbs Free Energy**: ΔG, spontaneity, and temperature dependence
 - **📊 Gases**: Ideal gas law, Dalton’s law, gas stoichiometry, van der Waals (with thermo-derived a,b when available)
 - **🌡️ Thermochemistry**: Calorimetry, heating/cooling curves, ΔH from ΔHf°, Clausius–Clapeyron
@@ -94,6 +95,37 @@ chem_calc/
 - Expected result: ~180.156 g/mol
 - Shows contribution of each element: C (6 × 12.011), H (12 × 1.008), O (6 × 15.999)
 
+### Electron Configuration Calculator
+- Open **⚖️ Atoms & Molar Mass** → **⚛️ Elektronkonfiguration**.
+- Input supports symbol or atomic number with optional charge:
+   - `Na`, `B`, `O2-`, `O^2-`, `Fe3+`, `Fe2+`, `Cl-`, `Br1-`, `Cu+`, `Cr`, `Cr2+`
+- Charge formats supported: `2+`, `+2`, `2-`, `-2`, `+`, `-`, `0`.
+- Output includes:
+   - Total electrons (`electrons = Z - charge`)
+   - Long notation (e.g. `1s2 2s2 2p6 3s1`)
+   - Noble-gas notation (e.g. `[Ne] 3s1`)
+   - Orbital distribution (Hund + Pauli) for relevant outer subshells
+   - Radius line with explicit type (`atomradius (neutral)` / `ionradius (kation)` / `ionradius (anion)`)
+- Radius standard (explicit, fixed by config):
+   - Neutral atoms: **covalent radius** (Pyykkö single-bond)
+   - Ions: **ionic radius**
+- Radius data is lookup-based only (no numeric trend-guess fallback when data is missing).
+- Local data files:
+   - `data/radii.atomic.json` (neutral atomic radii, default unit pm)
+   - `data/radii.ionic.json` (ionic radii by ion key, default unit pm)
+- Source notes for radius data (also shown in-app on result):
+   - Neutral: mendeleev dataset (Pyykkö covalent radii)
+   - Ionic: Shannon-like ionic radius reference values for common ions (school level)
+- Transition-metal cations remove electrons from highest principal quantum number first (e.g. Fe²⁺ removes 4s before 3d).
+- Ground-state exception table currently includes Cr and Cu and is easy to extend.
+- Orbital distribution rules and format:
+   - Follows **Hund's rule** (single occupancy with parallel spins first) and **Pauli** (max 2 per orbital with opposite spin)
+   - Unpaired electrons are rendered as `↑`, paired as `↑↓`
+   - Deterministic orbital ordering:
+      - `p`: `px`, `py`, `pz`
+      - `d`: `dxy`, `dyz`, `dxz`, `dx2−y2`, `dz2`
+   - Example style: `3p: px [↑]  py [↑]  pz [↑]`
+
 ### Gibbs Free Energy Calculator
 ### Kinetics (examples)
 - First-order decay: C0=0.100 M, k=0.350 s⁻¹, t=10.0 s → Ct ≈ 0.00302 M
@@ -112,6 +144,47 @@ chem_calc/
 **Example**: ΔH = -100 kJ/mol, ΔS = 200 J/(mol·K), T = 298.15 K
 - Expected result: ΔG ≈ -159.63 kJ/mol
 - Conclusion: Reaction is **spontaneous** at this temperature
+
+### Reaction Enthalpy (ΔH°) under Thermochemistry
+- Open **🌡️ Thermochemistry** → **Reaction Enthalpy (ΔH°)**.
+- Enter a reaction like `N2(g) + 3 H2(g) -> 2 NH3(g)` or use `=` as arrow.
+- Parser supports:
+   - Explicit or implicit coefficients (implicit = 1)
+   - Parentheses formulas like `Ca(OH)2`, `(NH4)2SO4`
+   - Phases `(s)`, `(l)`, `(g)`, `(aq)`
+- If phase is omitted, the app defaults to `(g)` and shows a warning.
+- The app shows per-species table rows with coefficient ν, ΔHf°, source, and subtotal ν·ΔHf°.
+- The result is reported as `ΔH°_rxn` in `kJ/mol reaktion`.
+- A **Balance reaction** button attempts integer stoichiometric balancing by linear algebra.
+
+#### Local ΔHf° databases (`data/dhf.openstax.tableG1.json` + `data/dhf.exampack.json` + `data/dhf.json`)
+- `data/dhf.openstax.tableG1.json` is generated from OpenStax Appendix G Table G1 and provides broad offline baseline coverage.
+- `data/dhf.exampack.json` is an offline **exam pack** with curated overrides for common exam species.
+- The database key format is `FORMULA(PHASE)`, for example `H2O(g)`.
+- You can extend the dataset by adding more entries to JSON (same key/value structure).
+- Missing species are highlighted in the UI and can be provided as temporary overrides.
+- Use **Add to database** to persist selected overrides to `data/dhf.json` (user layer).
+- Saving requires explicit confirmation in the UI before writing the file.
+- Aqueous standards follow the common convention `H+(aq) = 0` in the exam pack.
+- Merge priority is: `dhf.json` (user) > `dhf.exampack.json` (exam pack) > `dhf.openstax.tableG1.json` (generated OpenStax base).
+
+### Hess Solver under Thermochemistry
+- Open **🌡️ Thermochemistry** → **Hess Solver**.
+- Enter a target reaction and known reactions line-by-line as:
+   - `reaction ; dH`
+   - Example: `H2(g) + 1/2 O2(g) -> H2O(g) ; -241.8`
+- Parser supports:
+   - `->` and `→`
+   - implicit coefficient `1`
+   - fractions (`1/2`, `½`)
+   - phases `(s)`, `(l)`, `(g)`, `(aq)`
+- The solver builds and solves `A*x=b` with exact rational arithmetic (`Fraction`), then validates residual `b-A*x = 0` before showing ΔH°.
+- Output shows selected reaction combination (factor + reverse), summed reaction, symbolic ΔH° sum, and exact validation status.
+
+Build/refresh OpenStax baseline:
+```bash
+npm run build:dhf
+```
 
 ## 🧪 Running Tests
 

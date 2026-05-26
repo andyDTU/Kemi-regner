@@ -16,8 +16,10 @@ from core.thermo import (
     q_mc_deltaT,
     heating_curve_water_segments,
     reaction_enthalpy_from_formation,
-    clausius_clapeyron_p2,
 )
+from core.clausius_clapeyron import ClausiusClapeyronProblem, solve_clausius_clapeyron
+from core.dhf_database import load_dhf_database
+from core.reaction_enthalpy import parseReaction, computeRxnEnthalpy
 
 
 def _fmt(v: float, unit: str, sig: int = 4) -> str:
@@ -130,14 +132,24 @@ def calculate_reaction_enthalpy_from_formation_with_steps(
     """
     ΔH_rxn = Σν ΔHf°(products) − Σν ΔHf°(reactants), returned in kJ/mol.
     """
-    deltaH_kJ, contributions = reaction_enthalpy_from_formation(reaction)
-    steps: List[str] = ["Reaction enthalpy from standard formation enthalpies"]
-    steps.append(f"Reaction: {reaction}")
-    steps.append("Contributions (kJ/mol):")
-    for k, v in contributions.items():
-        steps.append(f"- {k}: {v:.4g}")
-    steps.append(f"ΔH_rxn = {deltaH_kJ:.4g} kJ/mol")
-    return deltaH_kJ, steps, {'contributions_kJ_per_mol': contributions}
+    ast = parseReaction(reaction)
+    db = load_dhf_database()
+    details = computeRxnEnthalpy(ast, db, overrides={})
+    if details["missing_species"]:
+        missing = ", ".join(details["missing_species"])
+        raise ValueError(f"ΔHf° missing for: {missing}")
+
+    deltaH_kJ = float(details["delta_h_rxn_kj_per_mol"])
+    steps: List[str] = ["Reaction enthalpy from standard formation enthalpies (Hess' law)"]
+    steps.append(f"Reaction: {ast['equation_str']}")
+    for row in details["rows"]:
+        steps.append(
+            f"- {row['side']} {row['coefficient']:.6g} × {row['species']} = {row['subtotal_kj_per_mol']:.6g} kJ/mol"
+        )
+    steps.append(f"Σ products = {details['sum_products_kj_per_mol']:.6g} kJ/mol")
+    steps.append(f"Σ reactants = {details['sum_reactants_kj_per_mol']:.6g} kJ/mol")
+    steps.append(f"ΔH°_rxn = {deltaH_kJ:.6g} kJ/mol reaktion")
+    return deltaH_kJ, steps, details
 
 
 def calculate_clausius_clapeyron_with_steps(
@@ -153,11 +165,21 @@ def calculate_clausius_clapeyron_with_steps(
     constants = load_constants()
     if deltaHvap_kJ_per_mol is None:
         deltaHvap_kJ_per_mol = constants['water']['deltaHvap_kJ_per_mol']
-    P2 = clausius_clapeyron_p2(P1_atm, T1_K, T2_K, deltaHvap_kJ_per_mol)
-    steps: List[str] = []
-    steps.append("Clausius–Clapeyron (two-point): ln(P2/P1) = -ΔHvap/R · (1/T2 - 1/T1)")
-    steps.append(f"Given: P1 = {_fmt(P1_atm, 'atm')}, T1 = {_fmt(T1_K, 'K')}, T2 = {_fmt(T2_K, 'K')}, ΔHvap = {_fmt(deltaHvap_kJ_per_mol, 'kJ/mol')}")
-    steps.append(f"Result: P2 = {_fmt(P2, 'atm')}")
-    return P2, steps, {'deltaHvap_kJ_per_mol': deltaHvap_kJ_per_mol}
+    problem = ClausiusClapeyronProblem(
+        unknown="P2",
+        p1=P1_atm,
+        p1_unit="atm",
+        t1=T1_K,
+        t1_unit="K",
+        t2=T2_K,
+        t2_unit="K",
+        delta_hvap=deltaHvap_kJ_per_mol,
+        delta_hvap_unit="kJ/mol",
+    )
+    solution = solve_clausius_clapeyron(problem)
+    return solution.value, solution.steps, {
+        'deltaHvap_kJ_per_mol': deltaHvap_kJ_per_mol,
+        **solution.metadata,
+    }
 
 

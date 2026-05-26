@@ -9,7 +9,11 @@ from pathlib import Path
 # Add the parent directory to the path so we can import the modules
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from calculators.gibbs import calculate_gibbs_free_energy_with_steps, analyze_gibbs_temperature_dependence
+from calculators.gibbs import (
+    calculate_gibbs_free_energy_with_steps,
+    analyze_gibbs_temperature_dependence,
+    calculate_reaction_gibbs_with_steps,
+)
 
 def test_gibbs_spontaneous_reaction():
     """Test Gibbs calculation for a spontaneous reaction."""
@@ -142,6 +146,130 @@ def test_gibbs_invalid_inputs():
         calculate_gibbs_free_energy_with_steps(
             -100.0, "kJ/mol", 200.0, "J/(mol·K)", 0.0, "K"
         )
+
+
+def _haber_rows():
+    return [
+        {"species": "N2(g)", "side": "reactant", "nu": 1, "dhf": 0.0, "s": 191.5},
+        {"species": "H2(g)", "side": "reactant", "nu": 3, "dhf": 0.0, "s": 130.68},
+        {"species": "NH3(g)", "side": "product", "nu": 2, "dhf": -46.11, "s": 192.77},
+    ]
+
+
+def test_reaction_gibbs_haber_reference():
+    result, steps, metadata = calculate_reaction_gibbs_with_steps(
+        _haber_rows(),
+        temperature=298.15,
+        temp_unit="K",
+    )
+
+    assert result["delta_h_rxn_kj_per_mol"] == pytest.approx(-92.22, abs=0.05)
+    assert result["delta_s_rxn_j_per_mol_k"] == pytest.approx(-198.0, abs=0.2)
+    assert result["delta_g_rxn_kj_per_mol"] == pytest.approx(-33.19, abs=0.2)
+    assert result["spontaneity"] == "spontaneous"
+    assert result["log10_k"] > 5.0
+    assert isinstance(steps, list) and len(steps) > 5
+    assert "row_contributions" in metadata
+
+
+def test_reaction_gibbs_accepts_celsius():
+    rows = _haber_rows()
+    result_k, _, _ = calculate_reaction_gibbs_with_steps(rows, 298.15, "K")
+    result_c, _, _ = calculate_reaction_gibbs_with_steps(rows, 25.0, "°C")
+    assert result_c["delta_g_rxn_kj_per_mol"] == pytest.approx(result_k["delta_g_rxn_kj_per_mol"], abs=0.1)
+
+
+def test_reaction_gibbs_rejects_nonpositive_temperature():
+    with pytest.raises(ValueError):
+        calculate_reaction_gibbs_with_steps(_haber_rows(), 0.0, "K")
+
+
+def test_reaction_gibbs_requires_both_sides():
+    only_reactants = [
+        {"species": "A", "side": "reactant", "nu": 1, "dhf": 0.0, "s": 10.0},
+    ]
+    with pytest.raises(ValueError):
+        calculate_reaction_gibbs_with_steps(only_reactants, 298.15, "K")
+
+
+def test_reaction_gibbs_requires_positive_coefficients():
+    bad_rows = [
+        {"species": "A", "side": "reactant", "nu": 0, "dhf": 0.0, "s": 10.0},
+        {"species": "B", "side": "product", "nu": 1, "dhf": 0.0, "s": 10.0},
+    ]
+    with pytest.raises(ValueError):
+        calculate_reaction_gibbs_with_steps(bad_rows, 298.15, "K")
+
+
+def test_reaction_gibbs_missing_fields_are_reported():
+    rows = [
+        {"species": "A", "side": "reactant", "nu": 1, "dhf": "", "s": 10.0},
+        {"species": "B", "side": "product", "nu": 1, "dhf": 0.0, "s": None},
+    ]
+    with pytest.raises(ValueError) as exc:
+        calculate_reaction_gibbs_with_steps(rows, 298.15, "K")
+    text = str(exc.value)
+    assert "ΔHf° missing" in text
+    assert "S° missing" in text
+
+
+def test_reaction_gibbs_dash_placeholder_is_treated_as_missing():
+    rows = [
+        {"species": "A", "side": "reactant", "nu": 1, "dhf": "-", "s": 10.0},
+        {"species": "B", "side": "product", "nu": 1, "dhf": 0.0, "s": "-"},
+    ]
+    with pytest.raises(ValueError) as exc:
+        calculate_reaction_gibbs_with_steps(rows, 298.15, "K")
+    msg = str(exc.value)
+    assert "ΔHf° missing" in msg
+    assert "S° missing" in msg
+
+
+def test_reaction_gibbs_unit_conversions_per_row():
+    rows_mixed = [
+        {"species": "A", "side": "reactant", "nu": 1, "dhf": 1000.0, "dhf_unit": "J/mol", "s": 2.0, "s_unit": "cal/(mol·K)"},
+        {"species": "B", "side": "product", "nu": 1, "dhf": 1.0, "dhf_unit": "kJ/mol", "s": 8.368, "s_unit": "J/(mol·K)"},
+    ]
+    result, _, _ = calculate_reaction_gibbs_with_steps(rows_mixed, 298.15, "K")
+    assert result["delta_h_rxn_kj_per_mol"] == pytest.approx(0.0, abs=1e-9)
+    assert result["delta_s_rxn_j_per_mol_k"] == pytest.approx(0.0, abs=1e-6)
+    assert result["delta_g_rxn_kj_per_mol"] == pytest.approx(0.0, abs=1e-6)
+
+
+def test_reaction_gibbs_equilibrium_constant_identity():
+    rows = [
+        {"species": "A", "side": "reactant", "nu": 1, "dhf": 0.0, "s": 10.0},
+        {"species": "A", "side": "product", "nu": 1, "dhf": 0.0, "s": 10.0},
+    ]
+    result, _, _ = calculate_reaction_gibbs_with_steps(rows, 298.15, "K")
+    assert result["delta_g_rxn_kj_per_mol"] == pytest.approx(0.0, abs=1e-12)
+    assert result["ln_k"] == pytest.approx(0.0, abs=1e-12)
+    assert result["k"] == pytest.approx(1.0, abs=1e-12)
+
+
+def test_reaction_gibbs_large_negative_delta_g_has_stable_large_k_display():
+    rows = [
+        {"species": "A", "side": "reactant", "nu": 1, "dhf": 5000.0, "s": 0.0},
+        {"species": "B", "side": "product", "nu": 1, "dhf": -5000.0, "s": 0.0},
+    ]
+    result, _, _ = calculate_reaction_gibbs_with_steps(rows, 298.15, "K")
+    assert result["k"] == float("inf")
+    assert "K > 1e" in result["k_display"]
+
+
+def test_reaction_gibbs_large_positive_delta_g_has_stable_small_k_display():
+    rows = [
+        {"species": "A", "side": "reactant", "nu": 1, "dhf": -5000.0, "s": 0.0},
+        {"species": "B", "side": "product", "nu": 1, "dhf": 5000.0, "s": 0.0},
+    ]
+    result, _, _ = calculate_reaction_gibbs_with_steps(rows, 298.15, "K")
+    assert result["k"] == pytest.approx(0.0, abs=0.0)
+    assert "K < 1e" in result["k_display"]
+
+
+def test_reaction_gibbs_lnK_log10K_consistency():
+    result, _, _ = calculate_reaction_gibbs_with_steps(_haber_rows(), 298.15, "K")
+    assert result["log10_k"] == pytest.approx(result["ln_k"] / 2.302585092994046, rel=1e-12)
 
 if __name__ == "__main__":
     pytest.main([__file__])

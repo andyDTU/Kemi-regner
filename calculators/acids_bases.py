@@ -170,29 +170,41 @@ def calculate_strong_acid_base_mixture(acid_conc: float, acid_vol: float,
     return ph, steps, metadata
 
 
-def calculate_weak_acid_ph(concentration: float, ka: float) -> Tuple[float, List[str], Dict[str, Any]]:
+def calculate_weak_acid_ph(concentration: float, ka: float, stoichiometry: float = 1.0) -> Tuple[float, List[str], Dict[str, Any]]:
     """
     Calculate pH of a weak acid solution.
     
     Args:
         concentration: Acid concentration in M
         ka: Acid dissociation constant
+        stoichiometry: Number of H3O+ ions produced per acid molecule (default 1)
     
     Returns:
         Tuple of (pH, steps, metadata)
     """
     steps = []
     
+    # Step 0: Show stoichiometry (if not 1)
+    if stoichiometry != 1.0:
+        steps.append("**Step 0: Stoichiometry Information**")
+        steps.append(f"Each acid molecule produces {stoichiometry} H₃O⁺ ions")
+        steps.append(f"If x amount of acid dissociates: [H₃O⁺] = {stoichiometry} × x")
+    
     # Step 1: Set up ICE table
     steps.append("**Step 1: Set up ICE table**")
     steps.append("HA ⇌ H⁺ + A⁻")
     steps.append("Initial: [HA]₀ = C₀, [H⁺]₀ = 0, [A⁻]₀ = 0")
-    steps.append("Change: -x, +x, +x")
-    steps.append("Equilibrium: C₀ - x, x, x")
+    if stoichiometry == 1.0:
+        steps.append("Change: -x, +x, +x")
+        steps.append("Equilibrium: C₀ - x, x, x")
+    else:
+        steps.append("Change: -x, +x, +x  (x mol/L of HA dissociates)")
+        steps.append(f"Equilibrium: C₀ - x, x, x  (but [H⁺] will be {stoichiometry}x due to stoichiometry)")
     
     # Step 2: Write Ka expression
     steps.append("\n**Step 2: Write Ka expression**")
     steps.append("Ka = [H⁺][A⁻] / [HA] = x² / (C₀ - x)")
+    steps.append(f"(Note: x is the amount that dissociates; [H⁺] will be {stoichiometry} × x)")
     steps.append(f"Ka = {ka:.2e} = x² / ({concentration:.4f} - x)")
     
     # Step 3: Check if approximation is valid
@@ -227,9 +239,12 @@ def calculate_weak_acid_ph(concentration: float, ka: float) -> Tuple[float, List
     
     # Step 4: Calculate pH
     steps.append("\n**Step 4: Calculate pH**")
-    h_plus = x
+    h_plus = stoichiometry * x
     ph = -math.log10(h_plus)
-    steps.append(f"[H⁺] = x = {h_plus:.6f} M")
+    if stoichiometry == 1.0:
+        steps.append(f"[H⁺] = x = {h_plus:.6f} M")
+    else:
+        steps.append(f"[H⁺] = {stoichiometry} × x = {stoichiometry} × {x:.6f} = {h_plus:.6f} M")
     steps.append(f"pH = -log₁₀({h_plus:.6f}) = {ph:.4f}")
     
     # Step 5: Verify approximation accuracy
@@ -249,13 +264,14 @@ def calculate_weak_acid_ph(concentration: float, ka: float) -> Tuple[float, List
         'concentration': concentration,
         'x_approx': x_approx,
         'percent_ionization': percent_ionization,
-        'approximation_valid': percent_ionization < 5
+        'approximation_valid': percent_ionization < 5,
+        'stoichiometry': stoichiometry
     }
     
     return ph, steps, metadata
 
 
-def calculate_weak_base_ph(concentration: float, kb: float = None, ka_conjugate: float = None) -> Tuple[float, List[str], Dict[str, Any]]:
+def calculate_weak_base_ph(concentration: float, kb: float = None, ka_conjugate: float = None, stoichiometry: float = 1.0) -> Tuple[float, List[str], Dict[str, Any]]:
     """
     Calculate pH of a weak base solution.
     
@@ -263,11 +279,18 @@ def calculate_weak_base_ph(concentration: float, kb: float = None, ka_conjugate:
         concentration: Base concentration in M
         kb: Base dissociation constant (if provided)
         ka_conjugate: Ka of conjugate acid (if kb not provided)
+        stoichiometry: Number of OH- ions produced per base molecule (default 1)
     
     Returns:
         Tuple of (pH, steps, metadata)
     """
     steps = []
+    
+    # Step 0: Show stoichiometry (if not 1)
+    if stoichiometry != 1.0:
+        steps.append("**Step 0: Stoichiometry Information**")
+        steps.append(f"Each base molecule produces {stoichiometry} OH⁻ ions")
+        steps.append(f"If x amount of base dissociates: [OH⁻] = {stoichiometry} × x")
     
     # Step 1: Determine Kb
     if kb is None and ka_conjugate is not None:
@@ -281,12 +304,17 @@ def calculate_weak_base_ph(concentration: float, kb: float = None, ka_conjugate:
     steps.append("\n**Step 2: Set up ICE table**")
     steps.append("B + H₂O ⇌ BH⁺ + OH⁻")
     steps.append("Initial: [B]₀ = C₀, [BH⁺]₀ = 0, [OH⁻]₀ = 0")
-    steps.append("Change: -x, +x, +x")
-    steps.append("Equilibrium: C₀ - x, x, x")
+    if stoichiometry == 1.0:
+        steps.append("Change: -x, +x, +x")
+        steps.append("Equilibrium: C₀ - x, x, x")
+    else:
+        steps.append("Change: -x, +x, +x  (x mol/L of B dissociates)")
+        steps.append(f"Equilibrium: C₀ - x, x, x  (but [OH⁻] will be {stoichiometry}x due to stoichiometry)")
     
     # Step 3: Write Kb expression
     steps.append("\n**Step 3: Write Kb expression**")
     steps.append("Kb = [BH⁺][OH⁻] / [B] = x² / (C₀ - x)")
+    steps.append(f"(Note: x is the amount that dissociates; [OH⁻] will be {stoichiometry} × x)")
     steps.append(f"Kb = {kb:.2e} = x² / ({concentration:.4f} - x)")
     
     # Step 4: Check if approximation is valid
@@ -321,10 +349,13 @@ def calculate_weak_base_ph(concentration: float, kb: float = None, ka_conjugate:
     
     # Step 5: Calculate pH
     steps.append("\n**Step 5: Calculate pH**")
-    oh_minus = x
+    oh_minus = stoichiometry * x
     poh = -math.log10(oh_minus)
     ph = 14 - poh
-    steps.append(f"[OH⁻] = x = {oh_minus:.6f} M")
+    if stoichiometry == 1.0:
+        steps.append(f"[OH⁻] = x = {oh_minus:.6f} M")
+    else:
+        steps.append(f"[OH⁻] = {stoichiometry} × x = {stoichiometry} × {x:.6f} = {oh_minus:.6f} M")
     steps.append(f"pOH = -log₁₀({oh_minus:.6f}) = {poh:.4f}")
     steps.append(f"pH = 14 - pOH = 14 - {poh:.4f} = {ph:.4f}")
     
@@ -335,7 +366,8 @@ def calculate_weak_base_ph(concentration: float, kb: float = None, ka_conjugate:
         'kb': kb,
         'concentration': concentration,
         'x_approx': x_approx,
-        'percent_ionization': percent_ionization
+        'percent_ionization': percent_ionization,
+        'stoichiometry': stoichiometry
     }
     
     return ph, steps, metadata

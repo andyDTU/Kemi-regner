@@ -1,0 +1,46 @@
+{
+  "CH4(g)": {
+    "dhf_kj_per_mol": -74.81,
+    "source": "NIST/JANAF reference set"
+  },
+  "CO(g)": {
+    "dhf_kj_per_mol": -110.53,
+    "source": "NIST/JANAF reference set"
+  },
+  "CO2(g)": {
+    "dhf_kj_per_mol": -393.51,
+    "source": "NIST/JANAF reference set"
+  },
+  "H2(g)": {
+    "dhf_kj_per_mol": 0.0,
+    "source": "NIST/JANAF reference set"
+  },
+  "H2O(g)": {
+    "dhf_kj_per_mol": -241.826,
+    "source": "NIST/JANAF reference set"
+  },
+  "H2O(l)": {
+    "dhf_kj_per_mol": -285.83,
+    "source": "NIST/JANAF reference set"
+  },
+  "N2(g)": {
+    "dhf_kj_per_mol": 0.0,
+    "source": "NIST/JANAF reference set"
+  },
+  "NH3(g)": {
+    "dhf_kj_per_mol": -46.11,
+    "source": "NIST/JANAF reference set"
+  },
+  "NO(g)": {
+    "dhf_kj_per_mol": 90.25,
+    "source": "NIST/JANAF reference set"
+  },
+  "NO2(g)": {
+    "dhf_kj_per_mol": 33.1,
+    "source": "NIST/JANAF reference set"
+  },
+  "O2(g)": {
+    "dhf_kj_per_mol": 0.0,
+    "source": "NIST/JANAF reference set"
+  }
+}

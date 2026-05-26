@@ -1,0 +1,13 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" width="360" height="220" viewBox="0 0 360 220">
+  <rect width="360" height="220" fill="#f7fafc"/>
+  <circle cx="180" cy="110" r="16" fill="#111827"/>
+  <circle cx="180" cy="45" r="14" fill="#2563eb"/>
+  <circle cx="105" cy="105" r="14" fill="#2563eb"/>
+  <circle cx="255" cy="105" r="14" fill="#2563eb"/>
+  <circle cx="180" cy="180" r="14" fill="#2563eb"/>
+  <line x1="180" y1="95" x2="180" y2="59" stroke="#1f2937" stroke-width="4"/>
+  <line x1="165" y1="109" x2="119" y2="106" stroke="#1f2937" stroke-width="4"/>
+  <line x1="195" y1="109" x2="241" y2="106" stroke="#1f2937" stroke-width="4"/>
+  <line x1="180" y1="125" x2="180" y2="166" stroke="#1f2937" stroke-width="4"/>
+  <text x="20" y="30" font-family="Segoe UI" font-size="20" fill="#0f172a">Tetrahedral (AX4)</text>
+</svg>

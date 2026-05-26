@@ -1,0 +1,8 @@
+{
+  "name": "chem_calc",
+  "private": true,
+  "scripts": {
+    "build:dhf": "python scripts/build_dhf_from_openstax.py",
+    "build:dhf:extend": "python scripts/extend_dhf_from_sources.py"
+  }
+}

@@ -1,0 +1,9 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" width="360" height="220" viewBox="0 0 360 220">
+  <rect width="360" height="220" fill="#f7fafc"/>
+  <circle cx="180" cy="120" r="16" fill="#111827"/>
+  <circle cx="95" cy="70" r="14" fill="#2563eb"/>
+  <circle cx="265" cy="70" r="14" fill="#2563eb"/>
+  <line x1="168" y1="112" x2="108" y2="78" stroke="#1f2937" stroke-width="4"/>
+  <line x1="192" y1="112" x2="252" y2="78" stroke="#1f2937" stroke-width="4"/>
+  <text x="20" y="30" font-family="Segoe UI" font-size="20" fill="#0f172a">Bent (AX2E / AX2E2)</text>
+</svg>

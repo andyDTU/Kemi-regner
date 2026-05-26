@@ -1,0 +1,9 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" width="360" height="220" viewBox="0 0 360 220">
+  <rect width="360" height="220" fill="#f7fafc"/>
+  <circle cx="180" cy="110" r="16" fill="#111827"/>
+  <circle cx="80" cy="110" r="14" fill="#2563eb"/>
+  <circle cx="280" cy="110" r="14" fill="#2563eb"/>
+  <line x1="166" y1="110" x2="94" y2="110" stroke="#1f2937" stroke-width="4"/>
+  <line x1="194" y1="110" x2="266" y2="110" stroke="#1f2937" stroke-width="4"/>
+  <text x="20" y="30" font-family="Segoe UI" font-size="20" fill="#0f172a">Linear (AX2)</text>
+</svg>

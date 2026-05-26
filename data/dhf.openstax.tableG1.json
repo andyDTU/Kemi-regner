@@ -1,0 +1,1306 @@
+{
+  "(NH4)2Cr2O7(s)": {
+    "dhf_kj_per_mol": -1806.7,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Ag(g)": {
+    "dhf_kj_per_mol": 284.9,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Ag(s)": {
+    "dhf_kj_per_mol": 0.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Ag+(aq)": {
+    "dhf_kj_per_mol": 105.6,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Ag2O(s)": {
+    "dhf_kj_per_mol": -31.05,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Ag2S(s)": {
+    "dhf_kj_per_mol": -32.6,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "AgCl(s)": {
+    "dhf_kj_per_mol": -127.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Al(g)": {
+    "dhf_kj_per_mol": 324.4,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Al(s)": {
+    "dhf_kj_per_mol": 0.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Al2(SO4)3(s)": {
+    "dhf_kj_per_mol": -3445.06,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Al2O3(s)": {
+    "dhf_kj_per_mol": -1676.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Al2S3(s)": {
+    "dhf_kj_per_mol": -724.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "AlCl3(s)": {
+    "dhf_kj_per_mol": -704.2,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "AlCl3·6H2O(s)": {
+    "dhf_kj_per_mol": -2691.57,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "AlF3(s)": {
+    "dhf_kj_per_mol": -1510.4,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Al^3+(aq)": {
+    "dhf_kj_per_mol": -531.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "As(g)": {
+    "dhf_kj_per_mol": 302.5,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "As(s)": {
+    "dhf_kj_per_mol": 0.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "As2O5(s)": {
+    "dhf_kj_per_mol": -924.87,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "As2S3(s)": {
+    "dhf_kj_per_mol": -169.03,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "As4(g)": {
+    "dhf_kj_per_mol": 143.9,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "As4O6(s)": {
+    "dhf_kj_per_mol": -1313.94,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "AsCl3(g)": {
+    "dhf_kj_per_mol": -261.5,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "AsH3(g)": {
+    "dhf_kj_per_mol": 66.44,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "B(g)": {
+    "dhf_kj_per_mol": 565.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "B(s)": {
+    "dhf_kj_per_mol": 0.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "B2H6(g)": {
+    "dhf_kj_per_mol": 36.4,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "B2O3(s)": {
+    "dhf_kj_per_mol": -1273.5,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "B3N3H6(l)": {
+    "dhf_kj_per_mol": -540.99,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "BCl3(g)": {
+    "dhf_kj_per_mol": -403.8,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "BF3(g)": {
+    "dhf_kj_per_mol": -1136.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Ba(g)": {
+    "dhf_kj_per_mol": 180.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Ba(s)": {
+    "dhf_kj_per_mol": 0.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "BaCO3(s)": {
+    "dhf_kj_per_mol": -1218.8,
+    "source": "Fallback (course/exam standard)"
+  },
+  "BaCl2(s)": {
+    "dhf_kj_per_mol": -855.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "BaO(s)": {
+    "dhf_kj_per_mol": -548.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K) (forced)"
+  },
+  "BaSO4(s)": {
+    "dhf_kj_per_mol": -1473.2,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Ba^2+(aq)": {
+    "dhf_kj_per_mol": -537.6,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Be(g)": {
+    "dhf_kj_per_mol": 324.3,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Be(s)": {
+    "dhf_kj_per_mol": 0.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "BeO(s)": {
+    "dhf_kj_per_mol": -609.4,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Bi(g)": {
+    "dhf_kj_per_mol": 207.1,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Bi(s)": {
+    "dhf_kj_per_mol": 0.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Bi2O3(s)": {
+    "dhf_kj_per_mol": -573.88,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Bi2S3(s)": {
+    "dhf_kj_per_mol": -143.1,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "BiCl3(s)": {
+    "dhf_kj_per_mol": -379.07,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Br(g)": {
+    "dhf_kj_per_mol": 111.88,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Br-(aq)": {
+    "dhf_kj_per_mol": -120.9,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Br2(g)": {
+    "dhf_kj_per_mol": 30.91,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Br2(l)": {
+    "dhf_kj_per_mol": 0.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "BrF3(g)": {
+    "dhf_kj_per_mol": -255.6,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "C(g)": {
+    "dhf_kj_per_mol": 716.681,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "C(s)": {
+    "dhf_kj_per_mol": 1.89,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "C2H2(g)": {
+    "dhf_kj_per_mol": 227.4,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "C2H4(g)": {
+    "dhf_kj_per_mol": 52.4,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "C2H5Cl(g)": {
+    "dhf_kj_per_mol": -112.17,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "C2H5Cl(l)": {
+    "dhf_kj_per_mol": -136.52,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "C2H5OH(g)": {
+    "dhf_kj_per_mol": -234.8,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "C2H5OH(l)": {
+    "dhf_kj_per_mol": -277.6,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "C2H6(g)": {
+    "dhf_kj_per_mol": -84.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "C2N2(g)": {
+    "dhf_kj_per_mol": 308.98,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "C3H8(g)": {
+    "dhf_kj_per_mol": -103.8,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "C6H6(g)": {
+    "dhf_kj_per_mol": 82.927,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "C6H6(l)": {
+    "dhf_kj_per_mol": 49.1,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "CCl4(g)": {
+    "dhf_kj_per_mol": -95.7,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "CCl4(l)": {
+    "dhf_kj_per_mol": -128.2,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "CH2Cl2(g)": {
+    "dhf_kj_per_mol": -95.4,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "CH2Cl2(l)": {
+    "dhf_kj_per_mol": -124.2,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "CH3CO2H(g)": {
+    "dhf_kj_per_mol": -434.84,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "CH3CO2H(l)": {
+    "dhf_kj_per_mol": -484.3,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "CH3Cl(g)": {
+    "dhf_kj_per_mol": -81.9,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "CH3OH(g)": {
+    "dhf_kj_per_mol": -201.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "CH3OH(l)": {
+    "dhf_kj_per_mol": -239.2,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "CH4(g)": {
+    "dhf_kj_per_mol": -74.6,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "CHCl3(g)": {
+    "dhf_kj_per_mol": -103.14,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "CHCl3(l)": {
+    "dhf_kj_per_mol": -134.1,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "CO(g)": {
+    "dhf_kj_per_mol": -110.52,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "CO2(g)": {
+    "dhf_kj_per_mol": -393.51,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K) (forced)"
+  },
+  "CO3^2-(aq)": {
+    "dhf_kj_per_mol": -677.1,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "CS2(g)": {
+    "dhf_kj_per_mol": 116.9,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "CS2(l)": {
+    "dhf_kj_per_mol": 89.7,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Ca(OH)2(s)": {
+    "dhf_kj_per_mol": -985.2,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Ca(g)": {
+    "dhf_kj_per_mol": 178.2,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Ca(s)": {
+    "dhf_kj_per_mol": 0.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "CaCO3(s)": {
+    "dhf_kj_per_mol": -1220.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "CaO(s)": {
+    "dhf_kj_per_mol": -634.9,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "CaSO3·H2O(s)": {
+    "dhf_kj_per_mol": -1752.68,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "CaSO4(s)": {
+    "dhf_kj_per_mol": -1434.5,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "CaSO4·2H2O(s)": {
+    "dhf_kj_per_mol": -2022.63,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Ca^2+(aq)": {
+    "dhf_kj_per_mol": -542.96,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Cd(g)": {
+    "dhf_kj_per_mol": 112.01,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Cd(s)": {
+    "dhf_kj_per_mol": 0.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "CdCl2(s)": {
+    "dhf_kj_per_mol": -391.5,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "CdO(s)": {
+    "dhf_kj_per_mol": -258.2,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "CdS(s)": {
+    "dhf_kj_per_mol": -161.9,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "CdSO4(s)": {
+    "dhf_kj_per_mol": -933.3,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Cd^2+(aq)": {
+    "dhf_kj_per_mol": -75.9,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Cl(g)": {
+    "dhf_kj_per_mol": 121.3,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Cl-(aq)": {
+    "dhf_kj_per_mol": -167.2,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Cl2(g)": {
+    "dhf_kj_per_mol": 0.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Cl2O(g)": {
+    "dhf_kj_per_mol": 80.3,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Cl2O7(g)": {
+    "dhf_kj_per_mol": 272.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Cl2O7(l)": {
+    "dhf_kj_per_mol": 238.1,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "ClF(g)": {
+    "dhf_kj_per_mol": -54.48,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "ClF3(g)": {
+    "dhf_kj_per_mol": -158.99,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Co(NO3)2(s)": {
+    "dhf_kj_per_mol": -420.5,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Co(s)": {
+    "dhf_kj_per_mol": 0.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Co3O4(s)": {
+    "dhf_kj_per_mol": -910.02,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "CoO(s)": {
+    "dhf_kj_per_mol": -237.9,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Co^2+(aq)": {
+    "dhf_kj_per_mol": -67.4,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Co^3+(aq)": {
+    "dhf_kj_per_mol": 92.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Cr(g)": {
+    "dhf_kj_per_mol": 396.6,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Cr(s)": {
+    "dhf_kj_per_mol": 0.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Cr2O3(s)": {
+    "dhf_kj_per_mol": -1139.7,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Cr2O7^2-(aq)": {
+    "dhf_kj_per_mol": -1490.3,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "CrO3(s)": {
+    "dhf_kj_per_mol": -589.5,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "CrO4^2-(aq)": {
+    "dhf_kj_per_mol": -881.2,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Cs+(aq)": {
+    "dhf_kj_per_mol": -248.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Cu(NO3)2(s)": {
+    "dhf_kj_per_mol": -302.9,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Cu(g)": {
+    "dhf_kj_per_mol": 338.32,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Cu(s)": {
+    "dhf_kj_per_mol": 0.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Cu+(aq)": {
+    "dhf_kj_per_mol": 51.9,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Cu2O(s)": {
+    "dhf_kj_per_mol": -168.6,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Cu2S(s)": {
+    "dhf_kj_per_mol": -79.5,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "CuO(s)": {
+    "dhf_kj_per_mol": -157.3,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "CuS(s)": {
+    "dhf_kj_per_mol": -53.1,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "CuSO4(s)": {
+    "dhf_kj_per_mol": -771.36,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Cu^2+(aq)": {
+    "dhf_kj_per_mol": 64.77,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "F(g)": {
+    "dhf_kj_per_mol": 79.4,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "F-(aq)": {
+    "dhf_kj_per_mol": -332.6,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "F2(g)": {
+    "dhf_kj_per_mol": 0.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "F2O(g)": {
+    "dhf_kj_per_mol": 24.7,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Fe(CO)5(g)": {
+    "dhf_kj_per_mol": -733.87,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Fe(CO)5(l)": {
+    "dhf_kj_per_mol": -774.04,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Fe(OH)2(s)": {
+    "dhf_kj_per_mol": -569.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Fe(OH)3(s)": {
+    "dhf_kj_per_mol": -823.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Fe(g)": {
+    "dhf_kj_per_mol": 416.3,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Fe(s)": {
+    "dhf_kj_per_mol": 0.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Fe2O3(s)": {
+    "dhf_kj_per_mol": -824.2,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Fe3C(s)": {
+    "dhf_kj_per_mol": 25.1,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Fe3O4(s)": {
+    "dhf_kj_per_mol": -1118.4,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "FeCl2(s)": {
+    "dhf_kj_per_mol": -341.79,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "FeCl3(s)": {
+    "dhf_kj_per_mol": -399.49,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "FeO(s)": {
+    "dhf_kj_per_mol": -272.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "FeS(s)": {
+    "dhf_kj_per_mol": -100.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Fe^2+(aq)": {
+    "dhf_kj_per_mol": -89.1,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Fe^3+(aq)": {
+    "dhf_kj_per_mol": -48.5,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "H(g)": {
+    "dhf_kj_per_mol": 217.97,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "H+(aq)": {
+    "dhf_kj_per_mol": 0.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "H2(g)": {
+    "dhf_kj_per_mol": 0.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "H2O(g)": {
+    "dhf_kj_per_mol": -241.82,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "H2O(l)": {
+    "dhf_kj_per_mol": -285.83,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "H2O2(g)": {
+    "dhf_kj_per_mol": -136.3,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "H2O2(l)": {
+    "dhf_kj_per_mol": -187.78,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "H2PO4^2-(aq)": {
+    "dhf_kj_per_mol": -1296.3,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "H2S(g)": {
+    "dhf_kj_per_mol": -20.6,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "H2S2O7(s)": {
+    "dhf_kj_per_mol": -1273.6,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "H2SO4(l)": {
+    "dhf_kj_per_mol": -813.989,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "H2Se(g)": {
+    "dhf_kj_per_mol": 29.7,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "H2SiO3(s)": {
+    "dhf_kj_per_mol": -1188.67,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "H3AsO4(s)": {
+    "dhf_kj_per_mol": -906.3,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "H3BO3(s)": {
+    "dhf_kj_per_mol": -1094.33,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "H3O+(aq)": {
+    "dhf_kj_per_mol": -285.8,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "H3PO2(s)": {
+    "dhf_kj_per_mol": -604.6,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "H3PO3(s)": {
+    "dhf_kj_per_mol": -964.4,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "H3PO4(l)": {
+    "dhf_kj_per_mol": -1266.9,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "H3PO4(s)": {
+    "dhf_kj_per_mol": -1279.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "H4P2O7(s)": {
+    "dhf_kj_per_mol": -2241.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "H4SiO4(s)": {
+    "dhf_kj_per_mol": -1481.14,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "HBO2(s)": {
+    "dhf_kj_per_mol": -794.25,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "HBr(g)": {
+    "dhf_kj_per_mol": -36.3,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "HCN(g)": {
+    "dhf_kj_per_mol": 135.5,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "HCN(l)": {
+    "dhf_kj_per_mol": 108.9,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "HCO^3-(aq)": {
+    "dhf_kj_per_mol": -691.11,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "HCl(g)": {
+    "dhf_kj_per_mol": -92.307,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "HClO4(l)": {
+    "dhf_kj_per_mol": -40.58,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "HF(g)": {
+    "dhf_kj_per_mol": -273.3,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "HI(g)": {
+    "dhf_kj_per_mol": 26.48,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "HNO3(aq)": {
+    "dhf_kj_per_mol": -207.4,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "HNO3(g)": {
+    "dhf_kj_per_mol": -133.9,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "HNO3(l)": {
+    "dhf_kj_per_mol": -174.1,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "HPO3(s)": {
+    "dhf_kj_per_mol": -948.5,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "HPO4^2-(aq)": {
+    "dhf_kj_per_mol": -1292.1,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "HS-(aq)": {
+    "dhf_kj_per_mol": -17.7,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "HSO^4-(aq)": {
+    "dhf_kj_per_mol": -885.75,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Hg(g)": {
+    "dhf_kj_per_mol": 61.4,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Hg(l)": {
+    "dhf_kj_per_mol": 0.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Hg2Cl2(s)": {
+    "dhf_kj_per_mol": -265.4,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "HgCl2(s)": {
+    "dhf_kj_per_mol": -224.3,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "HgO(s)": {
+    "dhf_kj_per_mol": -90.46,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "HgS(s)": {
+    "dhf_kj_per_mol": -53.56,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "HgSO4(s)": {
+    "dhf_kj_per_mol": -707.51,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Hg^2+(aq)": {
+    "dhf_kj_per_mol": 172.4,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "I(g)": {
+    "dhf_kj_per_mol": 106.84,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "I-(aq)": {
+    "dhf_kj_per_mol": -55.19,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "I2(g)": {
+    "dhf_kj_per_mol": 62.438,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "I2(s)": {
+    "dhf_kj_per_mol": 0.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "IBr(g)": {
+    "dhf_kj_per_mol": 40.84,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "ICl(g)": {
+    "dhf_kj_per_mol": 17.78,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "IF(g)": {
+    "dhf_kj_per_mol": 95.65,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "IF7(g)": {
+    "dhf_kj_per_mol": -943.91,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "K(g)": {
+    "dhf_kj_per_mol": 89.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "K(s)": {
+    "dhf_kj_per_mol": 0.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "K+(aq)": {
+    "dhf_kj_per_mol": -252.4,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "KCl(s)": {
+    "dhf_kj_per_mol": -436.5,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "KF(s)": {
+    "dhf_kj_per_mol": -576.27,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Li(g)": {
+    "dhf_kj_per_mol": 159.3,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Li(s)": {
+    "dhf_kj_per_mol": -487.5,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Li+(aq)": {
+    "dhf_kj_per_mol": -278.5,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Li2CO3(s)": {
+    "dhf_kj_per_mol": -1216.04,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "LiF(s)": {
+    "dhf_kj_per_mol": -616.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "LiH(s)": {
+    "dhf_kj_per_mol": -90.5,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Mg^2+(aq)": {
+    "dhf_kj_per_mol": -466.9,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Mn(g)": {
+    "dhf_kj_per_mol": 280.7,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Mn(s)": {
+    "dhf_kj_per_mol": 0.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Mn2O3(s)": {
+    "dhf_kj_per_mol": -958.97,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Mn3O4(s)": {
+    "dhf_kj_per_mol": -1378.83,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "MnO(s)": {
+    "dhf_kj_per_mol": -385.2,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "MnO2(s)": {
+    "dhf_kj_per_mol": -520.03,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "MnO4^2-(aq)": {
+    "dhf_kj_per_mol": -653.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "MnO^4-(aq)": {
+    "dhf_kj_per_mol": -541.4,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Mn^2+(aq)": {
+    "dhf_kj_per_mol": -220.8,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "N(g)": {
+    "dhf_kj_per_mol": 472.704,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "N2(g)": {
+    "dhf_kj_per_mol": 0.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "N2H4(g)": {
+    "dhf_kj_per_mol": 95.4,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "N2H4(l)": {
+    "dhf_kj_per_mol": 50.63,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "N2O(g)": {
+    "dhf_kj_per_mol": 81.6,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "N2O3(g)": {
+    "dhf_kj_per_mol": 83.72,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "N2O4(g)": {
+    "dhf_kj_per_mol": 11.1,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "N2O5(g)": {
+    "dhf_kj_per_mol": 11.3,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "NH3(g)": {
+    "dhf_kj_per_mol": -45.9,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "NH4Br(s)": {
+    "dhf_kj_per_mol": -270.8,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "NH4Cl(s)": {
+    "dhf_kj_per_mol": -314.43,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "NH4I(s)": {
+    "dhf_kj_per_mol": -201.4,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "NH4NO2(s)": {
+    "dhf_kj_per_mol": -256.5,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "NH4NO3(s)": {
+    "dhf_kj_per_mol": -365.56,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "NH^4+(aq)": {
+    "dhf_kj_per_mol": -132.5,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "NO(g)": {
+    "dhf_kj_per_mol": 90.25,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "NO2(g)": {
+    "dhf_kj_per_mol": 33.2,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "NO^3-(aq)": {
+    "dhf_kj_per_mol": -205.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Na(g)": {
+    "dhf_kj_per_mol": 107.5,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Na(s)": {
+    "dhf_kj_per_mol": 0.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Na+(aq)": {
+    "dhf_kj_per_mol": -240.1,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Na2O(s)": {
+    "dhf_kj_per_mol": -414.2,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "NaCl(s)": {
+    "dhf_kj_per_mol": -411.2,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Ni^2+(aq)": {
+    "dhf_kj_per_mol": -64.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "O(g)": {
+    "dhf_kj_per_mol": 249.17,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "O2(g)": {
+    "dhf_kj_per_mol": 0.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "O3(g)": {
+    "dhf_kj_per_mol": 142.7,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "OH-(aq)": {
+    "dhf_kj_per_mol": -230.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "P(g)": {
+    "dhf_kj_per_mol": 314.64,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "P4(g)": {
+    "dhf_kj_per_mol": 58.91,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "P4(s)": {
+    "dhf_kj_per_mol": 0.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "P4O10(s)": {
+    "dhf_kj_per_mol": -2984.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "P4O6(s)": {
+    "dhf_kj_per_mol": -1640.1,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "PCl3(g)": {
+    "dhf_kj_per_mol": -287.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "PCl5(g)": {
+    "dhf_kj_per_mol": -374.9,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "PH3(g)": {
+    "dhf_kj_per_mol": 5.4,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "PO4^3-(aq)": {
+    "dhf_kj_per_mol": -1277.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "POCl3(g)": {
+    "dhf_kj_per_mol": -558.5,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "POCl3(l)": {
+    "dhf_kj_per_mol": -597.1,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Pb(NO3)2(s)": {
+    "dhf_kj_per_mol": -451.9,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Pb(OH)2(s)": {
+    "dhf_kj_per_mol": -515.9,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Pb(g)": {
+    "dhf_kj_per_mol": 195.2,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Pb(s)": {
+    "dhf_kj_per_mol": 0.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "PbCl2(s)": {
+    "dhf_kj_per_mol": -359.4,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "PbO(s)": {
+    "dhf_kj_per_mol": -218.99,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "PbO2(s)": {
+    "dhf_kj_per_mol": -277.4,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "PbS(s)": {
+    "dhf_kj_per_mol": -100.4,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Pb^2+(aq)": {
+    "dhf_kj_per_mol": -1.7,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Rb+(aq)": {
+    "dhf_kj_per_mol": -246.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "S(g)": {
+    "dhf_kj_per_mol": 278.81,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "S2Cl2(g)": {
+    "dhf_kj_per_mol": -19.5,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "S2Cl2(l)": {
+    "dhf_kj_per_mol": -59.4,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "S2O3^2-(aq)": {
+    "dhf_kj_per_mol": -648.5,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "S8(s)": {
+    "dhf_kj_per_mol": 0.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "SCl2(g)": {
+    "dhf_kj_per_mol": -19.7,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "SCl2(l)": {
+    "dhf_kj_per_mol": -50.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "SF4(g)": {
+    "dhf_kj_per_mol": -728.43,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "SF6(g)": {
+    "dhf_kj_per_mol": -1220.5,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "SO2(g)": {
+    "dhf_kj_per_mol": -296.83,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "SO2Cl2(g)": {
+    "dhf_kj_per_mol": -354.8,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "SO2Cl2(l)": {
+    "dhf_kj_per_mol": -394.1,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "SO3(g)": {
+    "dhf_kj_per_mol": -395.72,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "SO4^2-(aq)": {
+    "dhf_kj_per_mol": -909.3,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "SOCl2(g)": {
+    "dhf_kj_per_mol": -212.55,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "SOCl2(l)": {
+    "dhf_kj_per_mol": -245.6,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "S^2-(aq)": {
+    "dhf_kj_per_mol": 41.8,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Sb(g)": {
+    "dhf_kj_per_mol": 262.34,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Sb(s)": {
+    "dhf_kj_per_mol": 0.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Sb2S3(s)": {
+    "dhf_kj_per_mol": -174.89,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Sb4O6(s)": {
+    "dhf_kj_per_mol": -1440.55,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "SbCl3(g)": {
+    "dhf_kj_per_mol": -313.8,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "SbCl3(s)": {
+    "dhf_kj_per_mol": -382.17,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "SbCl5(g)": {
+    "dhf_kj_per_mol": -394.34,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "SbOCl(s)": {
+    "dhf_kj_per_mol": -374.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Si(g)": {
+    "dhf_kj_per_mol": 450.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Si(s)": {
+    "dhf_kj_per_mol": 0.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "SiCl4(g)": {
+    "dhf_kj_per_mol": -662.75,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "SiCl4(l)": {
+    "dhf_kj_per_mol": -687.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "SiF4(g)": {
+    "dhf_kj_per_mol": -1615.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "SiH4(g)": {
+    "dhf_kj_per_mol": 34.3,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "SiO2(s)": {
+    "dhf_kj_per_mol": -910.7,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Sn(g)": {
+    "dhf_kj_per_mol": 301.2,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Sn(s)": {
+    "dhf_kj_per_mol": 0.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "SnCl4(g)": {
+    "dhf_kj_per_mol": -471.5,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "SnCl4(l)": {
+    "dhf_kj_per_mol": -511.3,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "SnO(s)": {
+    "dhf_kj_per_mol": -285.8,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "SnO2(s)": {
+    "dhf_kj_per_mol": -577.6,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Sr^2+(aq)": {
+    "dhf_kj_per_mol": -545.8,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Ti(g)": {
+    "dhf_kj_per_mol": 473.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Ti(s)": {
+    "dhf_kj_per_mol": 0.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "TiCl4(g)": {
+    "dhf_kj_per_mol": -763.2,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "TiCl4(l)": {
+    "dhf_kj_per_mol": -804.2,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "TiO2(s)": {
+    "dhf_kj_per_mol": -944.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "W(g)": {
+    "dhf_kj_per_mol": 849.4,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "W(s)": {
+    "dhf_kj_per_mol": 0.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "WO3(s)": {
+    "dhf_kj_per_mol": -842.9,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Zn(g)": {
+    "dhf_kj_per_mol": 130.73,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Zn(s)": {
+    "dhf_kj_per_mol": 0.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "ZnCO3(s)": {
+    "dhf_kj_per_mol": -812.78,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "ZnCl2(s)": {
+    "dhf_kj_per_mol": -415.1,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "ZnO(s)": {
+    "dhf_kj_per_mol": -350.5,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "ZnS(s)": {
+    "dhf_kj_per_mol": -206.0,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "ZnSO4(s)": {
+    "dhf_kj_per_mol": -982.8,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  },
+  "Zn^2+(aq)": {
+    "dhf_kj_per_mol": -153.9,
+    "source": "OpenStax Chemistry 2e Appendix G Table G1 (standard state, 298 K)"
+  }
+}

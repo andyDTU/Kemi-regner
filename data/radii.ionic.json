@@ -1,0 +1,27 @@
+{
+  "meta": {
+    "definition": "ionic_radius",
+    "unit": "pm",
+    "source": "Ionradius (pm), Shannon-lignende referenceværdier for almindelige ioner (skoleniveau)"
+  },
+  "radii_by_ion": {
+    "H+1": 10,
+    "Li+1": 76,
+    "Na+1": 102,
+    "K+1": 138,
+    "Mg+2": 72,
+    "Ca+2": 100,
+    "Al+3": 54,
+    "Fe+2": 78,
+    "Fe+3": 65,
+    "Cu+1": 77,
+    "Cu+2": 73,
+    "Zn+2": 74,
+    "F-1": 133,
+    "O-2": 140,
+    "S-2": 184,
+    "Cl-1": 181,
+    "Br-1": 196,
+    "I-1": 220
+  }
+}

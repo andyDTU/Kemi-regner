@@ -1,0 +1,962 @@
+{
+  "BrH(g)": {
+    "dhf_kj_per_mol": -36.29,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C10035106&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C10H22(g)": {
+    "dhf_kj_per_mol": -249.7,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C124185&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C10H22(l)": {
+    "dhf_kj_per_mol": -301.0,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C124185&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C10H22O(g)": {
+    "dhf_kj_per_mol": -395.0,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C112301&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C10H22O(l)": {
+    "dhf_kj_per_mol": -478.1,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C112301&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C11H24(g)": {
+    "dhf_kj_per_mol": -270.3,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C1120214&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C11H24(l)": {
+    "dhf_kj_per_mol": -327.2,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C1120214&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C12H26(g)": {
+    "dhf_kj_per_mol": -290.9,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C112403&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C12H26(l)": {
+    "dhf_kj_per_mol": -352.1,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C112403&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C12H26O(g)": {
+    "dhf_kj_per_mol": -436.5,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C112538&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C12H26O(l)": {
+    "dhf_kj_per_mol": -528.5,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C112538&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C2Cl4(g)": {
+    "dhf_kj_per_mol": -12.43,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C127184&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C2Cl4(l)": {
+    "dhf_kj_per_mol": -64.0,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C127184&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C2H3N(g)": {
+    "dhf_kj_per_mol": 74.04,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C75058&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C2H3N(l)": {
+    "dhf_kj_per_mol": 40.56,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C75058&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C2H4O(g)": {
+    "dhf_kj_per_mol": -170.7,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C75070&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C2H4O(l)": {
+    "dhf_kj_per_mol": -196.4,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C75070&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C2H4O2(g)": {
+    "dhf_kj_per_mol": -433.0,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C64197&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C2H4O2(l)": {
+    "dhf_kj_per_mol": -483.52,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C64197&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C2H6O(g)": {
+    "dhf_kj_per_mol": -234.0,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C64175&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C2H6O(l)": {
+    "dhf_kj_per_mol": -276.0,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C64175&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C2H6O2(g)": {
+    "dhf_kj_per_mol": -394.4,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C107211&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C2H6O2(l)": {
+    "dhf_kj_per_mol": -460.0,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C107211&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C2H6OS(g)": {
+    "dhf_kj_per_mol": -150.5,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C67685&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C2H6OS(l)": {
+    "dhf_kj_per_mol": -203.4,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C67685&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C2HCl3(g)": {
+    "dhf_kj_per_mol": -18.0,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C79016&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C2HCl3(l)": {
+    "dhf_kj_per_mol": -52.0,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C79016&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C3H3N(g)": {
+    "dhf_kj_per_mol": 172.6,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C107131&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C3H3N(l)": {
+    "dhf_kj_per_mol": 140.0,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C107131&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C3H4O3(g)": {
+    "dhf_kj_per_mol": -503.0,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C96491&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C3H4O3(l)": {
+    "dhf_kj_per_mol": -682.8,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C96491&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C3H4O3(s)": {
+    "dhf_kj_per_mol": -590.9,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C96491&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C3H6(g)": {
+    "dhf_kj_per_mol": 20.41,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C115071&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C3H6O(g)": {
+    "dhf_kj_per_mol": -218.5,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C67641&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C3H6O(l)": {
+    "dhf_kj_per_mol": -249.4,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C67641&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C3H6O2(g)": {
+    "dhf_kj_per_mol": -455.8,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C79094&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C3H6O2(l)": {
+    "dhf_kj_per_mol": -510.8,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C79094&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C3H7NO(l)": {
+    "dhf_kj_per_mol": -239.4,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C68122&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C3H8(l)": {
+    "dhf_kj_per_mol": -119.8,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C74986&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C3H8O(g)": {
+    "dhf_kj_per_mol": -272.8,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C67630&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C3H8O(l)": {
+    "dhf_kj_per_mol": -317.0,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C67630&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C3H8O2(g)": {
+    "dhf_kj_per_mol": -429.8,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C57556&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C3H8O2(l)": {
+    "dhf_kj_per_mol": -501.0,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C57556&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C3H8O3(g)": {
+    "dhf_kj_per_mol": -577.9,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C56815&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C3H8O3(l)": {
+    "dhf_kj_per_mol": -669.6,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C56815&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C4H10(g)": {
+    "dhf_kj_per_mol": -125.6,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C106978&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C4H10O(g)": {
+    "dhf_kj_per_mol": -277.0,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C71363&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C4H10O(l)": {
+    "dhf_kj_per_mol": -328.0,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C71363&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C4H6(g)": {
+    "dhf_kj_per_mol": 108.8,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C106990&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C4H6(l)": {
+    "dhf_kj_per_mol": 90.5,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C106990&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C4H8(g)": {
+    "dhf_kj_per_mol": -0.63,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C106989&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C4H8O(g)": {
+    "dhf_kj_per_mol": -211.8,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C123728&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C4H8O(l)": {
+    "dhf_kj_per_mol": -245.4,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C123728&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C4H8O2(g)": {
+    "dhf_kj_per_mol": -315.3,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C123911&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C4H8O2(l)": {
+    "dhf_kj_per_mol": -355.13,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C123911&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C5H10(g)": {
+    "dhf_kj_per_mol": -76.4,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C287923&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C5H10(l)": {
+    "dhf_kj_per_mol": -105.6,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C287923&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C5H10O(g)": {
+    "dhf_kj_per_mol": -253.4,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C96220&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C5H10O(l)": {
+    "dhf_kj_per_mol": -296.51,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C96220&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C5H12(g)": {
+    "dhf_kj_per_mol": -146.8,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C109660&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C5H12(l)": {
+    "dhf_kj_per_mol": -173.5,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C109660&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C5H12O(g)": {
+    "dhf_kj_per_mol": -285.0,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C1634044&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C5H12O(l)": {
+    "dhf_kj_per_mol": -315.4,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C1634044&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C5H8O(g)": {
+    "dhf_kj_per_mol": -197.4,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C120923&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C5H8O(l)": {
+    "dhf_kj_per_mol": -240.2,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C120923&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C6H10O(g)": {
+    "dhf_kj_per_mol": -231.1,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C108941&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C6H10O(l)": {
+    "dhf_kj_per_mol": -276.1,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C108941&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C6H12(g)": {
+    "dhf_kj_per_mol": -124.6,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C110827&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C6H12(l)": {
+    "dhf_kj_per_mol": -157.7,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C110827&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C6H12O(g)": {
+    "dhf_kj_per_mol": -291.2,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C108101&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C6H12O(s)": {
+    "dhf_kj_per_mol": -381.5,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C108101&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C6H14(g)": {
+    "dhf_kj_per_mol": -167.1,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C110543&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C6H14(l)": {
+    "dhf_kj_per_mol": -198.7,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C110543&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C6H14O(g)": {
+    "dhf_kj_per_mol": -318.0,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C108203&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C6H14O(l)": {
+    "dhf_kj_per_mol": -351.5,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C108203&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C6H4Cl2(g)": {
+    "dhf_kj_per_mol": 33.0,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C95501&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C6H4Cl2(l)": {
+    "dhf_kj_per_mol": -17.4,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C95501&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C6H4Cl2(s)": {
+    "dhf_kj_per_mol": -42.3,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C106467&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C6H5Br(l)": {
+    "dhf_kj_per_mol": 58.6,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C108861&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C6H5Cl(g)": {
+    "dhf_kj_per_mol": 54.42,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C108907&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C6H5Cl(l)": {
+    "dhf_kj_per_mol": 11.5,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C108907&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C6H5F(l)": {
+    "dhf_kj_per_mol": -150.8,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C462066&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C6H5I(g)": {
+    "dhf_kj_per_mol": 165.0,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C591504&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C6H5I(l)": {
+    "dhf_kj_per_mol": 117.0,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C591504&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C6H5NO2(g)": {
+    "dhf_kj_per_mol": 68.53,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C98953&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C6H5NO2(l)": {
+    "dhf_kj_per_mol": 12.5,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C98953&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C6H6O(g)": {
+    "dhf_kj_per_mol": -96.36,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C108952&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C6H6O(s)": {
+    "dhf_kj_per_mol": -165.0,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C108952&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C6H7N(g)": {
+    "dhf_kj_per_mol": 87.03,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C62533&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C6H7N(l)": {
+    "dhf_kj_per_mol": 31.3,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C62533&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C7H14(g)": {
+    "dhf_kj_per_mol": -154.8,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C108872&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C7H14(l)": {
+    "dhf_kj_per_mol": -190.2,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C108872&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C7H14O(g)": {
+    "dhf_kj_per_mol": -264.0,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C111717&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C7H14O(l)": {
+    "dhf_kj_per_mol": -312.0,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C111717&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C7H16(g)": {
+    "dhf_kj_per_mol": -187.8,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C142825&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C7H16(l)": {
+    "dhf_kj_per_mol": -224.4,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C142825&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C7H16O(g)": {
+    "dhf_kj_per_mol": -340.0,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C111706&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C7H16O(l)": {
+    "dhf_kj_per_mol": -403.4,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C111706&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C7H5N(g)": {
+    "dhf_kj_per_mol": 219.0,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C100470&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C7H5N(l)": {
+    "dhf_kj_per_mol": 163.2,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C100470&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C7H6O(g)": {
+    "dhf_kj_per_mol": -36.8,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C100527&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C7H6O(l)": {
+    "dhf_kj_per_mol": -87.1,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C100527&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C7H6O2(s)": {
+    "dhf_kj_per_mol": -384.8,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C65850&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C7H8(g)": {
+    "dhf_kj_per_mol": 50.1,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C108883&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C7H8(l)": {
+    "dhf_kj_per_mol": 12.0,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C108883&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C8H10(g)": {
+    "dhf_kj_per_mol": 29.8,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C100414&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C8H10(l)": {
+    "dhf_kj_per_mol": -12.5,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C100414&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C8H16(g)": {
+    "dhf_kj_per_mol": -126.1,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C292648&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C8H16(l)": {
+    "dhf_kj_per_mol": -169.4,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C292648&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C8H16O(g)": {
+    "dhf_kj_per_mol": -291.9,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C124130&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C8H18(g)": {
+    "dhf_kj_per_mol": -208.7,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C111659&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C8H18(l)": {
+    "dhf_kj_per_mol": -250.3,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C111659&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C8H18O(g)": {
+    "dhf_kj_per_mol": -356.0,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C111875&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C8H18O(l)": {
+    "dhf_kj_per_mol": -426.6,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C111875&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C8H8(g)": {
+    "dhf_kj_per_mol": 146.9,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C100425&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C8H8(l)": {
+    "dhf_kj_per_mol": 103.4,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C100425&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C8H8O(g)": {
+    "dhf_kj_per_mol": -86.7,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C98862&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C8H8O(l)": {
+    "dhf_kj_per_mol": -142.5,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C98862&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C9H10O(l)": {
+    "dhf_kj_per_mol": -167.2,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C93550&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C9H20(g)": {
+    "dhf_kj_per_mol": -228.3,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C111842&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "C9H20(l)": {
+    "dhf_kj_per_mol": -274.7,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C111842&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "CCl2O(g)": {
+    "dhf_kj_per_mol": -220.08,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C75445&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "CH2O(g)": {
+    "dhf_kj_per_mol": -115.9,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C50000&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "CH2O2(g)": {
+    "dhf_kj_per_mol": -378.6,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C64186&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "CH2O2(l)": {
+    "dhf_kj_per_mol": -425.09,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C64186&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "CH3Cl(l)": {
+    "dhf_kj_per_mol": -102.4,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C74873&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "CH3NO2(g)": {
+    "dhf_kj_per_mol": -81.0,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C75525&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "CH3NO2(l)": {
+    "dhf_kj_per_mol": -113.0,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C75525&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "CH4N2O(g)": {
+    "dhf_kj_per_mol": -235.5,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C57136&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "CH4N2O(s)": {
+    "dhf_kj_per_mol": -333.11,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C57136&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "CH4O(g)": {
+    "dhf_kj_per_mol": -205.0,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C67561&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "CH4O(l)": {
+    "dhf_kj_per_mol": -238.4,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C67561&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "CHBr3(g)": {
+    "dhf_kj_per_mol": 55.4,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C75252&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "CHBr3(l)": {
+    "dhf_kj_per_mol": 9.4,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C75252&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "CHN(g)": {
+    "dhf_kj_per_mol": 135.14,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C74908&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "COS(g)": {
+    "dhf_kj_per_mol": -138.41,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C463581&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "CO^32-(aq)": {
+    "dhf_kj_per_mol": -676.3,
+    "source": "USP PDF – Standard Enthalpy of Formation for Atomic and Molecular Ions",
+    "source_url": "https://sistemas.eel.usp.br/docentes/arquivos/5817712/TDQ%20I/R-standard_enthalpy_of_formation.pdf",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "Cl3P(g)": {
+    "dhf_kj_per_mol": -288.7,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C7719122&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "Cl4Si(g)": {
+    "dhf_kj_per_mol": -662.75,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C10026047&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "ClH(g)": {
+    "dhf_kj_per_mol": -92.31,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C7647010&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "ClHO(g)": {
+    "dhf_kj_per_mol": -74.48,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C7790923&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "ClO^3-(aq)": {
+    "dhf_kj_per_mol": -98.3,
+    "source": "USP PDF – Standard Enthalpy of Formation for Atomic and Molecular Ions",
+    "source_url": "https://sistemas.eel.usp.br/docentes/arquivos/5817712/TDQ%20I/R-standard_enthalpy_of_formation.pdf",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "ClO^4-(aq)": {
+    "dhf_kj_per_mol": -131.4,
+    "source": "USP PDF – Standard Enthalpy of Formation for Atomic and Molecular Ions",
+    "source_url": "https://sistemas.eel.usp.br/docentes/arquivos/5817712/TDQ%20I/R-standard_enthalpy_of_formation.pdf",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "CrO^42-(aq)": {
+    "dhf_kj_per_mol": -863.2,
+    "source": "USP PDF – Standard Enthalpy of Formation for Atomic and Molecular Ions",
+    "source_url": "https://sistemas.eel.usp.br/docentes/arquivos/5817712/TDQ%20I/R-standard_enthalpy_of_formation.pdf",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "F4Si(g)": {
+    "dhf_kj_per_mol": -1615.0,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C7783611&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "FH(g)": {
+    "dhf_kj_per_mol": -273.3,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C7664393&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "H2PO^4-(aq)": {
+    "dhf_kj_per_mol": -1302.5,
+    "source": "USP PDF – Standard Enthalpy of Formation for Atomic and Molecular Ions",
+    "source_url": "https://sistemas.eel.usp.br/docentes/arquivos/5817712/TDQ%20I/R-standard_enthalpy_of_formation.pdf",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "H3N(g)": {
+    "dhf_kj_per_mol": -45.94,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C7664417&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "H3P(g)": {
+    "dhf_kj_per_mol": 5.47,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C7803512&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "H4N2(g)": {
+    "dhf_kj_per_mol": 95.35,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C302012&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "H4N2(l)": {
+    "dhf_kj_per_mol": 50.63,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C302012&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "H4Si(g)": {
+    "dhf_kj_per_mol": 34.31,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C7803625&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "HPO^42-(aq)": {
+    "dhf_kj_per_mol": -1298.7,
+    "source": "USP PDF – Standard Enthalpy of Formation for Atomic and Molecular Ions",
+    "source_url": "https://sistemas.eel.usp.br/docentes/arquivos/5817712/TDQ%20I/R-standard_enthalpy_of_formation.pdf",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "N2O4(l)": {
+    "dhf_kj_per_mol": -19.56,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C10544726&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "N2O4(s)": {
+    "dhf_kj_per_mol": -35.05,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C10544726&Units=SI&Mask=2",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "O2S(g)": {
+    "dhf_kj_per_mol": -296.81,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C7446095&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "O3S(g)": {
+    "dhf_kj_per_mol": -395.77,
+    "source": "NIST Chemistry WebBook SRD 69 (standard enthalpy of formation)",
+    "source_url": "https://webbook.nist.gov/cgi/cbook.cgi?ID=C7446119&Units=SI&Mask=1",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "PO^43-(aq)": {
+    "dhf_kj_per_mol": -1284.1,
+    "source": "USP PDF – Standard Enthalpy of Formation for Atomic and Molecular Ions",
+    "source_url": "https://sistemas.eel.usp.br/docentes/arquivos/5817712/TDQ%20I/R-standard_enthalpy_of_formation.pdf",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "SO^42-(aq)": {
+    "dhf_kj_per_mol": -907.5,
+    "source": "USP PDF – Standard Enthalpy of Formation for Atomic and Molecular Ions",
+    "source_url": "https://sistemas.eel.usp.br/docentes/arquivos/5817712/TDQ%20I/R-standard_enthalpy_of_formation.pdf",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  },
+  "Sn^2+(aq)": {
+    "dhf_kj_per_mol": -10.0,
+    "source": "USP PDF – Standard Enthalpy of Formation for Atomic and Molecular Ions",
+    "source_url": "https://sistemas.eel.usp.br/docentes/arquivos/5817712/TDQ%20I/R-standard_enthalpy_of_formation.pdf",
+    "retrieved_utc": "2026-02-27T13:17:05Z"
+  }
+}
