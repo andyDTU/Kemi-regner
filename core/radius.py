@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """
 Radius lookup utilities.
 
@@ -6,8 +8,6 @@ Note:
 - Neutral atoms use a configurable definition.
 - Ions use ionic radius table lookup.
 """
-
-from __future__ import annotations
 
 from enum import Enum
 import json

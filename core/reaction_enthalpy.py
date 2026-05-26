@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """
 Reaction enthalpy utilities built around Hess' law.
 
@@ -6,8 +8,6 @@ Public API:
 - computeRxnEnthalpy(ast, dhfDb, overrides) -> details
 - balanceReaction(ast) -> balanced AST/details
 """
-
-from __future__ import annotations
 
 import math
 import re

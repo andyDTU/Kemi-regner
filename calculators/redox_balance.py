@@ -2,6 +2,7 @@
 Redox reaction balancer with atom/charge conservation checks.
 Supports acidic, basic, and neutral media.
 """
+from __future__ import annotations
 
 import re
 from typing import Dict, List, Tuple, Any

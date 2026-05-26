@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """
 Chemistry Calculator - Streamlit App
 A comprehensive chemistry calculator for high school and introductory university students.

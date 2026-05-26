@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """Solubility parsing and rule engine for ionic salts in water.
 
 Implemented model:
@@ -10,8 +12,6 @@ Internal statuses:
 - slightly_soluble
 - unknown
 """
-
-from __future__ import annotations
 
 from dataclasses import dataclass
 from math import gcd
