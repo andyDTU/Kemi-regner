@@ -82,6 +82,7 @@ st.set_page_config(
 
 NAVIGATION_OPTIONS = [
     "🏠 Fundamentals",
+    "📝 Eksamensguide",
     "⚖️ Atoms & Molar Mass",
     "🧮 Balancering og stofmængde",
     "📊 Gases",
@@ -102,6 +103,7 @@ NAVIGATION_OPTIONS = [
 
 PAGE_LABEL_TO_QUERY = {
     "🏠 Fundamentals": "fundamentals",
+    "📝 Eksamensguide": "eksamensguide",
     "⚖️ Atoms & Molar Mass": "atoms-molar",
     "🧮 Balancering og stofmængde": "stoichiometry",
     "📊 Gases": "gases",
@@ -158,6 +160,21 @@ SEARCH_INDEX = [
     {"title": "Nuklear henfald", "keywords": ["nuklear", "radioaktivitet", "henfald", "alpha", "beta", "gamma", "halvliv", "radioaktiv"], "page": "nuklear", "tab": None, "description": "Beregn radioaktivt henfald og halveringstid"},
     {"title": "Formelsamling", "keywords": ["formel", "samling", "tabel", "oversigt", "konstanter", "alle formler"], "page": "formelsamling", "tab": None, "description": "Oversigt over alle kemiformler og konstanter"},
     {"title": "Osmotisk tryk", "keywords": ["osmose", "osmotisk", "tryk", "van't hoff", "kolligativ", "membran"], "page": "koge-fryse", "tab": None, "description": "Beregn osmotisk tryk med van't Hoffs lov"},
+    # Eksamens-sprog
+    {"title": "pH af stærk syre", "keywords": ["beregn ph", "find ph", "hcl", "h2so4", "hno3", "stærk syre opgave"], "page": "acids-bases", "tab": "Strong Acids/Bases", "description": "HCl, HNO₃, H₂SO₄ – ioniserer 100%"},
+    {"title": "pH af svag syre", "keywords": ["beregn ph", "find ph", "ka", "eddikesyre", "svag syre opgave", "procentvis ionisering"], "page": "acids-bases", "tab": "Weak Acids/Bases", "description": "Ka-opgave – eddikesyre, citronsyre m.fl."},
+    {"title": "Buffer pH", "keywords": ["buffer", "henderson", "beregn ph buffer", "ha og a-", "konjugeret base"], "page": "acids-bases", "tab": "Buffers", "description": "pH af buffer med svag syre + konjugeret base"},
+    {"title": "Titrering", "keywords": ["titrering", "ækvivalenspunkt", "titrer", "neutraliser", "halvækvivalens", "beregn ph ved titrering"], "page": "acids-bases", "tab": "Titrations", "description": "pH ved titrering"},
+    {"title": "Er reaktionen spontan?", "keywords": ["spontan", "er reaktionen spontan", "δg", "gibbs", "spontanitet", "negativ δg"], "page": "thermochemistry", "tab": "Thermochemistry (Gibbs)", "description": "ΔG = ΔH − TΔS – find fortegnet"},
+    {"title": "Beregn ΔH° for reaktion", "keywords": ["beregn δh", "find δh", "reaktionsvarme", "hess", "eksoterm", "endoterm", "dannelsesenthalpi"], "page": "thermochemistry", "tab": "Enthalpy change (ΔH°)", "description": "Hess' lov med dannelsesentalpier"},
+    {"title": "Kalorimetri – temperaturstigning", "keywords": ["kalorimeter", "temperaturstigning", "q=mcδt", "specifik varme", "registrerer", "afgivet varme"], "page": "thermochemistry", "tab": "Calorimetry (q = m c ΔT)", "description": "q = mcΔT – varme fra temperaturændring"},
+    {"title": "Afstem reaktion", "keywords": ["afstem", "balancer ligning", "koefficienter", "afstemning", "balance reaktion"], "page": "stoichiometry", "tab": "⚖️ Balance Reaction", "description": "Afstemt kemisk ligning"},
+    {"title": "Begrænsende reaktant / udbytte", "keywords": ["begrænsende", "theoretical yield", "udbytte", "hvad er den begrænsende", "overskud", "limiting"], "page": "stoichiometry", "tab": "🔬 Limiting Reagent & Yields", "description": "Find limiting reagent og teoretisk udbytte"},
+    {"title": "Fortynding af opløsning", "keywords": ["fortynding", "fortyndes", "ny koncentration", "c1v1=c2v2", "fortynder", "tilsæt vand"], "page": "stoichiometry", "tab": "💧 Dilution", "description": "C₁V₁ = C₂V₂"},
+    {"title": "Ideel gaslov – find ubekendt", "keywords": ["pv=nrt", "gaslov", "find tryk", "find volumen", "find temperature", "find mol gas", "beregn gas"], "page": "gases", "tab": "Ideal Gas Law", "description": "PV = nRT – beregn P, V, n eller T"},
+    {"title": "ICE-tabel / ligevægt", "keywords": ["ice tabel", "ice-tabel", "opstil ice", "opsæt ice", "ligevægtskoncentration", "beregn kc", "beregn kp"], "page": "ligevaegt", "tab": "🧊 ICE Table", "description": "ICE-tabel og ligevægtskoncentrationer"},
+    {"title": "Q vs K – reaktionsretning", "keywords": ["reaktionskvotient", "q vs k", "hvilken retning", "går reaktionen frem", "går reaktionen tilbage", "forskydning"], "page": "ligevaegt", "tab": "📊 Reaktionskvotient Q", "description": "Beregn Q og sammenlign med K"},
+    {"title": "Eksamensguide", "keywords": ["eksamensguide", "eksamen", "guide", "hjælp", "opgave", "hvilken beregner", "hvad skal jeg bruge"], "page": "eksamensguide", "tab": None, "description": "Oversigt over opgavetyper og hvilken beregner de kræver"},
 ]
 
 
@@ -282,6 +299,8 @@ def main():
     # Main content area
     if page == "🏠 Fundamentals":
         show_fundamentals_page()
+    elif page == "📝 Eksamensguide":
+        show_exam_guide_page()
     elif page == "⚖️ Atoms & Molar Mass":
         show_molar_mass_page()
     elif page == "🧮 Balancering og stofmængde":
@@ -475,6 +494,150 @@ def show_fundamentals_page():
 
     st.markdown("---")
     st.caption("💡 Tip: Søg i sidepanelet øverst for at finde en specifik beregner hurtigt.")
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# EKSAMENSGUIDE
+# ─────────────────────────────────────────────────────────────────────────────
+
+_EXAM_TASKS = [
+    # (opgave_tekst, nøgleord_der_afslører_typen, beregner_navn, page, tab)
+    # ── Syrer & Baser ────────────────────────────────────────────────────────
+    ("Beregn pH af 0,10 M HCl",
+     "Nøgleord: stærk syre (HCl, HNO₃, H₂SO₄) + koncentration → pH = −log[H⁺]",
+     "Stærk syre", "acids-bases", "Strong Acids/Bases"),
+    ("En 0,050 M NaOH-opløsning – hvad er pH?",
+     "Nøgleord: stærk base (NaOH, KOH) + koncentration → pOH, pH = 14 − pOH",
+     "Stærk base", "acids-bases", "Strong Acids/Bases"),
+    ("En 0,100 M eddikesyre har Ka = 1,8×10⁻⁵. Beregn pH.",
+     "Nøgleord: svag syre + Ka → brug ICE-tabel til at finde [H⁺]",
+     "Svag syre", "acids-bases", "Weak Acids/Bases"),
+    ("En bufferløsning indeholder 0,20 M CH₃COOH og 0,10 M CH₃COO⁻. Beregn pH.",
+     "Nøgleord: buffer = svag syre + konjugeret base → Henderson-Hasselbalch: pH = pKa + log([A⁻]/[HA])",
+     "Buffer (Henderson-Hasselbalch)", "acids-bases", "Buffers"),
+    ("25 mL 0,10 M HCl titreres med 0,10 M NaOH. Find pH ved ækvivalenspunktet.",
+     "Nøgleord: titrering + ækvivalenspunkt → bestem, hvad der er i overskud",
+     "Titrering", "acids-bases", "Titrations"),
+    # ── Termokemi ────────────────────────────────────────────────────────────
+    ("Er reaktionen N₂ + 3H₂ → 2NH₃ spontan ved 25°C? ΔH° = −92 kJ, ΔS° = −198 J/K",
+     "Nøgleord: spontan / ΔG / ΔH og ΔS givet → ΔG = ΔH − TΔS; spontan hvis ΔG < 0",
+     "Gibbs fri energi (ΔG)", "thermochemistry", "Thermochemistry (Gibbs)"),
+    ("Beregn ΔH° for 2NO(g) + O₂(g) → 2NO₂(g) vha. dannelsesentalpier.",
+     "Nøgleord: dannelsesentalpier (ΔHf°) givet → Hess: ΔH = Σ(ν·ΔHf° produkter) − Σ(ν·ΔHf° reaktanter)",
+     "Reaktionsenthalpi (ΔH°)", "thermochemistry", "Enthalpy change (ΔH°)"),
+    ("100 g vand opvarmes fra 20°C til 45°C i et kalorimeter. Beregn varmeafgivelsen.",
+     "Nøgleord: masse + temperaturændring + specifik varme → q = mcΔT",
+     "Kalorimetri (q = mcΔT)", "thermochemistry", "Calorimetry (q = m c ΔT)"),
+    # ── Stofmængder & Reaktioner ─────────────────────────────────────────────
+    ("Afstem: Fe + O₂ → Fe₂O₃",
+     "Nøgleord: afstem / koefficienter → balancer reaktion",
+     "Balancer reaktion", "stoichiometry", "⚖️ Balance Reaction"),
+    ("5,0 g H₂ reagerer med 32 g O₂. Hvad er den begrænsende reaktant?",
+     "Nøgleord: to reaktanter + masser → beregn mol af hvert, find hvem der løber tørt først",
+     "Begrænsende reaktant", "stoichiometry", "🔬 Limiting Reagent & Yields"),
+    ("Fortynding: 25 mL af 2,0 M HCl fortyndes til 500 mL. Find den nye koncentration.",
+     "Nøgleord: fortynding + volumen ændres → C₁V₁ = C₂V₂",
+     "Fortynding", "stoichiometry", "💧 Dilution"),
+    ("Afstem redoxreaktionen MnO₄⁻ + Fe²⁺ → Mn²⁺ + Fe³⁺ i sur opløsning.",
+     "Nøgleord: redox + sur/basisk opløsning → halvreaktionsmetoden",
+     "Redoxafstemning", "stoichiometry", "🔋 Redoxafstemning"),
+    # ── Gasser ───────────────────────────────────────────────────────────────
+    ("2,5 mol N₂ ved 25°C og 1,5 atm – hvad er volumen?",
+     "Nøgleord: mol + tryk + temperatur + volumen → PV = nRT (find ubekendt)",
+     "Ideel gaslov (PV = nRT)", "gases", "Ideal Gas Law"),
+    ("En blanding af N₂ (0,80 mol) og O₂ (0,20 mol) har totaltryk 1,0 atm. Find partialtryk.",
+     "Nøgleord: gasblanding + mol + totaltryk → Daltons lov: P_i = χ_i · P_total",
+     "Daltons lov (partialtryk)", "gases", "Dalton's Law"),
+    # ── Ligevægt ─────────────────────────────────────────────────────────────
+    ("H₂ + I₂ ⇌ 2HI. Start: [H₂]₀=0,50 M, [I₂]₀=0,50 M. Beregn [HI] ved ligevægt (Kc=50).",
+     "Nøgleord: ligevægtskonstant + startkoncentrationer → opstil ICE-tabel",
+     "ICE-tabel", "ligevaegt", "🧊 ICE Table"),
+    ("Q beregnes til 8,0. Kc = 50. Hvad sker der med reaktionen?",
+     "Nøgleord: Q og K givet → Q < K: reaktion går frem; Q > K: reaktion går tilbage",
+     "Reaktionskvotient (Q vs K)", "ligevaegt", "📊 Reaktionskvotient Q"),
+    # ── Elektrokemi ──────────────────────────────────────────────────────────
+    ("Beregn E°cell for Zn/Cu-cellen (E°Zn²⁺/Zn = −0,76 V, E°Cu²⁺/Cu = +0,34 V).",
+     "Nøgleord: halvreaktionspotentialer givet → E°cell = E°katode − E°anode",
+     "Cellespænding (E°cell)", "electrochemistry", "Build a Cell"),
+    ("E°cell = 1,10 V, n = 2. Beregn ΔG° og K.",
+     "Nøgleord: E°cell + n → ΔG° = −nFE°; K fra ΔG° = −RT·lnK",
+     "ΔG° og K fra E°", "electrochemistry", "ΔG and K"),
+    # ── Kinetik ──────────────────────────────────────────────────────────────
+    ("En 1. ordens reaktion har k = 0,35 s⁻¹. Hvad er halvliv? Hvad er [A] efter 5 s?",
+     "Nøgleord: reaktionsorden + k → integreret hastighedslov; halvliv t½ = ln2/k",
+     "Integreret hastighedslov", "kinetics", "Integrated Rate Law"),
+    ("k₁ = 1,0×10⁻³ s⁻¹ ved 25°C, Eₐ = 50 kJ/mol. Beregn k ved 35°C.",
+     "Nøgleord: k ved én temp + Eₐ → Arrhenius: k₂ = k₁·exp(Eₐ/R·(1/T₁ − 1/T₂))",
+     "Arrhenius", "kinetics", "Arrhenius"),
+    # ── Molarmasse & Sammensætning ───────────────────────────────────────────
+    ("Hvad er molarmassen af Ca(NO₃)₂?",
+     "Nøgleord: kemisk formel → summer atomvægte × antal",
+     "Molarmasse", "atoms-molar", "⚖️ Molar Mass"),
+    # ── Kolligative egenskaber ───────────────────────────────────────────────
+    ("10 g glukose (M = 180 g/mol) opløses i 100 g vand. Find frysepunktssænkning (Kf = 1,86).",
+     "Nøgleord: opløst stof + masse opløsningsmiddel + Kf → ΔTf = Kf·m (molalitet)",
+     "Frysepunktssænkning", "koge-fryse", None),
+]
+
+
+def show_exam_guide_page():
+    """Eksamensguide – typiske opgavetyper og hvilken beregner de kræver."""
+    st.title("📝 Eksamensguide")
+    st.markdown(
+        "Her kan du hurtigt finde ud af **hvilken beregner du skal bruge** til en given eksamensopgave. "
+        "Klik på knappen ved opgaven for at åbne den rigtige beregner direkte."
+    )
+    st.markdown("---")
+
+    # ── Søg i opgaver ────────────────────────────────────────────────────────
+    exam_q = st.text_input(
+        "🔍 Filtrér opgaver",
+        placeholder="fx 'pH', 'spontan', 'titrering', 'ICE'...",
+        key="exam_guide_filter",
+    )
+
+    # Grupper efter emne
+    groups = {
+        "🧪 Syrer & Baser":             ["Stærk syre", "Stærk base", "Svag syre", "Buffer (Henderson-Hasselbalch)", "Titrering"],
+        "🔥 Termokemi":                  ["Gibbs fri energi (ΔG)", "Reaktionsenthalpi (ΔH°)", "Kalorimetri (q = mcΔT)"],
+        "🧮 Stofmængder & Reaktioner":   ["Balancer reaktion", "Begrænsende reaktant", "Fortynding", "Redoxafstemning"],
+        "📊 Gasser":                     ["Ideel gaslov (PV = nRT)", "Daltons lov (partialtryk)"],
+        "⚗️ Ligevægt":                   ["ICE-tabel", "Reaktionskvotient (Q vs K)"],
+        "🔋 Elektrokemi":                ["Cellespænding (E°cell)", "ΔG° og K fra E°"],
+        "⚡ Kinetik":                    ["Integreret hastighedslov", "Arrhenius"],
+        "⚖️ Atoms & Molarmasse":         ["Molarmasse"],
+        "🌡️ Kolligative egenskaber":     ["Frysepunktssænkning"],
+    }
+    name_to_task = {t[2]: t for t in _EXAM_TASKS}
+
+    for group_label, task_names in groups.items():
+        tasks_in_group = [name_to_task[n] for n in task_names if n in name_to_task]
+        if exam_q:
+            q_low = exam_q.lower()
+            tasks_in_group = [
+                t for t in tasks_in_group
+                if q_low in t[0].lower() or q_low in t[1].lower() or q_low in t[2].lower()
+            ]
+        if not tasks_in_group:
+            continue
+
+        with st.expander(group_label, expanded=True):
+            for opgave, tip, beregner, page, tab in tasks_in_group:
+                col_text, col_btn = st.columns([5, 1])
+                with col_text:
+                    st.markdown(f"**{opgave}**")
+                    st.caption(f"→ {tip}")
+                with col_btn:
+                    btn_key = f"exam_nav_{beregner.replace(' ', '_').replace('(', '').replace(')', '').replace('/', '_')}"
+                    if st.button(f"Åbn →", key=btn_key, use_container_width=True):
+                        st.query_params["page"] = page
+                        if tab:
+                            st.session_state[f"nav_{page.replace('-', '_')}"] = tab
+                        st.rerun()
+                st.markdown("---")
+
+    st.caption("Tip: Søg i sidepanelet for endnu hurtigere navigation.")
+
 
 def format_formula_with_subscripts(formula: str) -> str:
     """
