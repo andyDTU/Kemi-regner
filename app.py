@@ -311,15 +311,14 @@ def main():
         query_page_raw = query_page_raw[0] if query_page_raw else None
     query_page = str(query_page_raw).strip().lower() if query_page_raw else ""
 
-    default_page = PAGE_QUERY_TO_LABEL.get(query_page, "🏠 Fundamentals")
-    if default_page not in NAVIGATION_OPTIONS:
-        default_page = "🏠 Fundamentals"
-    default_index = NAVIGATION_OPTIONS.index(default_page)
+    target_label = PAGE_QUERY_TO_LABEL.get(query_page, "🏠 Fundamentals")
+    if target_label not in NAVIGATION_OPTIONS:
+        target_label = "🏠 Fundamentals"
+    st.session_state["main_page"] = target_label
 
     page = st.sidebar.radio(
         "Select Calculator:",
         NAVIGATION_OPTIONS,
-        index=default_index,
         key="main_page",
     )
 
