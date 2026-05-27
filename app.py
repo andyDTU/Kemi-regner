@@ -176,6 +176,9 @@ SEARCH_INDEX = [
     {"title": "Empirisk formel", "keywords": ["empirisk formel", "empirisk", "procentsammensætning", "procent sammensætning", "masseandel", "elementaranalyse", "forbrændingsanalyse", "%c", "%h", "%o", "hvad er formlen", "find formel fra procent", "molekylær formel", "molecular formula"], "page": "atoms-molar", "tab": "🔬 Empirisk formel", "description": "Find empirisk/molekylær formel fra procentvis sammensætning – klassisk elementaranalyse"},
     {"title": "Salthydrolyse / pH af salt", "keywords": ["salthydrolyse", "hydrolyse", "ph af salt", "natriumacetat", "ammoniumchlorid", "konjugeret base", "konjugeret syre", "kh", "salt opløsning ph", "basisk salt", "sur salt", "ch3coona", "nh4cl"], "page": "acids-bases", "tab": "⚗️ Salthydrolyse", "description": "pH af saltopløsninger via hydrolyse – Kh = Kw/Ka eller Kw/Kb"},
     {"title": "Ioniseringsgrad α", "keywords": ["ioniseringsgrad", "ionisering", "alpha", "α", "procentvis ioniseret", "5%regel", "5 procent regel", "svag syre ioniseret", "andel ioniseret", "degree of ionization"], "page": "acids-bases", "tab": "Svag syre/base", "description": "Beregn ioniseringsgrad α og procentvis ionisering for svag syre/base"},
+    {"title": "Van't Hoff-plot", "keywords": ["van't hoff", "vant hoff", "lnk vs 1/t", "delta h fra k", "delta s fra k", "k ved to temperaturer", "hældning lnk", "reaktionsentalpi fra k", "temperaturafhængig k", "van hoff plot"], "page": "thermochemistry", "tab": None, "description": "Find ΔH° og ΔS° fra K-værdier ved to temperaturer – hældning og skæringspunkt i lnK vs. 1/T"},
+    {"title": "Kirchhoffs lov", "keywords": ["kirchhoff", "kirchhoffs lov", "delta h ved anden temperatur", "temperaturkorrektions", "delta cp", "varmekaps", "delta h 500k", "reaktionsenthalpi ved t"], "page": "thermochemistry", "tab": None, "description": "ΔH°(T₂) = ΔH°(T₁) + ΔCp×ΔT – korriger entalpien til anden temperatur"},
+    {"title": "Molarmasse fra kolligative egenskaber", "keywords": ["molarmasse fra deltaT", "molarmasse fra osmose", "ukendt molarmasse", "find M fra frysepunkt", "find M fra kogepunkt", "baglæns kolligativ", "osmotisk tryk molarmasse", "protein molarmasse"], "page": "koge-fryse", "tab": None, "description": "Find molarmasse fra ΔTf, ΔTb eller osmotisk tryk – klassisk analyseopgave"},
     {"title": "ICE-tabel / ligevægt", "keywords": ["ice tabel", "ice-tabel", "opstil ice", "opsæt ice", "ligevægtskoncentration", "beregn kc", "beregn kp"], "page": "ligevaegt", "tab": "🧊 ICE Table", "description": "ICE-tabel og ligevægtskoncentrationer"},
     {"title": "Q vs K – reaktionsretning", "keywords": ["reaktionskvotient", "q vs k", "hvilken retning", "går reaktionen frem", "går reaktionen tilbage", "forskydning"], "page": "ligevaegt", "tab": "📊 Reaktionskvotient Q", "description": "Beregn Q og sammenlign med K"},
     {"title": "Eksamensguide", "keywords": ["eksamensguide", "eksamen", "guide", "hjælp", "opgave", "hvilken beregner", "hvad skal jeg bruge"], "page": "eksamensguide", "tab": None, "description": "Oversigt over opgavetyper og hvilken beregner de kræver"},
@@ -509,9 +512,9 @@ def show_fundamentals_page():
         _nav_card("Elektronkonfiguration", "atoms-molar", "Aufbau, orbital-notation og ions", "ec", tab="⚛️ Elektronkonfiguration og atomradius")
     with c8:
         st.markdown("**🌡️ Andet**")
-        _nav_card("Kogepunktselevering / Frysepunkt", "koge-fryse", "Kolligative egenskaber og molalitet", "kf")
-        _nav_card("Damptryk (Raoult)", "damptryk", "Damptryk over opløsninger", "vp")
-        _nav_card("Kinetik & halvliv", "kinetics", "Reaktionshastighed, Arrhenius, halvliv", "kin", tab="Integreret hastighedslov")
+        _nav_card("📈 Van't Hoff-plot", "thermochemistry", "ΔH° og ΔS° fra K ved to temperaturer", "vhp")
+        _nav_card("🌡️ Kirchhoffs lov", "thermochemistry", "ΔH°(T₂) = ΔH°(T₁) + ΔCp·ΔT", "khl")
+        _nav_card("🔬 M fra kolligative egensk.", "koge-fryse", "Molarmasse fra ΔTf, ΔTb eller osmotisk tryk", "mce")
         _nav_card("Nuklear henfald", "nuklear", "α/β/γ-henfald og radioaktiv halveringstid", "nuc")
 
     st.markdown("---")
@@ -5638,11 +5641,13 @@ def show_thermochemistry_page():
     from core.dhf_database import load_dhf_database, add_to_dhf_database, getDhf, normalizeSpeciesKey
     from core.hess_solver import solve_hess_problem
 
-    tab_enthalpy, tab_gibbs, tab_calorimetry, tab_heating = st.tabs([
+    tab_enthalpy, tab_gibbs, tab_calorimetry, tab_heating, tab_vanthoff, tab_kirchhoff = st.tabs([
         "Enthalpi (ΔH°)",
         "Gibbs (ΔG)",
         "Kalorimetri (q = mcΔT)",
         "Opvarmningskurve",
+        "📈 Van't Hoff-plot",
+        "🌡️ Kirchhoffs lov",
     ])
 
     with tab_gibbs:
@@ -5978,6 +5983,246 @@ def show_thermochemistry_page():
             except Exception as e:
                 st.error(str(e))
 
+    with tab_vanthoff:
+        _show_vanthoff_tab()
+
+    with tab_kirchhoff:
+        _show_kirchhoff_tab()
+
+def _show_vanthoff_tab():
+    """Van't Hoff-plot: ΔH° og ΔS° fra ligevægtskonstanter ved forskellige temperaturer."""
+    import math
+
+    R = 8.314  # J/(mol·K)
+
+    st.markdown("### 📈 Van't Hoff-plot")
+    st.latex(r"\ln K = -\frac{\Delta H°}{R} \cdot \frac{1}{T} + \frac{\Delta S°}{R}")
+    st.markdown(
+        "Bruges til at bestemme **ΔH°** og **ΔS°** fra ligevægtskonstanter målt ved forskellige temperaturer. "
+        "Hældningen i et lnK vs. 1/T-plot er −ΔH°/R, og skæringspunktet er ΔS°/R."
+    )
+
+    mode = st.radio(
+        "Beregningsmode:",
+        ["To-punkts (2 K-værdier)", "Find K ved ny temperatur"],
+        horizontal=True, key="vh_mode",
+    )
+
+    if mode == "To-punkts (2 K-værdier)":
+        st.markdown("#### To-punkts Van't Hoff")
+        st.caption(
+            "Givet K₁ ved T₁ og K₂ ved T₂ – beregner ΔH° fra hældning og ΔS° fra skæringspunkt."
+        )
+        col1, col2 = st.columns(2)
+        with col1:
+            T1 = st.number_input("T₁ (K):", value=298.15, min_value=1.0, key="vh_T1")
+            K1 = st.number_input("K₁:", value=1.0e-5, min_value=1e-30, format="%.3e", key="vh_K1")
+        with col2:
+            T2 = st.number_input("T₂ (K):", value=373.15, min_value=1.0, key="vh_T2")
+            K2 = st.number_input("K₂:", value=1.0e-3, min_value=1e-30, format="%.3e", key="vh_K2")
+
+        temp_unit = st.radio("Temperaturenhed (input):", ["K", "°C"], horizontal=True, key="vh_tunit")
+        if temp_unit == "°C":
+            T1 += 273.15
+            T2 += 273.15
+
+        if st.button("Beregn ΔH° og ΔS°", type="primary", key="vh_btn"):
+            try:
+                if abs(T1 - T2) < 0.01:
+                    st.error("T₁ og T₂ må ikke være identiske.")
+                else:
+                    lnK1 = math.log(K1)
+                    lnK2 = math.log(K2)
+                    inv_T1 = 1.0 / T1
+                    inv_T2 = 1.0 / T2
+
+                    # slope = -ΔH°/R = Δ(lnK) / Δ(1/T)
+                    slope = (lnK2 - lnK1) / (inv_T2 - inv_T1)
+                    dH_J = -slope * R
+                    dH_kJ = dH_J / 1000
+
+                    # intercept = ΔS°/R → ΔS° = R × (lnK - slope/T)
+                    dS_J = R * (lnK1 - slope * inv_T1)
+
+                    # ΔG° at T1 and T2
+                    dG1 = -R * T1 * lnK1 / 1000
+                    dG2 = -R * T2 * lnK2 / 1000
+
+                    st.success(f"**ΔH° = {dH_kJ:.2f} kJ/mol**  |  **ΔS° = {dS_J:.2f} J/(mol·K)**")
+
+                    st.markdown(f"""
+**Trin-for-trin:**
+
+1. lnK₁ = ln({K1:.3e}) = **{lnK1:.4f}**
+2. lnK₂ = ln({K2:.3e}) = **{lnK2:.4f}**
+3. Hældning = Δ(lnK) / Δ(1/T) = ({lnK2:.4f} − {lnK1:.4f}) / (1/{T2:.2f} − 1/{T1:.2f})
+   = {lnK2-lnK1:.4f} / {inv_T2-inv_T1:.6f} = **{slope:.2f} K**
+4. ΔH° = −hældning × R = −{slope:.2f} × 8.314 = **{dH_J:.0f} J/mol = {dH_kJ:.2f} kJ/mol**
+5. ΔS° = R × (lnK₁ − hældning × 1/T₁) = 8.314 × ({lnK1:.4f} − {slope:.2f} × {inv_T1:.6f})
+   = **{dS_J:.2f} J/(mol·K)**
+6. Kontrol – ΔG°(T₁) = −RT₁lnK₁ = **{dG1:.2f} kJ/mol**
+7. Kontrol – ΔG°(T₂) = −RT₂lnK₂ = **{dG2:.2f} kJ/mol**
+""")
+
+                    exo_endo = "eksoterm (ΔH° < 0)" if dH_kJ < 0 else "endoterm (ΔH° > 0)"
+                    k_temp = "K falder med stigende T" if dH_kJ < 0 else "K stiger med stigende T"
+                    st.info(f"📌 Reaktionen er **{exo_endo}** → {k_temp} (Le Chatelier)")
+
+            except Exception as exc:
+                st.error(f"Fejl: {exc}")
+
+    else:  # Find K ved ny temperatur
+        st.markdown("#### Find K ved ny temperatur")
+        st.caption(
+            "Givet ΔH° og én K-måling – beregn K ved en anden temperatur. "
+            "Eller: givet ΔH° og ΔS° – beregn K ved vilkårlig T."
+        )
+        method = st.radio(
+            "Input:", ["ΔH° + én K-måling", "ΔH° og ΔS°"], horizontal=True, key="vh_pred_method"
+        )
+        col1, col2 = st.columns(2)
+        with col1:
+            dH_input = st.number_input("ΔH° (kJ/mol):", value=-92.0, key="vh_pred_dH")
+            T_new = st.number_input("Ny temperatur T (K):", value=500.0, min_value=1.0, key="vh_pred_Tnew")
+        with col2:
+            if method == "ΔH° + én K-måling":
+                T_ref = st.number_input("Referencetemperatur T₁ (K):", value=298.15, min_value=1.0, key="vh_pred_Tref")
+                K_ref = st.number_input("K₁ ved T₁:", value=977.0, min_value=1e-30, format="%.4e", key="vh_pred_K1")
+            else:
+                dS_input = st.number_input("ΔS° (J/(mol·K)):", value=-198.0, key="vh_pred_dS")
+
+        if st.button("Find K(T)", type="primary", key="vh_pred_btn"):
+            try:
+                dH_J = dH_input * 1000
+                if method == "ΔH° + én K-måling":
+                    lnK_new = math.log(K_ref) + (-dH_J / R) * (1.0 / T_new - 1.0 / T_ref)
+                else:
+                    lnK_new = (-dH_J / (R * T_new)) + dS_input / R
+
+                K_new = math.exp(lnK_new)
+                dG_new = -R * T_new * lnK_new / 1000
+
+                st.success(f"**K({T_new:.1f} K) = {K_new:.4e}**  |  ΔG° = {dG_new:.2f} kJ/mol")
+                if method == "ΔH° + én K-måling":
+                    st.markdown(f"""
+**Beregning:**
+
+ln(K₂/K₁) = −ΔH°/R × (1/T₂ − 1/T₁)
+
+lnK₂ = lnK₁ + (−ΔH°/R) × (1/T₂ − 1/T₁)
+= {math.log(K_ref):.4f} + ({-dH_J/R:.2f}) × ({1/T_new:.6f} − {1/T_ref:.6f})
+= {math.log(K_ref):.4f} + {(-dH_J/R)*(1/T_new - 1/T_ref):.4f}
+= **{lnK_new:.4f}**
+
+K₂ = e^{lnK_new:.4f} = **{K_new:.4e}**
+""")
+            except Exception as exc:
+                st.error(f"Fejl: {exc}")
+
+    _quick_links([
+        ("Gibbs (ΔG)", "thermochemistry", None),
+        ("Ligevægt / ICE", "ligevaegt", "🧊 ICE Table"),
+        ("Kc/Kp", "ligevaegt", "🔄 Kc/Kp konvertering"),
+    ])
+
+
+def _show_kirchhoff_tab():
+    """Kirchhoffs lov: ΔH°(T₂) = ΔH°(T₁) + ΔCp × (T₂ − T₁)."""
+    st.markdown("### 🌡️ Kirchhoffs lov")
+    st.latex(r"\Delta H°(T_2) = \Delta H°(T_1) + \Delta C_p \cdot (T_2 - T_1)")
+    st.markdown(
+        "Bruges til at korrigere reaktionsentalpien til en anden temperatur end standardbetingelserne (298 K). "
+        "Gyldigt når ΔCp er konstant over det givne temperaturinterval."
+    )
+    st.info(
+        "**ΔCp** = Σ(νᵢ × Cp,i produkter) − Σ(νᵢ × Cp,i reaktanter)  \n"
+        "Typiske Cp-værdier: H₂(g)≈28,8 J/mol·K, O₂(g)≈29,4, N₂(g)≈29,1, "
+        "H₂O(g)≈33,6, CO₂(g)≈37,1, NH₃(g)≈35,1"
+    )
+
+    mode = st.radio(
+        "Input-mode:",
+        ["Direkte ΔCp", "Beregn ΔCp fra Cp for hvert stof"],
+        horizontal=True, key="kh_mode",
+    )
+
+    col1, col2 = st.columns(2)
+    with col1:
+        dH_ref = st.number_input("ΔH°(T₁) (kJ/mol):", value=-92.38, key="kh_dH_ref")
+        T1 = st.number_input("T₁ (K):", value=298.15, min_value=1.0, key="kh_T1")
+        T2 = st.number_input("T₂ (K):", value=500.0, min_value=1.0, key="kh_T2")
+
+    with col2:
+        if mode == "Direkte ΔCp":
+            dCp = st.number_input(
+                "ΔCp (J/(mol·K)):", value=-58.6, format="%.2f", key="kh_dCp",
+                help="Positiv: produkter har højere Cp. Negativ: reaktanter har højere Cp."
+            )
+        else:
+            st.markdown("**Cp-tabel (J/(mol·K))**")
+            n_prod = st.number_input("Antal produkter:", min_value=1, max_value=6, value=2, step=1, key="kh_np")
+            n_react = st.number_input("Antal reaktanter:", min_value=1, max_value=6, value=2, step=1, key="kh_nr")
+
+            products = []
+            for i in range(int(n_prod)):
+                c1, c2, c3 = st.columns(3)
+                with c1:
+                    name = st.text_input(f"Produkt {i+1}:", key=f"kh_pname_{i}", placeholder="NH₃(g)")
+                with c2:
+                    nu = st.number_input("ν:", value=1.0, min_value=0.0, key=f"kh_pnu_{i}")
+                with c3:
+                    cp = st.number_input("Cp:", value=35.1, key=f"kh_pcp_{i}")
+                products.append((nu, cp))
+
+            reactants = []
+            for i in range(int(n_react)):
+                c1, c2, c3 = st.columns(3)
+                with c1:
+                    name = st.text_input(f"Reaktant {i+1}:", key=f"kh_rname_{i}", placeholder="N₂(g)")
+                with c2:
+                    nu = st.number_input("ν:", value=1.0, min_value=0.0, key=f"kh_rnu_{i}")
+                with c3:
+                    cp = st.number_input("Cp:", value=29.1, key=f"kh_rcp_{i}")
+                reactants.append((nu, cp))
+
+            dCp = sum(nu * cp for nu, cp in products) - sum(nu * cp for nu, cp in reactants)
+            st.metric("Beregnet ΔCp (J/(mol·K)):", f"{dCp:.2f}")
+
+    if st.button("Beregn ΔH°(T₂)", type="primary", key="kh_btn"):
+        dT = T2 - T1
+        correction_kJ = dCp * dT / 1000  # convert J → kJ
+        dH_T2 = dH_ref + correction_kJ
+
+        st.success(f"**ΔH°({T2:.1f} K) = {dH_T2:.4f} kJ/mol**")
+        st.markdown(f"""
+**Trin-for-trin:**
+
+1. ΔH°({T1:.1f} K) = **{dH_ref:.4f} kJ/mol** (standard)
+2. ΔCp = **{dCp:.2f} J/(mol·K)**
+3. ΔT = T₂ − T₁ = {T2:.1f} − {T1:.1f} = **{dT:.1f} K**
+4. Korrektionsled: ΔCp × ΔT = {dCp:.2f} × {dT:.1f} = **{dCp*dT:.2f} J/mol = {correction_kJ:.4f} kJ/mol**
+5. ΔH°({T2:.1f} K) = {dH_ref:.4f} + {correction_kJ:.4f} = **{dH_T2:.4f} kJ/mol**
+""")
+
+        change_pct = abs(correction_kJ / dH_ref * 100) if dH_ref != 0 else 0
+        if change_pct < 5:
+            st.info(f"✅ Korrektionen er kun {change_pct:.1f}% – Kirchhoff-korrektionen er lille ved dette interval.")
+        else:
+            st.warning(f"⚠️ Korrektionen er {change_pct:.1f}% – temperaturkorrektionen er signifikant.")
+
+    st.markdown("---")
+    st.caption(
+        "💡 Eksempel (N₂ + 3H₂ → 2NH₃): ΔCp = 2×35,1 − (29,1 + 3×28,8) = 70,2 − 115,5 = −45,3 J/mol·K  \n"
+        "ΔH°(500K) = −92,38 + (−45,3 × 202)/1000 = −92,38 − 9,15 = −101,5 kJ/mol"
+    )
+
+    _quick_links([
+        ("Enthalpi ΔH°", "thermochemistry", None),
+        ("Gibbs (ΔG)", "thermochemistry", None),
+        ("📈 Van't Hoff-plot", "thermochemistry", None),
+    ])
+
+
 def show_colligatives_page():
     """Display Colligative Properties calculators (Part 4)."""
     st.title("🧪 Colligative Properties")
@@ -5990,10 +6235,11 @@ def show_colligatives_page():
         raoult_binary_with_steps,
     )
 
-    tab1, tab2, tab3 = st.tabs([
+    tab1, tab2, tab3, tab4 = st.tabs([
         "ΔTf / ΔTb",
         "Osmotic Pressure",
         "Raoult's Law",
+        "🔬 M fra kolligative egenskaber",
     ])
 
     with tab1:
@@ -6082,6 +6328,120 @@ def show_colligatives_page():
                             st.markdown(s)
                 except Exception as e:
                     st.error(str(e))
+
+    with tab4:
+        _show_molar_mass_from_colligatives()
+
+
+def _show_molar_mass_from_colligatives():
+    """Baglæns kolligative egenskaber: find molarmasse af opløst stof."""
+    import math
+
+    R = 0.08206   # L·atm/(mol·K)
+    Kf_water = 1.86   # °C·kg/mol
+    Kb_water = 0.512  # °C·kg/mol
+
+    st.markdown("### 🔬 Find molarmasse fra kolligative egenskaber")
+    st.markdown(
+        "Givet et eksperimentelt målt ΔTf, ΔTb eller osmotisk tryk – find molarmassen af det opløste stof. "
+        "Klassisk DTU-opgave ved karakterisering af ukendte forbindelser."
+    )
+
+    method = st.radio(
+        "Metode:",
+        ["ΔTf – frysepunktssænkning", "ΔTb – kogepunktselevering", "π – osmotisk tryk"],
+        horizontal=True, key="mcol_method",
+    )
+
+    col1, col2 = st.columns(2)
+    with col1:
+        mass_solute = st.number_input("Masse af opløst stof (g):", value=5.0, min_value=0.0,
+                                       format="%.4f", key="mcol_mass")
+        i = st.number_input("Van't Hoff faktor i:", value=1.0, min_value=0.1,
+                             help="i=1 for ikke-elektrolytter. NaCl→i≈2, CaCl₂→i≈3",
+                             key="mcol_i")
+
+    with col2:
+        if method in ["ΔTf – frysepunktssænkning", "ΔTb – kogepunktselevering"]:
+            dT_obs = st.number_input(
+                "Målt |ΔT| (°C):", value=0.372, min_value=0.0, format="%.4f", key="mcol_dT",
+                help="Angiv den observerede temperaturændring som positivt tal."
+            )
+            mass_solvent = st.number_input("Masse af opløsningsmiddel (g):", value=100.0,
+                                            min_value=0.1, key="mcol_msolvent")
+            custom_K = st.checkbox("Brug andet opløsningsmiddel (andet Kf/Kb)", key="mcol_custom_K")
+            if custom_K:
+                Kf_use = st.number_input("Kf eller Kb (°C·kg/mol):", value=Kf_water, key="mcol_Kuse")
+            else:
+                Kf_use = Kf_water if "ΔTf" in method else Kb_water
+                label = "Kf(vand) = 1,86 °C·kg/mol" if "ΔTf" in method else "Kb(vand) = 0,512 °C·kg/mol"
+                st.info(f"Bruger: {label}")
+        else:  # osmotisk tryk
+            pi_atm = st.number_input("Osmotisk tryk π (atm):", value=2.47, min_value=0.0,
+                                      format="%.4f", key="mcol_pi")
+            V_L = st.number_input("Opløsningsvolumen V (L):", value=0.100, min_value=0.001,
+                                   key="mcol_V")
+            T_K = st.number_input("Temperatur T (K):", value=298.15, min_value=1.0, key="mcol_T")
+
+    if st.button("Beregn molarmasse", type="primary", key="mcol_btn"):
+        try:
+            if method in ["ΔTf – frysepunktssænkning", "ΔTb – kogepunktselevering"]:
+                # ΔT = i × K × m,  m = molalitet = mol/kg_solvent
+                # mol = m × kg_solvent = ΔT × kg_solvent / (i × K)
+                # M = mass_solute / mol
+                kg_solvent = mass_solvent / 1000.0
+                mol_solute = dT_obs * kg_solvent / (i * Kf_use)
+                M_calc = mass_solute / mol_solute
+                m_calc = mol_solute / kg_solvent
+
+                K_label = "Kf" if "ΔTf" in method else "Kb"
+                prop_label = "frysepunktssænkning" if "ΔTf" in method else "kogepunktselevering"
+
+                st.success(f"**M ≈ {M_calc:.2f} g/mol**")
+                st.markdown(f"""
+**Trin-for-trin ({prop_label}):**
+
+Formel: ΔT = i × {K_label} × m  →  m = ΔT / (i × {K_label})
+
+1. Molalitet: m = {dT_obs:.4f} / ({i:.1f} × {Kf_use:.3f}) = **{m_calc:.4f} mol/kg**
+2. Mol opløst stof: n = m × kg_solvent = {m_calc:.4f} × {kg_solvent:.4f} = **{mol_solute:.6f} mol**
+3. Molarmasse: M = masse / n = {mass_solute:.4f} g / {mol_solute:.6f} mol = **{M_calc:.2f} g/mol**
+""")
+
+            else:  # osmotisk tryk
+                # π = i × (n/V) × R × T  →  n = π×V / (i×R×T)
+                # M = mass / n
+                n_solute = (pi_atm * V_L) / (i * R * T_K)
+                M_calc = mass_solute / n_solute
+                c_calc = n_solute / V_L
+
+                st.success(f"**M ≈ {M_calc:.2f} g/mol**")
+                st.markdown(f"""
+**Trin-for-trin (osmotisk tryk):**
+
+Formel: π = i × c × R × T  →  c = π / (i × R × T)
+
+1. Koncentration: c = {pi_atm:.4f} / ({i:.1f} × 0,08206 × {T_K:.2f}) = **{c_calc:.6f} mol/L**
+2. Mol: n = c × V = {c_calc:.6f} × {V_L:.4f} = **{n_solute:.6f} mol**
+3. Molarmasse: M = {mass_solute:.4f} / {n_solute:.6f} = **{M_calc:.2f} g/mol**
+""")
+                st.caption("💡 Osmotisk tryk giver ofte den mest præcise molarmasse ved høj M (biopolymerer, proteiner).")
+
+        except Exception as exc:
+            st.error(f"Fejl: {exc}")
+
+    st.markdown("---")
+    ex_col1, ex_col2 = st.columns(2)
+    with ex_col1:
+        st.caption("**Eksempel (ΔTf):** 5,00 g ukendt stof i 100 g benzol (Kf=5,12). ΔTf = 0,740°C → M = 5,12×0,1/0,740 / 0,100 = 346 g/mol")
+    with ex_col2:
+        st.caption("**Eksempel (osmose):** 1,00 g protein i 100 mL vand giver π = 2,73 mmHg ved 25°C → c = 2,73/760/(0,08206×298) = 1,47×10⁻⁴ M → M = 1,00/0,0147 = 68.000 g/mol")
+
+    _quick_links([
+        ("Kogepunkt/frysepunkt", "koge-fryse", None),
+        ("Osmotisk tryk", "koge-fryse", None),
+        ("⚖️ Molarmasse", "atoms-molar", "⚖️ Molar Mass"),
+    ])
 
 
 # ---------------------------------------------------------------------------
