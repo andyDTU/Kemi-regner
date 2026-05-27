@@ -250,10 +250,10 @@ def render_search_sidebar():
     if query:
         hits = _search_calculators(query)
         if hits:
-            for entry in hits:
+            for i, entry in enumerate(hits):
                 tab_hint = f"  ›  *{entry['tab']}*" if entry["tab"] else ""
                 label = f"{entry['title']}{tab_hint}"
-                if st.sidebar.button(label, key=f"search_nav_{entry['title']}", help=entry["description"]):
+                if st.sidebar.button(label, key=f"search_nav_{i}_{entry['title']}", help=entry["description"]):
                     st.query_params["page"] = entry["page"]
                     if entry.get("tab"):
                         nav_key = f"nav_{entry['page'].replace('-', '_')}"
@@ -623,13 +623,13 @@ def show_exam_guide_page():
 
         with st.expander(group_label, expanded=True):
             for opgave, tip, beregner, page, tab in tasks_in_group:
+                task_idx = next(i for i, t in enumerate(_EXAM_TASKS) if t[2] == beregner)
                 col_text, col_btn = st.columns([5, 1])
                 with col_text:
                     st.markdown(f"**{opgave}**")
                     st.caption(f"→ {tip}")
                 with col_btn:
-                    btn_key = f"exam_nav_{beregner.replace(' ', '_').replace('(', '').replace(')', '').replace('/', '_')}"
-                    if st.button(f"Åbn →", key=btn_key, use_container_width=True):
+                    if st.button("Åbn →", key=f"exam_nav_{task_idx}", use_container_width=True):
                         st.query_params["page"] = page
                         if tab:
                             st.session_state[f"nav_{page.replace('-', '_')}"] = tab
