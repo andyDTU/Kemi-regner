@@ -271,6 +271,9 @@ def _quick_links(links: list[tuple[str, str, str | None]]) -> None:
 
 def render_search_sidebar():
     """Render a search bar in the sidebar and show navigation results."""
+    if st.session_state.pop("_clear_search", False):
+        st.session_state["sidebar_search_query"] = ""
+
     query = st.sidebar.text_input(
         "🔍 Søg efter beregner",
         key="sidebar_search_query",
@@ -287,8 +290,7 @@ def render_search_sidebar():
                     if entry.get("tab"):
                         nav_key = f"nav_{entry['page'].replace('-', '_')}"
                         st.session_state[nav_key] = entry["tab"]
-                    if "sidebar_search_query" in st.session_state:
-                        st.session_state["sidebar_search_query"] = ""
+                    st.session_state["_clear_search"] = True
                     st.rerun()
         else:
             st.sidebar.caption("Ingen resultater – prøv et andet søgeord.")
