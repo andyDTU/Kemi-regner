@@ -182,6 +182,47 @@ def _search_calculators(query: str) -> list:
     return [e for _, e in results[:6]]
 
 
+_TAB_NAV_CSS = """
+<style>
+.st-key-{key} label[data-testid="stWidgetLabel"] {{
+    position: absolute; width: 1px; height: 1px; padding: 0;
+    margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0;
+}}
+.st-key-{key} [data-testid="stRadio"] div[role="radiogroup"] {{
+    display: flex; flex-wrap: wrap; gap: 0;
+    border-bottom: 2px solid #e2e8f0; margin-bottom: 1rem;
+}}
+.st-key-{key} [data-testid="stRadio"] label[data-baseweb="radio"] {{
+    margin: 0; padding: 0.45rem 1.1rem 0.55rem 1.1rem;
+    border-bottom: 3px solid transparent; margin-bottom: -2px;
+    background: transparent; min-height: 0; cursor: pointer;
+}}
+.st-key-{key} [data-testid="stRadio"] label[data-baseweb="radio"] > div:first-child {{
+    display: none !important;
+}}
+.st-key-{key} [data-testid="stRadio"] label[data-baseweb="radio"] p {{
+    margin: 0; font-size: 0.97rem; color: #4a5568;
+}}
+.st-key-{key} [data-testid="stRadio"] label[data-baseweb="radio"]:has(input:checked) {{
+    border-bottom-color: #ff4b4b;
+}}
+.st-key-{key} [data-testid="stRadio"] label[data-baseweb="radio"]:has(input:checked) p {{
+    color: #ff4b4b; font-weight: 600;
+}}
+</style>
+"""
+
+
+def _render_styled_tab_nav(options: list, key: str, nav_key: str | None = None) -> str:
+    """Render CSS-styled tab navigation from a radio widget. Supports deep-linking via nav_key."""
+    if nav_key and nav_key in st.session_state:
+        target = st.session_state.pop(nav_key)
+        if target in options and key not in st.session_state:
+            st.session_state[key] = target
+    st.markdown(_TAB_NAV_CSS.format(key=key), unsafe_allow_html=True)
+    return st.radio("Tab:", options, key=key, horizontal=True)
+
+
 def render_search_sidebar():
     """Render a search bar in the sidebar and show navigation results."""
     query = st.sidebar.text_input(
@@ -197,6 +238,9 @@ def render_search_sidebar():
                 label = f"{entry['title']}{tab_hint}"
                 if st.sidebar.button(label, key=f"search_nav_{entry['title']}", help=entry["description"]):
                     st.query_params["page"] = entry["page"]
+                    if entry.get("tab"):
+                        nav_key = f"nav_{entry['page'].replace('-', '_')}"
+                        st.session_state[nav_key] = entry["tab"]
                     if "sidebar_search_query" in st.session_state:
                         st.session_state["sidebar_search_query"] = ""
                     st.rerun()
@@ -290,6 +334,11 @@ def show_geometri_page():
     }
     query_to_subpage = {v: k for k, v in subpage_to_query.items()}
 
+    if "nav_geometri" in st.session_state:
+        _nav_target = st.session_state.pop("nav_geometri")
+        if _nav_target in subpage_labels:
+            st.session_state["geo_subpage"] = _nav_target
+
     query_sub_raw = st.query_params.get("geo_tab")
     if isinstance(query_sub_raw, list):
         query_sub_raw = query_sub_raw[0] if query_sub_raw else None
@@ -349,10 +398,12 @@ def show_geometri_page():
         render_bond_enthalpy_tab()
 
 
-def _nav_card(label: str, page: str, description: str, key_suffix: str):
-    """Render a task card that navigates to the given page."""
+def _nav_card(label: str, page: str, description: str, key_suffix: str, tab: str | None = None):
+    """Render a task card that navigates to the given page (and optionally a specific tab)."""
     if st.button(label, key=f"home_card_{key_suffix}", use_container_width=True, help=description):
         st.query_params["page"] = page
+        if tab:
+            st.session_state[f"nav_{page.replace('-', '_')}"] = tab
         st.rerun()
 
 
@@ -370,28 +421,28 @@ def show_fundamentals_page():
     c1, c2, c3, c4 = st.columns(4)
     with c1:
         st.markdown("**🧪 Syrer & Baser**")
-        _nav_card("pH af stærk syre / base", "acids-bases", "HCl, NaOH m.fl. – ioniserer 100%", "sa")
-        _nav_card("pH af svag syre / base", "acids-bases", "Eddikesyre, ammoniak m.fl. – brug Ka / Kb", "wa")
-        _nav_card("Buffer pH", "acids-bases", "Henderson-Hasselbalch, blandingsberegning", "buf")
-        _nav_card("Titrering", "acids-bases", "pH ved titrering – syre + base", "titr")
+        _nav_card("pH af stærk syre / base", "acids-bases", "HCl, NaOH m.fl. – ioniserer 100%", "sa", tab="Strong Acids/Bases")
+        _nav_card("pH af svag syre / base", "acids-bases", "Eddikesyre, ammoniak m.fl. – brug Ka / Kb", "wa", tab="Weak Acids/Bases")
+        _nav_card("Buffer pH", "acids-bases", "Henderson-Hasselbalch, blandingsberegning", "buf", tab="Buffers")
+        _nav_card("Titrering", "acids-bases", "pH ved titrering – syre + base", "titr", tab="Titrations")
     with c2:
         st.markdown("**🧮 Stofmængder & Reaktioner**")
         _nav_card("Molarmasse", "atoms-molar", "Find g/mol for en kemisk forbindelse", "mm")
-        _nav_card("Balancer reaktion", "stoichiometry", "Afstem koefficienterne i en reaktionsligning", "bal")
-        _nav_card("Begrænsende reaktant", "stoichiometry", "Find limiting reagent og teoretisk udbytte", "lr")
-        _nav_card("Fortynding (C₁V₁ = C₂V₂)", "stoichiometry", "Beregn koncentration efter fortynding", "dil")
+        _nav_card("Balancer reaktion", "stoichiometry", "Afstem koefficienterne i en reaktionsligning", "bal", tab="⚖️ Balance Reaction")
+        _nav_card("Begrænsende reaktant", "stoichiometry", "Find limiting reagent og teoretisk udbytte", "lr", tab="🔬 Limiting Reagent & Yields")
+        _nav_card("Fortynding (C₁V₁ = C₂V₂)", "stoichiometry", "Beregn koncentration efter fortynding", "dil", tab="💧 Dilution")
     with c3:
         st.markdown("**🔥 Termokemi**")
-        _nav_card("Enthalpi ΔH", "thermochemistry", "Reaktionsvarme, Hess's lov, dannelsesenthalpi", "dh")
-        _nav_card("Gibbs fri energi ΔG", "thermochemistry", "Spontanitet, ΔG = ΔH − TΔS", "dg")
-        _nav_card("Kalorimetri (q = mcΔT)", "thermochemistry", "Varmeoverførsel og temperaturændring", "cal")
-        _nav_card("Opvarmnings-/afkølingskurve", "thermochemistry", "Energi ved faseovergange", "heat")
+        _nav_card("Enthalpi ΔH", "thermochemistry", "Reaktionsvarme, Hess's lov, dannelsesenthalpi", "dh", tab="Enthalpy change (ΔH°)")
+        _nav_card("Gibbs fri energi ΔG", "thermochemistry", "Spontanitet, ΔG = ΔH − TΔS", "dg", tab="Thermochemistry (Gibbs)")
+        _nav_card("Kalorimetri (q = mcΔT)", "thermochemistry", "Varmeoverførsel og temperaturændring", "cal", tab="Calorimetry (q = m c ΔT)")
+        _nav_card("Opvarmnings-/afkølingskurve", "thermochemistry", "Energi ved faseovergange", "heat", tab="Heating/Cooling Curve")
     with c4:
         st.markdown("**📊 Gasser**")
-        _nav_card("Ideel gaslov PV = nRT", "gases", "Beregn P, V, n eller T", "ig")
-        _nav_card("Daltons lov (partialtryk)", "gases", "Partialtryk i en gasblanding", "dal")
-        _nav_card("Van der Waals", "gases", "Gaslov for reelle gasser", "vdw")
-        _nav_card("Gasstoichiometri", "gases", "Volumen og stofmængder i gasreaktioner", "gst")
+        _nav_card("Ideel gaslov PV = nRT", "gases", "Beregn P, V, n eller T", "ig", tab="Ideal Gas Law")
+        _nav_card("Daltons lov (partialtryk)", "gases", "Partialtryk i en gasblanding", "dal", tab="Dalton's Law")
+        _nav_card("Van der Waals", "gases", "Gaslov for reelle gasser", "vdw", tab="van der Waals")
+        _nav_card("Gasstoichiometri", "gases", "Volumen og stofmængder i gasreaktioner", "gst", tab="Gas Stoichiometry")
 
     st.markdown("---")
 
@@ -399,27 +450,27 @@ def show_fundamentals_page():
     c5, c6, c7, c8 = st.columns(4)
     with c5:
         st.markdown("**⚗️ Ligevægt**")
-        _nav_card("ICE-tabel", "ligevaegt", "Opsæt ICE-tabel og find ligevægtskoncentrationer", "ice")
-        _nav_card("Reaktionskvotient Q", "ligevaegt", "Find Q og afgør reaktionsretning", "rq")
-        _nav_card("Kc / Kp konvertering", "ligevaegt", "Konverter mellem Kc og Kp", "kckp")
-        _nav_card("Le Chatelier's princip", "ligevaegt", "Forudsig ligevægtsforskydning", "lec")
+        _nav_card("ICE-tabel", "ligevaegt", "Opsæt ICE-tabel og find ligevægtskoncentrationer", "ice", tab="🧊 ICE Table")
+        _nav_card("Reaktionskvotient Q", "ligevaegt", "Find Q og afgør reaktionsretning", "rq", tab="📊 Reaktionskvotient Q")
+        _nav_card("Kc / Kp konvertering", "ligevaegt", "Konverter mellem Kc og Kp", "kckp", tab="🔄 Kc/Kp konvertering")
+        _nav_card("Le Chatelier's princip", "ligevaegt", "Forudsig ligevægtsforskydning", "lec", tab="⚖️ Le Chateliers princip")
     with c6:
         st.markdown("**🔋 Elektrokemi**")
-        _nav_card("Cellespænding E°", "electrochemistry", "Standardcellespænding og spontanitet", "ecell")
-        _nav_card("Nernst ligning", "electrochemistry", "E ved ikke-standardbetingelser", "nernst")
-        _nav_card("Faradays lov", "electrochemistry", "Elektrolyse – mængde stof vs. ladning", "farad")
-        _nav_card("Redoxafstemning", "stoichiometry", "Afstem redoxreaktioner med halvreaktioner", "redox")
+        _nav_card("Cellespænding E°", "electrochemistry", "Standardcellespænding og spontanitet", "ecell", tab="Build a Cell")
+        _nav_card("Nernst ligning", "electrochemistry", "E ved ikke-standardbetingelser", "nernst", tab="Nernst")
+        _nav_card("Faradays lov", "electrochemistry", "Elektrolyse – mængde stof vs. ladning", "farad", tab="⚡ Faradays lov")
+        _nav_card("Redoxafstemning", "stoichiometry", "Afstem redoxreaktioner med halvreaktioner", "redox", tab="🔋 Redoxafstemning")
     with c7:
         st.markdown("**🔷 Molekylestruktur**")
-        _nav_card("VSEPR geometri", "geometri", "Molekylegeometri og bindingsvinkler", "vsepr")
-        _nav_card("Lewis struktur", "geometri", "Tegn Lewis-struktur og find formal ladning", "lewis")
-        _nav_card("Intermolekylære kræfter", "geometri", "IMF – hydrogen-, dipol-, Londonbinding", "imf")
-        _nav_card("Elektronkonfiguration", "atoms-molar", "Aufbau, orbital-notation og ions", "ec")
+        _nav_card("VSEPR geometri", "geometri", "Molekylegeometri og bindingsvinkler", "vsepr", tab="🔷 VSEPR – Molekylgeometri")
+        _nav_card("Intermolekylære kræfter", "geometri", "IMF – hydrogen-, dipol-, Londonbinding", "imf", tab="🔗 Intermolekylære kræfter (IMF)")
+        _nav_card("Lewis struktur", "atoms-molar", "Tegn Lewis-struktur og find formal ladning", "lewis", tab="🧷 Lewis-struktur")
+        _nav_card("Elektronkonfiguration", "atoms-molar", "Aufbau, orbital-notation og ions", "ec", tab="⚛️ Elektronkonfiguration og atomradius")
     with c8:
         st.markdown("**🌡️ Andet**")
         _nav_card("Kogepunktselevering / Frysepunkt", "koge-fryse", "Kolligative egenskaber og molalitet", "kf")
         _nav_card("Damptryk (Raoult)", "damptryk", "Damptryk over opløsninger", "vp")
-        _nav_card("Kinetik & halvliv", "kinetics", "Reaktionshastighed, Arrhenius, halvliv", "kin")
+        _nav_card("Kinetik & halvliv", "kinetics", "Reaktionshastighed, Arrhenius, halvliv", "kin", tab="Integrated Rate Law")
         _nav_card("Nuklear henfald", "nuklear", "α/β/γ-henfald og radioaktiv halveringstid", "nuc")
 
     st.markdown("---")
@@ -613,6 +664,10 @@ def show_molar_mass_page():
     if isinstance(query_subpage_raw, list):
         query_subpage_raw = query_subpage_raw[0] if query_subpage_raw else None
     query_subpage = str(query_subpage_raw).strip() if query_subpage_raw else ""
+    if "nav_atoms_molar" in st.session_state:
+        _nav_target = st.session_state.pop("nav_atoms_molar")
+        if _nav_target in subpage_labels:
+            st.session_state["atoms_subpage"] = _nav_target
     if "atoms_subpage" not in st.session_state and query_subpage in query_to_subpage:
         st.session_state["atoms_subpage"] = query_to_subpage[query_subpage]
 
@@ -1216,32 +1271,23 @@ def show_stoichiometry_page():
     st.title("🧮 Balancering og stofmængde")
     st.markdown("---")
     
-    # Create tabs for different stoichiometry calculations
-    tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
-        "⚖️ Balance Reaction",
-        "🔋 Redoxafstemning",
-        "🔬 Limiting Reagent & Yields",
-        "Tung/let opløselighed",
-        "🧭 Reaktionstype",
-        "💧 Dilution"
-    ])
-    
-    with tab1:
+    _st_options = [
+        "⚖️ Balance Reaction", "🔋 Redoxafstemning", "🔬 Limiting Reagent & Yields",
+        "Tung/let opløselighed", "🧭 Reaktionstype", "💧 Dilution",
+    ]
+    _st_active = _render_styled_tab_nav(_st_options, key="stoich_tab", nav_key="nav_stoichiometry")
+
+    if _st_active == "⚖️ Balance Reaction":
         show_reaction_balancing_tab()
-    
-    with tab2:
+    elif _st_active == "🔋 Redoxafstemning":
         show_redox_balancing_tab()
-
-    with tab3:
+    elif _st_active == "🔬 Limiting Reagent & Yields":
         show_limiting_reagent_tab()
-    
-    with tab4:
+    elif _st_active == "Tung/let opløselighed":
         show_salt_solubility_tab()
-
-    with tab5:
+    elif _st_active == "🧭 Reaktionstype":
         show_reaction_type_tab()
-
-    with tab6:
+    elif _st_active == "💧 Dilution":
         show_dilution_tab()
 
 
@@ -1846,12 +1892,13 @@ def show_dilution_tab():
     # Input section
     st.markdown("#### Select the unknown variable:")
     unknown = st.radio(
-        "Unknown:",
-        ["M₁ (Initial concentration)", "V₁ (Initial volume)", 
+        "Ubekendt:",
+        ["M₁ (Initial concentration)", "V₁ (Initial volume)",
          "M₂ (Final concentration)", "V₂ (Final volume)"],
         horizontal=True
     )
-    
+    st.caption("💡 Vælg den størrelse du vil beregne – de øvrige tre kendte værdier skal du indtaste.")
+
     # Create input fields based on selection
     col1, col2 = st.columns(2)
     
@@ -1921,25 +1968,19 @@ def show_acids_bases_page():
     """Display the acids and bases calculator page."""
     st.title("🧪 Acids & Bases Calculator")
     st.markdown("---")
-    
-    # Create tabs for different calculators
-    tab1, tab2, tab3, tab4, tab5 = st.tabs([
-        "Strong Acids/Bases", "Weak Acids/Bases", "Buffers", "Titrations", "📋 pH Calculator"
-    ])
-    
-    with tab1:
-        show_strong_acids_bases_tab()
-    
-    with tab2:
-        show_weak_acids_bases_tab()
-    
-    with tab3:
-        show_buffers_tab()
-    
-    with tab4:
-        show_titrations_tab()
 
-    with tab5:
+    _ab_options = ["Strong Acids/Bases", "Weak Acids/Bases", "Buffers", "Titrations", "📋 pH Calculator"]
+    _ab_active = _render_styled_tab_nav(_ab_options, key="acids_bases_tab", nav_key="nav_acids_bases")
+
+    if _ab_active == "Strong Acids/Bases":
+        show_strong_acids_bases_tab()
+    elif _ab_active == "Weak Acids/Bases":
+        show_weak_acids_bases_tab()
+    elif _ab_active == "Buffers":
+        show_buffers_tab()
+    elif _ab_active == "Titrations":
+        show_titrations_tab()
+    elif _ab_active == "📋 pH Calculator":
         show_pH_calculator_page()
 
 
@@ -2860,6 +2901,11 @@ def show_equilibrium_page():
     }
     query_to_subpage = {v: k for k, v in subpage_to_query.items()}
 
+    if "nav_ligevaegt" in st.session_state:
+        _nav_target = st.session_state.pop("nav_ligevaegt")
+        if _nav_target in subpage_labels:
+            st.session_state["eq_subpage"] = _nav_target
+
     query_sub_raw = st.query_params.get("eq_tab")
     if isinstance(query_sub_raw, list):
         query_sub_raw = query_sub_raw[0] if query_sub_raw else None
@@ -3160,9 +3206,14 @@ def show_solubility_tab():
     mode = st.radio(
         "Calculation mode:",
         ["Solubility from Ksp", "Ksp from solubility"],
-        horizontal=True
+        horizontal=True,
     )
-    
+    _sol_help = {
+        "Solubility from Ksp": "💡 **Hvornår?** Du kender Ksp og vil finde opløseligheden (mol/L) ved ligevægt.",
+        "Ksp from solubility": "💡 **Hvornår?** Du kender opløseligheden (fx fra et eksperiment) og vil beregne Ksp.",
+    }
+    st.info(_sol_help[mode])
+
     if mode == "Solubility from Ksp":
         st.markdown("#### Calculate Solubility from Ksp")
         
@@ -3378,13 +3429,13 @@ def show_gas_laws_page():
         base_mol = value * factors_to_mol[from_unit]
         return base_mol / factors_to_mol[to_unit]
 
-    # Sub-tabs for gases calculators
-    tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
-        "Unit Conversion", "Ideal Gas Law", "Dalton's Law", "Gas Stoichiometry", "van der Waals",
-        "💨 Grahams lov", "🔁 Kombineret gaslov",
-    ])
-    
-    with tab1:
+    _gas_options = [
+        "Unit Conversion", "Ideal Gas Law", "Dalton's Law",
+        "Gas Stoichiometry", "van der Waals", "💨 Grahams lov", "🔁 Kombineret gaslov",
+    ]
+    _gas_active = _render_styled_tab_nav(_gas_options, key="gases_tab", nav_key="nav_gases")
+
+    if _gas_active == "Unit Conversion":
         st.markdown("### 🔁 Unit Conversion")
         st.markdown("Convert between pressure, volume, and temperature units.")
 
@@ -3618,7 +3669,7 @@ def show_gas_laws_page():
                 except Exception as e:
                     st.error(f"❌ **Error**: {str(e)}")
 
-    with tab2:
+    elif _gas_active == "Ideal Gas Law":
         st.markdown("### 🎈 Ideal Gas Law: PV = nRT")
         st.markdown("Calculate any one variable given the other three.")
         
@@ -3688,16 +3739,20 @@ def show_gas_laws_page():
             except Exception as e:
                 st.error(f"❌ **Error**: {str(e)}")
     
-    with tab3:
+    elif _gas_active == "Dalton's Law":
         st.markdown("### 🌊 Dalton's Law of Partial Pressures")
         st.markdown("Calculate partial pressures from moles or mole fractions.")
         
-        # Input method selection
         input_method = st.radio(
             "Input Method:",
             ["Moles", "Mole Fractions"], key="gas_dalton_mode"
         )
-        
+        _dalton_help = {
+            "Moles": "💡 **Hvornår?** Du kender antallet af mol af hvert stof – beregner molfraktion og partialtryk automatisk.",
+            "Mole Fractions": "💡 **Hvornår?** Du kender allerede molfraktionerne (summen skal = 1). Angiv blot det samlede tryk.",
+        }
+        st.info(_dalton_help[input_method])
+
         if input_method == "Moles":
             st.markdown("**Enter species with moles:**")
             num_species = st.number_input("Number of species:", min_value=1, max_value=10, value=2, key="gas_dalton_n_moles")
@@ -3760,7 +3815,7 @@ def show_gas_laws_page():
             except Exception as e:
                 st.error(f"❌ **Error**: {str(e)}")
     
-    with tab4:
+    elif _gas_active == "Gas Stoichiometry":
         st.markdown("### ⚗️ Gas Stoichiometry")
         st.markdown("Calculate limiting reagent and theoretical gas product volume.")
         
@@ -3828,7 +3883,7 @@ def show_gas_laws_page():
                 except Exception as e:
                     st.error(f"❌ **Error**: {str(e)}")
     
-    with tab5:
+    elif _gas_active == "van der Waals":
         st.markdown("### 🔬 van der Waals Equation")
         st.markdown("Calculate pressure using the van der Waals equation for real gases.")
         
@@ -3882,10 +3937,9 @@ def show_gas_laws_page():
             except Exception as e:
                 st.error(f"❌ **Error**: {str(e)}")
 
-    with tab6:
+    elif _gas_active == "💨 Grahams lov":
         render_graham_tab()
-
-    with tab7:
+    elif _gas_active == "🔁 Kombineret gaslov":
         _render_combined_gas_law_tab()
 
 
@@ -4221,15 +4275,12 @@ def show_kinetics_page():
         calculate_arrhenius_two_point_Ea_with_steps,
     )
 
-    tab1, tab2, tab3, tab4 = st.tabs([
-        "Integrated Rate Law",
-        "Determine Order & k",
-        "Arrhenius",
-        "Rate Relationships",
-    ])
+    _kin_options = ["Integrated Rate Law", "Determine Order & k", "Arrhenius", "Rate Relationships"]
+    _kin_active = _render_styled_tab_nav(_kin_options, key="kinetics_tab", nav_key="nav_kinetics")
 
-    with tab1:
+    if _kin_active == "Integrated Rate Law":
         st.markdown("#### Integrated Rate Law")
+        st.caption("💡 Brug dette til at beregne koncentration eller tid for en reaktion af 0., 1. eller 2. orden.")
         order = st.selectbox("Order", [0, 1, 2], index=1)
         unknown = st.selectbox("Unknown", ["Ct", "C0", "k", "t"], index=0)
         C0 = st.number_input("C0 (M)", value=0.100, min_value=0.0)
@@ -4254,7 +4305,7 @@ def show_kinetics_page():
             except Exception as e:
                 st.error(str(e))
 
-    with tab2:
+    elif _kin_active == "Determine Order & k":
         st.markdown("#### Determine Order & k (two-point)")
         col1, col2 = st.columns(2)
         with col1:
@@ -4273,8 +4324,9 @@ def show_kinetics_page():
             except Exception as e:
                 st.error(str(e))
 
-    with tab3:
+    elif _kin_active == "Arrhenius":
         st.markdown("#### Arrhenius")
+        st.caption("💡 **Fremad:** du kender k₁ ved T₁ og Eₐ → beregn k₂ ved T₂. **Baglæns:** du kender k₁ og k₂ → beregn Eₐ.")
         st.markdown("Single-point forward")
         k1 = st.number_input("k1 (s^-1)", value=1.0e-3, format="%.6e")
         T1 = st.number_input("T1 (K)", value=298.15)
@@ -4301,7 +4353,7 @@ def show_kinetics_page():
             except Exception as e:
                 st.error(str(e))
 
-    with tab4:
+    elif _kin_active == "Rate Relationships":
         st.markdown("#### Rate Relationships by Stoichiometry")
         st.info("Given a balanced reaction aA + bB -> cC + dD, rates relate as −(1/a)d[A]/dt = −(1/b)d[B]/dt = (1/c)d[C]/dt …")
 
@@ -4326,15 +4378,10 @@ def show_electrochemistry_page():
         match_candidate_potential_value,
     )
 
-    tab1, tab2, tab3, tab4, tab5_faraday = st.tabs([
-        "Build a Cell",
-        "Nernst",
-        "ΔG and K",
-        "Redox Thermodynamics",
-        "⚡ Faradays lov",
-    ])
+    _ec_options = ["Build a Cell", "Nernst", "ΔG and K", "Redox Thermodynamics", "⚡ Faradays lov"]
+    _ec_active = _render_styled_tab_nav(_ec_options, key="electro_tab", nav_key="nav_electrochemistry")
 
-    with tab1:
+    if _ec_active == "Build a Cell":
         from core.electrochem import load_reduction_potentials
         df = load_reduction_potentials()
         cath = st.selectbox("Cathode (reduction)", df['half_reaction'].tolist(), key="electro_cath")
@@ -4349,7 +4396,7 @@ def show_electrochemistry_page():
             except Exception as e:
                 st.error(str(e))
 
-    with tab2:
+    elif _ec_active == "Nernst":
         st.markdown("#### Nernst Calculator")
         E0 = st.number_input("E°cell (V)", value=1.10, key="nernst_E0")
         n = st.number_input("n (electrons)", value=2, min_value=1, key="nernst_n")
@@ -4369,7 +4416,7 @@ def show_electrochemistry_page():
             except Exception as e:
                 st.error(str(e))
 
-    with tab3:
+    elif _ec_active == "ΔG and K":
         st.markdown("#### ΔG° and K")
         n = st.number_input("n (electrons)", value=2, min_value=1, key="g_n")
         E0 = st.number_input("E°cell (V)", value=1.10, format="%.4f", key="g_E0")
@@ -4394,7 +4441,7 @@ def show_electrochemistry_page():
             except Exception as e:
                 st.error(str(e))
 
-    with tab4:
+    elif _ec_active == "Redox Thermodynamics":
         st.markdown("### Redox, ΔG°, E°cell and K")
         st.caption("Eksamensvenlig redox-termokemi med tydelige mellemregninger og enhedskontrol.")
 
@@ -4723,7 +4770,7 @@ def show_electrochemistry_page():
             except Exception as exc:
                 st.error(str(exc))
 
-    with tab5_faraday:
+    elif _ec_active == "⚡ Faradays lov":
         _render_faraday_tab()
 
 
@@ -4780,11 +4827,17 @@ def _render_faraday_tab():
             n_e = st.number_input("Elektroner per ion n:", value=int(n_preset), min_value=1, step=1, key="far_n")
 
         unknown = st.radio(
-            "Ubekendt:",
+            "Hvad vil du beregne?",
             ["m — masse afsat (g)", "I — strøm (A)", "t — tid"],
             key="far_unknown",
             horizontal=True,
         )
+        _far_help = {
+            "m — masse afsat (g)": "💡 Brug Faradays lov: m = (I · t · M) / (n · F). Du kender strøm, tid og stof.",
+            "I — strøm (A)": "💡 Omvendt beregning – du kender masse, tid og stof, finder strømmen.",
+            "t — tid": "💡 Omvendt beregning – du kender masse, strøm og stof, finder den nødvendige tid.",
+        }
+        st.caption(_far_help[unknown])
 
         c1, c2 = st.columns(2)
         with c1:
