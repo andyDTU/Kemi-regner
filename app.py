@@ -251,16 +251,19 @@ def _render_styled_tab_nav(options: list, key: str, nav_key: str | None = None) 
     return st.radio("Tab:", options, key=key, horizontal=True)
 
 
-def _quick_links(links: list[tuple[str, str, str | None]]) -> None:
+def _quick_links(links: list[tuple[str, str, str | None]], ctx: str = "") -> None:
     """Render a 'Se også' shortcut bar with links to related calculators.
 
-    Each entry is (label, page, tab_or_None).
+    Each entry is (label, page, tab_or_None). Pass ctx= when multiple
+    _quick_links calls share the same page/tab combos (e.g. inside st.tabs()).
     """
     st.markdown("---")
     st.caption("📎 **Se også:**")
     cols = st.columns(len(links))
     for col, (label, page, tab) in zip(cols, links):
-        key = f"ql_{page}_{(tab or '').replace(' ', '_').replace('/', '_')}"
+        tab_safe = (tab or "").replace(" ", "_").replace("/", "_")
+        label_safe = label[:12].replace(" ", "_").replace("/", "_")
+        key = f"ql_{ctx}_{label_safe}_{page}_{tab_safe}"
         with col:
             if st.button(label, key=key, use_container_width=True):
                 page_label = PAGE_QUERY_TO_LABEL.get(page, "🏠 Fundamentals")
@@ -6036,7 +6039,7 @@ def show_thermochemistry_page():
         _quick_links([
             ("Enthalpi (ΔH°)", "thermochemistry", None),
             ("Gibbs (ΔG)", "thermochemistry", None),
-        ])
+        ], ctx="thermo_cal")
 
     with tab_heating:
         st.markdown("#### Opvarmningskurve (vand)")
@@ -6465,7 +6468,7 @@ K₂ = e^{lnK_new:.4f} = **{K_new:.4e}**
         ("Gibbs (ΔG)", "thermochemistry", None),
         ("Ligevægt / ICE", "ligevaegt", "🧊 ICE Table"),
         ("Kc/Kp", "ligevaegt", "🔄 Kc/Kp konvertering"),
-    ])
+    ], ctx="vanthoff")
 
 
 def _show_kirchhoff_tab():
@@ -6562,7 +6565,7 @@ def _show_kirchhoff_tab():
         ("Enthalpi ΔH°", "thermochemistry", None),
         ("Gibbs (ΔG)", "thermochemistry", None),
         ("📈 Van't Hoff-plot", "thermochemistry", None),
-    ])
+    ], ctx="kirchhoff")
 
 
 def _show_born_haber_tab():
@@ -6670,7 +6673,7 @@ def _show_born_haber_tab():
         ("Enthalpi ΔH°", "thermochemistry", None),
         ("Gibbs (ΔG)", "thermochemistry", None),
         ("🌡️ Kirchhoffs lov", "thermochemistry", None),
-    ])
+    ], ctx="bornhaber")
 
 
 def show_colligatives_page():
