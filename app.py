@@ -234,7 +234,7 @@ def _render_styled_tab_nav(options: list, key: str, nav_key: str | None = None) 
     """Render CSS-styled tab navigation from a radio widget. Supports deep-linking via nav_key."""
     if nav_key and nav_key in st.session_state:
         target = st.session_state.pop(nav_key)
-        if target in options and key not in st.session_state:
+        if target in options:
             st.session_state[key] = target
     st.markdown(_TAB_NAV_CSS.format(key=key), unsafe_allow_html=True)
     return st.radio("Tab:", options, key=key, horizontal=True)
