@@ -179,6 +179,10 @@ SEARCH_INDEX = [
     {"title": "Van't Hoff-plot", "keywords": ["van't hoff", "vant hoff", "lnk vs 1/t", "delta h fra k", "delta s fra k", "k ved to temperaturer", "hældning lnk", "reaktionsentalpi fra k", "temperaturafhængig k", "van hoff plot"], "page": "thermochemistry", "tab": None, "description": "Find ΔH° og ΔS° fra K-værdier ved to temperaturer – hældning og skæringspunkt i lnK vs. 1/T"},
     {"title": "Kirchhoffs lov", "keywords": ["kirchhoff", "kirchhoffs lov", "delta h ved anden temperatur", "temperaturkorrektions", "delta cp", "varmekaps", "delta h 500k", "reaktionsenthalpi ved t"], "page": "thermochemistry", "tab": None, "description": "ΔH°(T₂) = ΔH°(T₁) + ΔCp×ΔT – korriger entalpien til anden temperatur"},
     {"title": "Molarmasse fra kolligative egenskaber", "keywords": ["molarmasse fra deltaT", "molarmasse fra osmose", "ukendt molarmasse", "find M fra frysepunkt", "find M fra kogepunkt", "baglæns kolligativ", "osmotisk tryk molarmasse", "protein molarmasse"], "page": "koge-fryse", "tab": None, "description": "Find molarmasse fra ΔTf, ΔTb eller osmotisk tryk – klassisk analyseopgave"},
+    {"title": "Bufferkapacitet β", "keywords": ["bufferkapacitet", "buffer kapacitet", "beta buffer", "van slyke", "β buffer", "maksimal buffer", "modstandsevne syre base", "buffer robusthed"], "page": "acids-bases", "tab": "Buffer", "description": "β = 2,303×C×Ka×[H⁺]/(Ka+[H⁺])² – bufferens modstandsevne mod pH-ændring"},
+    {"title": "Debye-Hückel aktivitetskoefficent", "keywords": ["debye huckel", "debye-hückel", "aktivitetskoefficent", "gamma", "γ±", "ionsstyrke", "ionisk styrke", "aktivitet", "log gamma", "nicht-ideale opløsning", "koncentration vs aktivitet"], "page": "acids-bases", "tab": "🧮 Debye-Hückel", "description": "log γ± = −A|z+z−|√I – aktivitetskorrektion for ionopløsninger"},
+    {"title": "Born-Haber cyklus / Gitterenthalpi", "keywords": ["born haber", "born-haber", "gitterenthalpi", "lattice energy", "ionisk bindingsenergi", "sublimation", "ioniseringsenergi", "elektronaffinitet", "hess ionisk", "dannnelsesenthalpi ionisk", "salt krystal enthalpi"], "page": "thermochemistry", "tab": "🔷 Born-Haber", "description": "Beregn gitterenthalpi via Born-Haber cyklus – Hess' lov for ioniske salte"},
+    {"title": "Stofmænge fra reaktionsligning", "keywords": ["stofmænge", "molforhold", "koefficient", "beregn mol fra ligning", "stoichiometrisk beregning", "omregn mol", "mole ratio", "reaktantmol til produktmol", "n fra reaktion"], "page": "stoichiometry", "tab": "🔢 Stofmænge fra ligning", "description": "n_B = n_A × (ν_B/ν_A) – koefficient-baseret stofmængeomregning fra afstemt ligning"},
     {"title": "ICE-tabel / ligevægt", "keywords": ["ice tabel", "ice-tabel", "opstil ice", "opsæt ice", "ligevægtskoncentration", "beregn kc", "beregn kp"], "page": "ligevaegt", "tab": "🧊 ICE Table", "description": "ICE-tabel og ligevægtskoncentrationer"},
     {"title": "Q vs K – reaktionsretning", "keywords": ["reaktionskvotient", "q vs k", "hvilken retning", "går reaktionen frem", "går reaktionen tilbage", "forskydning"], "page": "ligevaegt", "tab": "📊 Reaktionskvotient Q", "description": "Beregn Q og sammenlign med K"},
     {"title": "Eksamensguide", "keywords": ["eksamensguide", "eksamen", "guide", "hjælp", "opgave", "hvilken beregner", "hvad skal jeg bruge"], "page": "eksamensguide", "tab": None, "description": "Oversigt over opgavetyper og hvilken beregner de kræver"},
@@ -473,8 +477,8 @@ def show_fundamentals_page():
         st.markdown("**🧮 Stofmængder & Reaktioner**")
         _nav_card("Molarmasse", "atoms-molar", "Find g/mol for en kemisk forbindelse", "mm")
         _nav_card("🔬 Empirisk formel", "atoms-molar", "Find formel fra %C, %H, %O – elementaranalyse", "ef", tab="🔬 Empirisk formel")
+        _nav_card("🔢 Stofmænge fra ligning", "stoichiometry", "n_B = n_A × (ν_B/ν_A) – koefficient omregning", "sfl", tab="🔢 Stofmænge fra ligning")
         _nav_card("Begrænsende reaktant", "stoichiometry", "Find limiting reagent og teoretisk udbytte", "lr", tab="🔬 Begrænsende reaktant")
-        _nav_card("Fortynding (C₁V₁ = C₂V₂)", "stoichiometry", "Beregn koncentration efter fortynding", "dil", tab="💧 Fortynding")
     with c3:
         st.markdown("**🔥 Termokemi**")
         _nav_card("Enthalpi ΔH", "thermochemistry", "Reaktionsvarme, Hess's lov, dannelsesenthalpi", "dh", tab="Enthalpi (ΔH°)")
@@ -511,11 +515,11 @@ def show_fundamentals_page():
         _nav_card("Lewis struktur", "atoms-molar", "Tegn Lewis-struktur og find formal ladning", "lewis", tab="🧷 Lewis-struktur")
         _nav_card("Elektronkonfiguration", "atoms-molar", "Aufbau, orbital-notation og ions", "ec", tab="⚛️ Elektronkonfiguration og atomradius")
     with c8:
-        st.markdown("**🌡️ Andet**")
+        st.markdown("**🌡️ Avancerede emner**")
         _nav_card("📈 Van't Hoff-plot", "thermochemistry", "ΔH° og ΔS° fra K ved to temperaturer", "vhp")
         _nav_card("🌡️ Kirchhoffs lov", "thermochemistry", "ΔH°(T₂) = ΔH°(T₁) + ΔCp·ΔT", "khl")
-        _nav_card("🔬 M fra kolligative egensk.", "koge-fryse", "Molarmasse fra ΔTf, ΔTb eller osmotisk tryk", "mce")
-        _nav_card("Nuklear henfald", "nuklear", "α/β/γ-henfald og radioaktiv halveringstid", "nuc")
+        _nav_card("🔷 Born-Haber cyklus", "thermochemistry", "Gitterenthalpi for ioniske salte via Hess' lov", "bh")
+        _nav_card("🧮 Debye-Hückel", "acids-bases", "Aktivitetskoefficenter – log γ± = −A|z+z−|√I", "dh2", tab="🧮 Debye-Hückel")
 
     st.markdown("---")
     st.caption("💡 Tip: Søg i sidepanelet øverst for at finde en specifik beregner hurtigt.")
@@ -1635,7 +1639,7 @@ def show_stoichiometry_page():
     
     _st_options = [
         "⚖️ Balancer reaktion", "🔋 Redoxafstemning", "🔬 Begrænsende reaktant",
-        "Tung/let opløselighed", "🧭 Reaktionstype", "💧 Fortynding",
+        "🔢 Stofmænge fra ligning", "Tung/let opløselighed", "🧭 Reaktionstype", "💧 Fortynding",
     ]
     _st_active = _render_styled_tab_nav(_st_options, key="stoich_tab", nav_key="nav_stoichiometry")
 
@@ -1658,6 +1662,13 @@ def show_stoichiometry_page():
             ("💧 Fortynding", "stoichiometry", "💧 Fortynding"),
             ("⚖️ Balancer reaktion", "stoichiometry", "⚖️ Balancer reaktion"),
         ])
+    elif _st_active == "🔢 Stofmænge fra ligning":
+        _show_stofmaengde_tab()
+        _quick_links([
+            ("🔬 Begrænsende reaktant", "stoichiometry", "🔬 Begrænsende reaktant"),
+            ("⚖️ Balancer reaktion", "stoichiometry", "⚖️ Balancer reaktion"),
+            ("⚖️ Molarmasse", "atoms-molar", None),
+        ])
     elif _st_active == "Tung/let opløselighed":
         show_salt_solubility_tab()
     elif _st_active == "🧭 Reaktionstype":
@@ -1668,6 +1679,132 @@ def show_stoichiometry_page():
             ("🔬 Begrænsende reaktant", "stoichiometry", "🔬 Begrænsende reaktant"),
             ("⚖️ Molarmasse", "atoms-molar", None),
         ])
+
+
+def _show_stofmaengde_tab():
+    """Stofmængeberegning fra reaktionsligning – koefficient-baseret omregning."""
+    import re
+    st.markdown("### 🔢 Stofmængeberegning fra reaktionsligning")
+    st.markdown(
+        "Givet en **afstemt reaktionsligning** kan du omregne stofmængden af ét stof til stofmængden af et andet "
+        "vha. **koefficientsforholdet** (det molare forhold)."
+    )
+    st.latex(r"n_B = n_A \times \frac{\nu_B}{\nu_A}")
+
+    st.markdown("#### Reaktionsligning")
+    rxn_input = st.text_input(
+        "Skriv afstemt reaktionsligning:",
+        value="2 H2 + O2 → 2 H2O",
+        key="stof_rxn",
+        help="Eksempel: 2 H2 + O2 → 2 H2O  eller  N2 + 3 H2 → 2 NH3",
+    )
+
+    def parse_rxn(rxn_str):
+        rxn_str = rxn_str.replace("->", "→").replace("=", "→")
+        if "→" not in rxn_str:
+            return None, "Mangler pil (→ eller ->)"
+        sides = rxn_str.split("→", 1)
+        species = {}
+        for side_sign, side_str in [(1, sides[1].strip()), (-1, sides[0].strip())]:
+            for part in re.split(r"\s*\+\s*", side_str):
+                part = part.strip()
+                if not part:
+                    continue
+                m = re.match(r"^(\d+(?:\.\d+)?)\s*(.+)$", part)
+                if m:
+                    coeff = float(m.group(1))
+                    name = m.group(2).strip()
+                else:
+                    coeff = 1.0
+                    name = part
+                label = ("→ " if side_sign > 0 else "") + name
+                species[label] = coeff
+        return species, None
+
+    species_map, err = parse_rxn(rxn_input)
+
+    if err:
+        st.error(f"❌ {err}")
+        return
+
+    if not species_map or len(species_map) < 2:
+        st.warning("Angiv mindst to stoffer i ligningen.")
+        return
+
+    names = list(species_map.keys())
+    coeffs = list(species_map.values())
+
+    col1, col2 = st.columns(2)
+    with col1:
+        src_label = st.selectbox("Kendt stof (kilde):", names, key="stof_src")
+        n_src = st.number_input(
+            f"Stofmængde af {src_label.replace('→ ', '')} (mol):",
+            value=1.0, min_value=0.0, step=0.1, key="stof_n_src",
+        )
+        input_mode = st.radio("Eller beregn fra:", ["Stofmængde (mol)", "Masse (g)", "Volumen af gas (L ved STP)"],
+                               key="stof_input_mode")
+        if input_mode == "Masse (g)":
+            m_src = st.number_input("Masse (g):", value=2.0, min_value=0.0, key="stof_m_src")
+            M_src = st.number_input("Molarmasse kilde (g/mol):", value=2.016, min_value=0.1, key="stof_M_src")
+            n_src = m_src / M_src
+            st.info(f"n = {m_src:.3f} g / {M_src:.3f} g/mol = **{n_src:.4f} mol**")
+        elif input_mode == "Volumen af gas (L ved STP)":
+            V_src = st.number_input("Volumen (L):", value=22.4, min_value=0.0, key="stof_V_src")
+            n_src = V_src / 22.414
+            st.info(f"n = {V_src:.3f} L / 22,414 L/mol = **{n_src:.4f} mol**")
+
+    with col2:
+        tgt_label = st.selectbox("Ukendt stof (mål):", [n for n in names if n != src_label], key="stof_tgt")
+        output_mode = st.radio("Vis resultat som:", ["Stofmængde (mol)", "Masse (g)", "Volumen af gas (L ved STP)"],
+                                key="stof_output_mode")
+        if output_mode == "Masse (g)":
+            M_tgt = st.number_input("Molarmasse mål (g/mol):", value=18.015, min_value=0.1, key="stof_M_tgt")
+        elif output_mode == "Volumen af gas (L ved STP)":
+            pass
+
+    if st.button("Beregn", type="primary", key="stof_calc"):
+        nu_src = species_map[src_label]
+        nu_tgt = species_map[tgt_label]
+        n_tgt = n_src * (nu_tgt / nu_src)
+
+        src_name = src_label.replace("→ ", "")
+        tgt_name = tgt_label.replace("→ ", "")
+
+        st.success(f"✅ **n({tgt_name}) = {n_tgt:.4f} mol**")
+
+        if output_mode == "Masse (g)":
+            m_tgt = n_tgt * M_tgt
+            st.success(f"⚖️ **m({tgt_name}) = {n_tgt:.4f} × {M_tgt:.3f} = {m_tgt:.4f} g**")
+        elif output_mode == "Volumen af gas (L ved STP)":
+            V_tgt = n_tgt * 22.414
+            st.success(f"💨 **V({tgt_name}) = {n_tgt:.4f} × 22,414 = {V_tgt:.4f} L ved STP**")
+
+        with st.expander("🔍 Trin-for-trin", expanded=True):
+            st.markdown(f"""
+**Reaktionsligning:** {rxn_input}
+
+| Stof | Koefficient ν |
+|------|--------------|
+| {src_name} (kilde) | {nu_src:.0f} |
+| {tgt_name} (mål) | {nu_tgt:.0f} |
+
+1. Molvægtforhold: ν({tgt_name}) / ν({src_name}) = {nu_tgt:.0f} / {nu_src:.0f} = **{nu_tgt/nu_src:.4f}**
+2. n({tgt_name}) = n({src_name}) × (ν({tgt_name}) / ν({src_name}))
+   = {n_src:.4f} mol × {nu_tgt/nu_src:.4f} = **{n_tgt:.4f} mol**
+""")
+
+    st.markdown("---")
+    st.markdown("**Eksempler:**")
+    ex_data = {
+        "Reaktion": ["2 H₂ + O₂ → 2 H₂O", "N₂ + 3 H₂ → 2 NH₃", "CH₄ + 2 O₂ → CO₂ + 2 H₂O"],
+        "Forklaring": [
+            "2 mol H₂ giver 2 mol H₂O (1:1 forhold)",
+            "3 mol H₂ giver 2 mol NH₃",
+            "1 mol CH₄ forbrænder med 2 mol O₂",
+        ],
+    }
+    import pandas as pd
+    st.dataframe(pd.DataFrame(ex_data), hide_index=True, use_container_width=True)
 
 
 def show_salt_solubility_tab():
@@ -2348,7 +2485,7 @@ def show_acids_bases_page():
     st.title("🧪 Acids & Bases Calculator")
     st.markdown("---")
 
-    _ab_options = ["Stærk syre/base", "Svag syre/base", "⚗️ Salthydrolyse", "Buffer", "Titrering", "📋 pH-beregner"]
+    _ab_options = ["Stærk syre/base", "Svag syre/base", "⚗️ Salthydrolyse", "Buffer", "Titrering", "🧮 Debye-Hückel", "📋 pH-beregner"]
     _ab_active = _render_styled_tab_nav(_ab_options, key="acids_bases_tab", nav_key="nav_acids_bases")
 
     if _ab_active == "Stærk syre/base":
@@ -2383,6 +2520,13 @@ def show_acids_bases_page():
         _quick_links([
             ("Stærk syre/base", "acids-bases", "Stærk syre/base"),
             ("Svag syre/base", "acids-bases", "Svag syre/base"),
+            ("Buffer", "acids-bases", "Buffer"),
+        ])
+    elif _ab_active == "🧮 Debye-Hückel":
+        _show_debye_huckel_tab()
+        _quick_links([
+            ("Svag syre/base", "acids-bases", "Svag syre/base"),
+            ("⚗️ Salthydrolyse", "acids-bases", "⚗️ Salthydrolyse"),
             ("Buffer", "acids-bases", "Buffer"),
         ])
     elif _ab_active == "📋 pH-beregner":
@@ -2608,6 +2752,135 @@ def show_strong_acids_bases_tab():
                 st.error(f"❌ **Fejl**: {str(e)}")
 
 
+def _show_debye_huckel_tab():
+    """Debye-Hückel aktivitetskoefficent – DTU 26021 relevant."""
+    import math
+    st.markdown("### 🧮 Debye-Hückel – aktivitetskoefficenter")
+    st.latex(r"\log \gamma_\pm = -A |z_+ z_-| \sqrt{I}")
+    st.markdown(
+        "Aktivitetskoefficienten γ± korrigerer for ioniske interaktioner i opløsninger med høj ionsstyrke. "
+        "**Gyldigt for I < 0,01 M** (forenklet Debye-Hückel). Den udvidede form er gyldig op til I ≈ 0,1 M."
+    )
+
+    mode_dh = st.radio(
+        "Beregningstype:",
+        ["Simpel Debye-Hückel (lav I)", "Udvidet Debye-Hückel", "Beregn ionsstyrke I"],
+        horizontal=True, key="dh_mode",
+    )
+
+    A = 0.509  # 25°C, vand
+    B = 3.281  # nm⁻¹
+
+    if mode_dh in ["Simpel Debye-Hückel (lav I)", "Udvidet Debye-Hückel"]:
+        col1, col2 = st.columns(2)
+        with col1:
+            z_plus = st.number_input("Ladning z₊ (kation):", value=1, min_value=1, max_value=4, step=1, key="dh_zp")
+            z_minus = st.number_input("Ladning |z₋| (anion):", value=1, min_value=1, max_value=4, step=1, key="dh_zm")
+            I_val = st.number_input("Ionsstyrke I (mol/L):", value=0.01, min_value=1e-6, format="%.4f", step=0.001, key="dh_I")
+        with col2:
+            if mode_dh == "Udvidet Debye-Hückel":
+                a_ion = st.number_input(
+                    "Ionparameter a (nm):", value=0.3, min_value=0.1, max_value=1.0, step=0.05, key="dh_a",
+                    help="Typiske værdier: Na⁺≈0,4, K⁺≈0,3, Ca²⁺≈0,6, Cl⁻≈0,3 nm",
+                )
+            st.markdown("**Konstanter (25°C, H₂O):**")
+            st.markdown(f"- A = {A}")
+            st.markdown(f"- B = {B} nm⁻¹")
+
+        if st.button("Beregn γ±", type="primary", key="dh_calc"):
+            sqrt_I = math.sqrt(I_val)
+            if mode_dh == "Simpel Debye-Hückel (lav I)":
+                log_gamma = -A * abs(z_plus * z_minus) * sqrt_I
+                denom_str = ""
+                formula_note = "Simpel Debye-Hückel"
+            else:
+                denom = 1 + B * a_ion * sqrt_I
+                log_gamma = -A * abs(z_plus * z_minus) * sqrt_I / denom
+                denom_str = f" / (1 + {B}×{a_ion}×{sqrt_I:.4f})"
+                formula_note = "Udvidet Debye-Hückel"
+
+            gamma = 10 ** log_gamma
+
+            st.success(f"✅ **log γ± = {log_gamma:.4f}** → **γ± = {gamma:.4f}**")
+
+            with st.expander("🔍 Trin-for-trin", expanded=True):
+                st.markdown(f"""
+**{formula_note}**
+
+1. |z₊ × z₋| = |{z_plus} × {z_minus}| = **{abs(z_plus * z_minus)}**
+2. √I = √{I_val:.4f} = **{sqrt_I:.4f}**
+3. log γ± = −{A} × {abs(z_plus * z_minus)} × {sqrt_I:.4f}{denom_str} = **{log_gamma:.4f}**
+4. γ± = 10^({log_gamma:.4f}) = **{gamma:.4f}**
+
+**Fortolkning:** γ± = {gamma:.4f} betyder, at den effektive koncentration (aktivitet) er {gamma*100:.1f}% af den nominelle koncentration.
+""")
+
+            if I_val > 0.1 and mode_dh == "Simpel Debye-Hückel (lav I)":
+                st.warning("⚠️ I > 0,1 M – simpel Debye-Hückel er ikke præcis ved denne ionsstyrke. Brug udvidet form.")
+            elif I_val > 0.5:
+                st.warning("⚠️ I > 0,5 M – Debye-Hückel er generelt ikke gyldig. Brug Pitzer-modellen.")
+
+            st.markdown("---")
+            st.markdown("**Aktivitet a± = γ± × c/c°**  \nBrug γ± til at korrigere Ka, Ksp mv. for ionstyrkeeffekter.")
+
+    else:  # Beregn ionsstyrke
+        st.markdown("#### Beregn ionsstyrke I fra ionsammensætning")
+        st.latex(r"I = \frac{1}{2} \sum_i c_i z_i^2")
+        st.markdown("Tilføj ioner med deres koncentration og ladning:")
+
+        if "dh_ions" not in st.session_state:
+            st.session_state["dh_ions"] = [
+                {"name": "Na⁺", "c": 0.10, "z": 1},
+                {"name": "Cl⁻", "c": 0.10, "z": 1},
+            ]
+
+        col_add, col_reset = st.columns([3, 1])
+        with col_add:
+            if st.button("➕ Tilføj ion", key="dh_add_ion"):
+                st.session_state["dh_ions"].append({"name": "", "c": 0.01, "z": 1})
+        with col_reset:
+            if st.button("↩️ Nulstil", key="dh_reset_ions"):
+                st.session_state["dh_ions"] = [
+                    {"name": "Na⁺", "c": 0.10, "z": 1},
+                    {"name": "Cl⁻", "c": 0.10, "z": 1},
+                ]
+
+        ions = st.session_state["dh_ions"]
+        for i, ion in enumerate(ions):
+            c1, c2, c3 = st.columns([2, 2, 1])
+            with c1:
+                ion["name"] = st.text_input(f"Ion {i+1}", value=ion["name"], key=f"dh_ion_name_{i}")
+            with c2:
+                ion["c"] = st.number_input(f"c (M)", value=ion["c"], min_value=0.0, step=0.001,
+                                            format="%.4f", key=f"dh_ion_c_{i}")
+            with c3:
+                ion["z"] = st.number_input(f"|z|", value=ion["z"], min_value=1, max_value=4, step=1,
+                                            key=f"dh_ion_z_{i}")
+
+        I_calc = 0.5 * sum(ion["c"] * ion["z"] ** 2 for ion in ions)
+        st.metric("Ionsstyrke I", f"{I_calc:.4f} mol/L")
+
+        terms = " + ".join(f"{ion['c']:.4f}×{ion['z']}²" for ion in ions if ion["name"])
+        st.markdown(f"I = ½ × ({terms}) = **{I_calc:.4f} mol/L**")
+
+        if I_calc < 0.01:
+            st.success("✅ Simpel Debye-Hückel er præcis (I < 0,01 M)")
+        elif I_calc < 0.1:
+            st.info("ℹ️ Brug udvidet Debye-Hückel (0,01 < I < 0,1 M)")
+        else:
+            st.warning("⚠️ I > 0,1 M – Debye-Hückel er usikker")
+
+    st.markdown("---")
+    st.markdown("**Referencetabel – typiske ionparametre a (nm):**")
+    ref_data = {
+        "Ion": ["H⁺", "Li⁺", "Na⁺", "K⁺, NH₄⁺", "Ca²⁺, Cu²⁺, Zn²⁺", "Mg²⁺, Be²⁺", "Al³⁺, Fe³⁺", "F⁻, OH⁻", "Cl⁻, Br⁻, I⁻", "SO₄²⁻"],
+        "z": [1, 1, 1, 1, 2, 2, 3, 1, 1, 2],
+        "a (nm)": [0.9, 0.6, 0.4, 0.3, 0.6, 0.8, 0.9, 0.35, 0.3, 0.4],
+    }
+    import pandas as pd
+    st.dataframe(pd.DataFrame(ref_data), hide_index=True, use_container_width=True)
+
+
 def show_weak_acids_bases_tab():
     """Display the weak acids/bases tab."""
     st.markdown("### 🥶 Weak Acids & Bases")
@@ -2775,13 +3048,14 @@ def show_buffers_tab():
     # Mode selection
     mode = st.radio(
         "Buffer calculation mode:",
-        ["Known concentrations", "Mixing solutions", "Target pH"],
+        ["Known concentrations", "Mixing solutions", "Target pH", "📊 Bufferkapacitet β"],
         horizontal=True
     )
     _buffer_help = {
         "Known concentrations": "💡 **Hvornår?** Du kender allerede [HA] og [A⁻] i opløsningen og vil finde pH via Henderson-Hasselbalch.",
         "Mixing solutions": "💡 **Hvornår?** Du blander en syreløsning og en baseløsning og vil finde pH af den resulterende buffer.",
         "Target pH": "💡 **Hvornår?** Du ved hvilken pH du ønsker, og vil finde det rette forhold mellem syre og base.",
+        "📊 Bufferkapacitet β": "💡 **Hvornår?** Du vil beregne, hvor meget syre/base bufferen kan optage uden stor pH-ændring. β er maksimal ved pH = pKa.",
     }
     st.info(_buffer_help[mode])
     
@@ -2842,7 +3116,7 @@ def show_buffers_tab():
             except Exception as e:
                 st.error(f"❌ **Fejl**: {str(e)}")
     
-    else:  # Target pH
+    elif mode == "Target pH":
         st.markdown("#### Target Buffer pH")
         target_ph = st.number_input("Target pH:", value=5.0, step=0.1, min_value=0.0, max_value=14.0, key="buf_target_ph")
         pka = st.number_input("pKa value:", value=4.74, step=0.01, key="buf_target_pka")
@@ -2862,6 +3136,55 @@ def show_buffers_tab():
             
             except Exception as e:
                 st.error(f"❌ **Fejl**: {str(e)}")
+
+    elif mode == "📊 Bufferkapacitet β":
+        import math
+        st.markdown("#### 📊 Bufferkapacitet β")
+        st.latex(r"\beta = 2{,}303 \left( \frac{K_w}{[H^+]} + [H^+] + \frac{C \cdot K_a \cdot [H^+]}{(K_a + [H^+])^2} \right)")
+        st.markdown(
+            "β (mol/L·pH-enhed) angiver, hvor mange mol stærk syre eller base der skal til for at ændre pH med 1 enhed. "
+            "**Maksimal β opnås ved pH = pKa.**"
+        )
+        col1, col2 = st.columns(2)
+        with col1:
+            C_buf = st.number_input("Samlet bufferkoncentration C (M):", value=0.10, min_value=1e-6, step=0.01, key="buf_beta_C",
+                                    help="C = [HA] + [A⁻]")
+            Ka_b = st.number_input("Ka:", value=1.8e-5, min_value=1e-14, format="%.2e", step=1e-6, key="buf_beta_ka")
+        with col2:
+            pH_b = st.number_input("pH:", value=4.74, min_value=0.0, max_value=14.0, step=0.01, key="buf_beta_ph")
+
+        if st.button("Beregn β", type="primary", key="buf_beta_calc"):
+            KW = 1e-14
+            H = 10 ** (-pH_b)
+            OH = KW / H
+            beta_water = 2.303 * (OH + H)
+            beta_buf = 2.303 * C_buf * Ka_b * H / (Ka_b + H) ** 2
+            beta_total = beta_water + beta_buf
+            pKa_b = -math.log10(Ka_b)
+
+            st.success(f"✅ **β = {beta_total:.4f} mol/(L·ΔpH)**")
+            col_a, col_b = st.columns(2)
+            col_a.metric("β buffer-led", f"{beta_buf:.4f}")
+            col_b.metric("β vand-led", f"{beta_water:.4f}")
+
+            with st.expander("🔍 Trin-for-trin", expanded=True):
+                st.markdown(f"""
+1. pKa = −log({Ka_b:.2e}) = **{pKa_b:.3f}**
+2. [H⁺] = 10^(−{pH_b:.2f}) = **{H:.3e} M**
+3. [OH⁻] = Kw/[H⁺] = **{OH:.3e} M**
+4. **Vand-led:** β_w = 2,303 × ([H⁺] + [OH⁻]) = 2,303 × {H+OH:.3e} = **{beta_water:.4f}**
+5. **Buffer-led:** β_b = 2,303 × C × Ka × [H⁺] / (Ka + [H⁺])²
+   = 2,303 × {C_buf} × {Ka_b:.2e} × {H:.3e} / ({Ka_b:.2e} + {H:.3e})²
+   = **{beta_buf:.4f}**
+6. **β_total = {beta_water:.4f} + {beta_buf:.4f} = {beta_total:.4f} mol/(L·ΔpH)**
+""")
+            if abs(pH_b - pKa_b) < 0.05:
+                st.success(f"✅ pH ≈ pKa = {pKa_b:.3f} – du er ved maksimal bufferkapacitet!")
+            else:
+                pH_max = pKa_b
+                H_max = 10 ** (-pH_max)
+                beta_max = 2.303 * (KW / H_max + H_max + C_buf * Ka_b * H_max / (Ka_b + H_max) ** 2)
+                st.info(f"💡 Maksimal bufferkapacitet opnås ved pH = pKa = {pKa_b:.3f}, hvor β_max ≈ {beta_max:.4f}")
 
 
 def show_titrations_tab():
@@ -5641,13 +5964,14 @@ def show_thermochemistry_page():
     from core.dhf_database import load_dhf_database, add_to_dhf_database, getDhf, normalizeSpeciesKey
     from core.hess_solver import solve_hess_problem
 
-    tab_enthalpy, tab_gibbs, tab_calorimetry, tab_heating, tab_vanthoff, tab_kirchhoff = st.tabs([
+    tab_enthalpy, tab_gibbs, tab_calorimetry, tab_heating, tab_vanthoff, tab_kirchhoff, tab_bornhaber = st.tabs([
         "Enthalpi (ΔH°)",
         "Gibbs (ΔG)",
         "Kalorimetri (q = mcΔT)",
         "Opvarmningskurve",
         "📈 Van't Hoff-plot",
         "🌡️ Kirchhoffs lov",
+        "🔷 Born-Haber",
     ])
 
     with tab_gibbs:
@@ -5989,6 +6313,10 @@ def show_thermochemistry_page():
     with tab_kirchhoff:
         _show_kirchhoff_tab()
 
+    with tab_bornhaber:
+        _show_born_haber_tab()
+
+
 def _show_vanthoff_tab():
     """Van't Hoff-plot: ΔH° og ΔS° fra ligevægtskonstanter ved forskellige temperaturer."""
     import math
@@ -6220,6 +6548,114 @@ def _show_kirchhoff_tab():
         ("Enthalpi ΔH°", "thermochemistry", None),
         ("Gibbs (ΔG)", "thermochemistry", None),
         ("📈 Van't Hoff-plot", "thermochemistry", None),
+    ])
+
+
+def _show_born_haber_tab():
+    """Born-Haber cyklus – gitterenthalpi for ioniske forbindelser."""
+    st.markdown("### 🔷 Born-Haber cyklus – Gitterenthalpi")
+    st.markdown(
+        "Born-Haber cyklussen anvender **Hess' lov** til at beregne gitterentalpien (ΔH_latt) "
+        "for ioniske salte, som ikke kan måles direkte. Alle trin summerer til ΔH_f° for saltet."
+    )
+    st.latex(
+        r"\Delta H_f° = \Delta H_{sub} + \Delta H_{ion} + \frac{1}{2}\Delta H_{diss} + \Delta H_{ea} + \Delta H_{latt}"
+    )
+    st.info(
+        "**Trin i Born-Haber cyklussen (eksempel NaCl):**\n"
+        "1. **Sublimation** af metallet: Na(s) → Na(g)  \n"
+        "2. **Ionisering** af metalatom: Na(g) → Na⁺(g) + e⁻  \n"
+        "3. **Dissociation** af halvmolekyle: ½Cl₂(g) → Cl(g)  \n"
+        "4. **Elektronaffinitet** for ikke-metallet: Cl(g) + e⁻ → Cl⁻(g)  \n"
+        "5. **Gitterenthalpi**: Na⁺(g) + Cl⁻(g) → NaCl(s)  \n"
+        "→ ΔH_latt = ΔH_f° − (ΔH_sub + ΔH_ion + ½ΔH_diss + ΔH_ea)"
+    )
+
+    salt_type = st.radio(
+        "Forbindelsestype:",
+        ["MX (fx NaCl, KF, LiI)", "MX₂ (fx CaCl₂, MgO)", "Tilpasset"],
+        horizontal=True, key="bh_salt_type",
+    )
+
+    if salt_type == "MX (fx NaCl, KF, LiI)":
+        diss_factor = 0.5
+        ion_factor = 1
+        ea_factor = 1
+    elif salt_type == "MX₂ (fx CaCl₂, MgO)":
+        diss_factor = 1.0
+        ion_factor = 2
+        ea_factor = 2
+        st.info("For MX₂: inkludér 1. og 2. ioniseringsenergi i ΔH_ion (sum), og 2 × ΔH_ea")
+    else:
+        diss_factor = st.number_input("Faktor for dissociation (fx 0,5 for ½X₂):", value=0.5, step=0.5, min_value=0.0, key="bh_diss_fac")
+        ion_factor = 1
+        ea_factor = 1
+
+    col1, col2 = st.columns(2)
+    with col1:
+        dH_f = st.number_input("ΔH_f° (dannelsesenthalpi, kJ/mol):", value=-411.2, step=1.0, key="bh_dhf",
+                                help="Standard dannelsesenthalpi for saltet (negativ for stabile salte)")
+        dH_sub = st.number_input("ΔH_sub (sublimationsenthalpi, kJ/mol):", value=107.3, step=1.0, key="bh_sub",
+                                  help="Sublimation af fast metal til gasatom: M(s) → M(g), altid positiv")
+        dH_ion = st.number_input(
+            f"ΔH_ion (ioniseringsenergi, kJ/mol):", value=495.8, step=1.0, key="bh_ion",
+            help="Sum af ioniseringsenergier (1. og 2. IE for M²⁺)")
+    with col2:
+        dH_diss = st.number_input("ΔH_diss (dissociationsenthalpi, kJ/mol for X₂):", value=242.0, step=1.0, key="bh_diss",
+                                   help="X₂(g) → 2X(g). Bruges med faktor (½ for NaCl, 1 for CaCl₂)")
+        dH_ea = st.number_input(
+            f"ΔH_ea (elektronaffinitet, kJ/mol):", value=-349.0, step=1.0, key="bh_ea",
+            help="Negativ for de fleste halogener (energi frigives). For O²⁻: 2. EA er positiv!")
+        unknown = st.radio("Hvad skal beregnes?", ["ΔH_latt (gitterenthalpi)", "ΔH_f° (dannelse)"], key="bh_unknown")
+
+    if st.button("Beregn", type="primary", key="bh_calc"):
+        contrib_sub = dH_sub
+        contrib_ion = dH_ion * ion_factor
+        contrib_diss = dH_diss * diss_factor
+        contrib_ea = dH_ea * ea_factor
+        sum_others = contrib_sub + contrib_ion + contrib_diss + contrib_ea
+
+        if unknown == "ΔH_latt (gitterenthalpi)":
+            result = dH_f - sum_others
+            st.success(f"✅ **ΔH_latt = {result:.1f} kJ/mol**")
+            result_label = "ΔH_latt"
+        else:
+            result = sum_others + st.session_state.get("bh_latt_override", -788.0)
+            result_label = "ΔH_f°"
+            st.warning("Vælg 'ΔH_latt' for den normale beregning; her estimeres ΔH_f° fra alle led + antaget gitterenthalpi.")
+
+        if unknown == "ΔH_latt (gitterenthalpi)":
+            with st.expander("🔍 Trin-for-trin", expanded=True):
+                st.markdown(f"""
+**Hess' lov:** ΔH_latt = ΔH_f° − (ΔH_sub + ΔH_ion + {diss_factor}·ΔH_diss + ΔH_ea)
+
+| Trin | Enthalpi |
+|------|---------|
+| ΔH_f° (dannelsesenthalpi) | **{dH_f:+.1f} kJ/mol** |
+| − ΔH_sub | −{contrib_sub:+.1f} kJ/mol |
+| − ΔH_ion (×{ion_factor}) | −{contrib_ion:+.1f} kJ/mol |
+| − {diss_factor}·ΔH_diss | −{contrib_diss:+.1f} kJ/mol |
+| − ΔH_ea (×{ea_factor}) | −{contrib_ea:+.1f} kJ/mol |
+| **= ΔH_latt** | **{result:+.1f} kJ/mol** |
+
+ΔH_latt er typisk **stærkt negativ** (energi frigives ved gitterdannelse).
+{"✅ Rimelig gitterenthalpi for et 1:1 salt." if result < -300 else "⚠️ Tjek fortegn på ΔH_ea – EA for halogener er negativ."}
+""")
+
+    st.markdown("---")
+    st.markdown("**Referencetabel – typiske Born-Haber-værdier:**")
+    bh_ref = {
+        "Salt": ["NaCl", "KCl", "MgO", "CaF₂", "LiF"],
+        "ΔH_f° (kJ/mol)": [-411, -437, -602, -1228, -616],
+        "ΔH_latt (kJ/mol)": [-788, -717, -3791, -2630, -1037],
+    }
+    import pandas as pd
+    st.dataframe(pd.DataFrame(bh_ref), hide_index=True, use_container_width=True)
+
+    _quick_links([
+        ("Enthalpi ΔH°", "thermochemistry", None),
+        ("Gibbs (ΔG)", "thermochemistry", None),
+        ("🌡️ Kirchhoffs lov", "thermochemistry", None),
     ])
 
 
