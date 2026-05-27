@@ -263,6 +263,8 @@ def _quick_links(links: list[tuple[str, str, str | None]]) -> None:
         key = f"ql_{page}_{(tab or '').replace(' ', '_').replace('/', '_')}"
         with col:
             if st.button(label, key=key, use_container_width=True):
+                page_label = PAGE_QUERY_TO_LABEL.get(page, "🏠 Fundamentals")
+                st.session_state["_pending_page"] = page_label
                 st.query_params["page"] = page
                 if tab:
                     st.session_state[f"nav_{page.replace('-', '_')}"] = tab
@@ -286,6 +288,8 @@ def render_search_sidebar():
                 tab_hint = f"  ›  *{entry['tab']}*" if entry["tab"] else ""
                 label = f"{entry['title']}{tab_hint}"
                 if st.sidebar.button(label, key=f"search_nav_{i}_{entry['title']}", help=entry["description"]):
+                    page_label = PAGE_QUERY_TO_LABEL.get(entry["page"], "🏠 Fundamentals")
+                    st.session_state["_pending_page"] = page_label
                     st.query_params["page"] = entry["page"]
                     if entry.get("tab"):
                         nav_key = f"nav_{entry['page'].replace('-', '_')}"
@@ -305,16 +309,23 @@ def main():
     st.sidebar.markdown("---")
     render_search_sidebar()
 
-    # Keep navigation stable across query-param based interactions (e.g. periodic table element clicks).
+    # Cards/buttons set _pending_page to force radio to follow programmatic navigation.
+    # Sidebar clicks don't set it, so their own session state is preserved unchanged.
+    pending = st.session_state.pop("_pending_page", None)
+    if pending and pending in NAVIGATION_OPTIONS:
+        st.session_state["main_page"] = pending
+
+    # On first load (no session state yet), sync from URL query params for deep links.
     query_page_raw = st.query_params.get("page")
     if isinstance(query_page_raw, list):
         query_page_raw = query_page_raw[0] if query_page_raw else None
     query_page = str(query_page_raw).strip().lower() if query_page_raw else ""
 
-    target_label = PAGE_QUERY_TO_LABEL.get(query_page, "🏠 Fundamentals")
-    if target_label not in NAVIGATION_OPTIONS:
-        target_label = "🏠 Fundamentals"
-    st.session_state["main_page"] = target_label
+    if "main_page" not in st.session_state:
+        initial = PAGE_QUERY_TO_LABEL.get(query_page, "🏠 Fundamentals")
+        if initial not in NAVIGATION_OPTIONS:
+            initial = "🏠 Fundamentals"
+        st.session_state["main_page"] = initial
 
     page = st.sidebar.radio(
         "Select Calculator:",
@@ -450,6 +461,8 @@ def show_geometri_page():
 def _nav_card(label: str, page: str, description: str, key_suffix: str, tab: str | None = None):
     """Render a task card that navigates to the given page (and optionally a specific tab)."""
     if st.button(label, key=f"home_card_{key_suffix}", use_container_width=True, help=description):
+        page_label = PAGE_QUERY_TO_LABEL.get(page, "🏠 Fundamentals")
+        st.session_state["_pending_page"] = page_label
         st.query_params["page"] = page
         if tab:
             st.session_state[f"nav_{page.replace('-', '_')}"] = tab
