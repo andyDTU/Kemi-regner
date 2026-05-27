@@ -173,6 +173,9 @@ SEARCH_INDEX = [
     {"title": "Fortynding af opløsning", "keywords": ["fortynding", "fortyndes", "ny koncentration", "c1v1=c2v2", "fortynder", "tilsæt vand"], "page": "stoichiometry", "tab": "💧 Fortynding", "description": "C₁V₁ = C₂V₂"},
     {"title": "Ideel gaslov – find ubekendt", "keywords": ["pv=nrt", "gaslov", "find tryk", "find volumen", "find temperature", "find mol gas", "beregn gas"], "page": "gases", "tab": "Ideel gaslov", "description": "PV = nRT – beregn P, V, n eller T"},
     {"title": "Molarmasse fra densitet", "keywords": ["densitet", "molarmasse fra densitet", "m fra densitet", "rho", "ρ", "g/l", "molar masse densitet", "identificer gas", "ukendt gas", "nitrogen oxid", "kvælstofoxid"], "page": "gases", "tab": "🔬 M fra densitet", "description": "M = ρRT/P – find molarmassen fra densitet, tryk og temperatur"},
+    {"title": "Empirisk formel", "keywords": ["empirisk formel", "empirisk", "procentsammensætning", "procent sammensætning", "masseandel", "elementaranalyse", "forbrændingsanalyse", "%c", "%h", "%o", "hvad er formlen", "find formel fra procent", "molekylær formel", "molecular formula"], "page": "atoms-molar", "tab": "🔬 Empirisk formel", "description": "Find empirisk/molekylær formel fra procentvis sammensætning – klassisk elementaranalyse"},
+    {"title": "Salthydrolyse / pH af salt", "keywords": ["salthydrolyse", "hydrolyse", "ph af salt", "natriumacetat", "ammoniumchlorid", "konjugeret base", "konjugeret syre", "kh", "salt opløsning ph", "basisk salt", "sur salt", "ch3coona", "nh4cl"], "page": "acids-bases", "tab": "⚗️ Salthydrolyse", "description": "pH af saltopløsninger via hydrolyse – Kh = Kw/Ka eller Kw/Kb"},
+    {"title": "Ioniseringsgrad α", "keywords": ["ioniseringsgrad", "ionisering", "alpha", "α", "procentvis ioniseret", "5%regel", "5 procent regel", "svag syre ioniseret", "andel ioniseret", "degree of ionization"], "page": "acids-bases", "tab": "Svag syre/base", "description": "Beregn ioniseringsgrad α og procentvis ionisering for svag syre/base"},
     {"title": "ICE-tabel / ligevægt", "keywords": ["ice tabel", "ice-tabel", "opstil ice", "opsæt ice", "ligevægtskoncentration", "beregn kc", "beregn kp"], "page": "ligevaegt", "tab": "🧊 ICE Table", "description": "ICE-tabel og ligevægtskoncentrationer"},
     {"title": "Q vs K – reaktionsretning", "keywords": ["reaktionskvotient", "q vs k", "hvilken retning", "går reaktionen frem", "går reaktionen tilbage", "forskydning"], "page": "ligevaegt", "tab": "📊 Reaktionskvotient Q", "description": "Beregn Q og sammenlign med K"},
     {"title": "Eksamensguide", "keywords": ["eksamensguide", "eksamen", "guide", "hjælp", "opgave", "hvilken beregner", "hvad skal jeg bruge"], "page": "eksamensguide", "tab": None, "description": "Oversigt over opgavetyper og hvilken beregner de kræver"},
@@ -461,12 +464,12 @@ def show_fundamentals_page():
         st.markdown("**🧪 Syrer & Baser**")
         _nav_card("pH af stærk syre / base", "acids-bases", "HCl, NaOH m.fl. – ioniserer 100%", "sa", tab="Stærk syre/base")
         _nav_card("pH af svag syre / base", "acids-bases", "Eddikesyre, ammoniak m.fl. – brug Ka / Kb", "wa", tab="Svag syre/base")
-        _nav_card("Buffer pH", "acids-bases", "Henderson-Hasselbalch, blandingsberegning", "buf", tab="Buffer")
-        _nav_card("Titrering", "acids-bases", "pH ved titrering – syre + base", "titr", tab="Titrering")
+        _nav_card("⚗️ Salthydrolyse", "acids-bases", "pH af CH₃COONa, NH₄Cl – Kh = Kw/Ka", "sh", tab="⚗️ Salthydrolyse")
+        _nav_card("Ioniseringsgrad α", "acids-bases", "Procentvis ioniseret, 5%-regel, eksakt ICE", "ia", tab="Svag syre/base")
     with c2:
         st.markdown("**🧮 Stofmængder & Reaktioner**")
         _nav_card("Molarmasse", "atoms-molar", "Find g/mol for en kemisk forbindelse", "mm")
-        _nav_card("Balancer reaktion", "stoichiometry", "Afstem koefficienterne i en reaktionsligning", "bal", tab="⚖️ Balancer reaktion")
+        _nav_card("🔬 Empirisk formel", "atoms-molar", "Find formel fra %C, %H, %O – elementaranalyse", "ef", tab="🔬 Empirisk formel")
         _nav_card("Begrænsende reaktant", "stoichiometry", "Find limiting reagent og teoretisk udbytte", "lr", tab="🔬 Begrænsende reaktant")
         _nav_card("Fortynding (C₁V₁ = C₂V₂)", "stoichiometry", "Beregn koncentration efter fortynding", "dil", tab="💧 Fortynding")
     with c3:
@@ -826,6 +829,7 @@ def show_molar_mass_page():
 
     subpage_labels = [
         "⚖️ Molar Mass",
+        "🔬 Empirisk formel",
         "⚛️ Elektronkonfiguration og atomradius",
         "🧭 Interaktivt periodisk system",
         "🧷 Lewis-struktur",
@@ -834,6 +838,7 @@ def show_molar_mass_page():
 
     subpage_to_query = {
         "⚖️ Molar Mass": "molar",
+        "🔬 Empirisk formel": "empirisk",
         "⚛️ Elektronkonfiguration og atomradius": "electron",
         "🧭 Interaktivt periodisk system": "periodic",
         "🧷 Lewis-struktur": "lewis",
@@ -1194,6 +1199,178 @@ def show_molar_mass_page():
             render_ionization_energy_tab()
         except Exception as e:
             st.error(f"Could not render Ionization Energy tab: {e}")
+
+    if active_subpage == "🔬 Empirisk formel":
+        _show_empirisk_formel_tab()
+
+
+def _show_empirisk_formel_tab():
+    """Empirisk formel og procentsammensætning beregner."""
+    import math
+
+    # Grundlæggende atomvægte
+    ATOMIC_MASSES: dict[str, float] = {
+        "H": 1.008, "He": 4.003, "Li": 6.941, "Be": 9.012, "B": 10.811,
+        "C": 12.011, "N": 14.007, "O": 15.999, "F": 18.998, "Ne": 20.180,
+        "Na": 22.990, "Mg": 24.305, "Al": 26.982, "Si": 28.086, "P": 30.974,
+        "S": 32.065, "Cl": 35.453, "Ar": 39.948, "K": 39.098, "Ca": 40.078,
+        "Fe": 55.845, "Cu": 63.546, "Zn": 65.38, "Br": 79.904, "Ag": 107.868,
+        "I": 126.904, "Ba": 137.327, "Pb": 207.2,
+    }
+
+    st.markdown("### 🔬 Empirisk formel og procentsammensætning")
+    st.caption("Find empirisk/molekylær formel fra procentvis sammensætning, eller beregn % fra formel.")
+
+    mode = st.radio(
+        "Beregningsretning:",
+        ["% sammensætning → Empirisk formel", "Formel → % sammensætning"],
+        horizontal=True,
+        key="emp_mode",
+    )
+
+    if mode == "% sammensætning → Empirisk formel":
+        st.markdown("#### Trin 1 – Indtast procentvis massesammensætning")
+        st.caption("Summer skal give ~100%. Kan også bruges med absolutte masser (g) fra forbrændingsanalyse.")
+
+        col1, col2 = st.columns(2)
+        with col1:
+            n_elements = st.number_input("Antal grundstoffer:", min_value=2, max_value=6, value=3, step=1, key="emp_n_el")
+            input_type = st.radio("Input-type:", ["Procent (%)", "Masse (g)"], horizontal=True, key="emp_input_type")
+
+        elements: list[tuple[str, float]] = []
+        with col2:
+            for i in range(int(n_elements)):
+                c1, c2 = st.columns(2)
+                with c1:
+                    sym = st.text_input(f"Element {i+1}:", key=f"emp_sym_{i}", placeholder="fx C")
+                with c2:
+                    val = st.number_input(
+                        "%" if input_type == "Procent (%)" else "g",
+                        value=0.0, min_value=0.0, key=f"emp_val_{i}", format="%.4f"
+                    )
+                if sym.strip():
+                    elements.append((sym.strip().capitalize(), val))
+
+        mol_mass_known = st.checkbox("Jeg kender den molekylære molarmasse (find molekylær formel)", key="emp_mm_known")
+        mol_mass = None
+        if mol_mass_known:
+            mol_mass = st.number_input("Molekylær molarmasse (g/mol):", value=180.0, min_value=1.0, key="emp_mm_val")
+
+        if st.button("Beregn empirisk formel", type="primary", key="emp_btn"):
+            errors = []
+            for sym, val in elements:
+                if sym not in ATOMIC_MASSES:
+                    errors.append(f"Ukendt grundstof: '{sym}'. Brug kemisk symbol (fx C, H, O, N, S).")
+            if not elements:
+                errors.append("Ingen grundstoffer angivet.")
+            if errors:
+                for e in errors:
+                    st.error(e)
+            else:
+                # Convert to moles
+                moles = {sym: val / ATOMIC_MASSES[sym] for sym, val in elements if val > 0}
+                if not moles:
+                    st.error("Alle værdier er 0.")
+                else:
+                    min_mol = min(moles.values())
+                    ratios = {sym: m / min_mol for sym, m in moles.items()}
+
+                    # Find multiplier to make all ratios close to integers
+                    def to_int_ratio(r: float, tol: float = 0.05) -> int | None:
+                        for mult in range(1, 13):
+                            val = r * mult
+                            if abs(val - round(val)) < tol * mult:
+                                return round(val * mult) if False else round(val)
+                        return None
+
+                    best_mult = 1
+                    for mult in range(1, 13):
+                        scaled = {s: r * mult for s, r in ratios.items()}
+                        if all(abs(v - round(v)) < 0.08 for v in scaled.values()):
+                            best_mult = mult
+                            break
+
+                    int_ratios = {sym: round(r * best_mult) for sym, r in ratios.items()}
+                    empirical = "".join(
+                        f"{sym}{n if n > 1 else ''}" for sym, n in int_ratios.items()
+                    )
+
+                    # Empirical molar mass
+                    M_emp = sum(ATOMIC_MASSES[sym] * n for sym, n in int_ratios.items())
+
+                    st.success(f"**Empirisk formel: {empirical}** (M_emp = {M_emp:.3f} g/mol)")
+
+                    # Steps
+                    st.markdown("**Trin-for-trin:**")
+                    unit = "%" if input_type == "Procent (%)" else "g"
+                    for sym, val in elements:
+                        if val > 0:
+                            m = val / ATOMIC_MASSES[sym]
+                            st.markdown(
+                                f"- {sym}: {val:.4g} {unit} ÷ {ATOMIC_MASSES[sym]:.3f} g/mol = **{m:.4f} mol**"
+                            )
+                    st.markdown(f"- Mindste moltal: **{min_mol:.4f} mol** ({min(moles, key=moles.get)})")
+                    for sym, r in ratios.items():
+                        st.markdown(f"- {sym}: {r:.4f} × {best_mult} ≈ **{int_ratios[sym]}**")
+                    st.markdown(f"→ Empirisk formel: **{empirical}**")
+
+                    if mol_mass_known and mol_mass:
+                        n_mol = mol_mass / M_emp
+                        n_int = round(n_mol)
+                        molecular = "".join(
+                            f"{sym}{int_ratios[sym]*n_int if int_ratios[sym]*n_int > 1 else ''}"
+                            for sym in int_ratios
+                        )
+                        st.info(
+                            f"**Molekylær formel:** n = {mol_mass:.2f} / {M_emp:.3f} ≈ **{n_int}**  \n"
+                            f"→ Molekylær formel: **{molecular}** (M = {M_emp * n_int:.3f} g/mol)"
+                        )
+
+                    st.markdown("---")
+                    st.caption(
+                        "💡 Eksempel: 40,0% C, 6,7% H, 53,3% O → "
+                        "C: 40,0/12,011=3,33, H: 6,7/1,008=6,65, O: 53,3/15,999=3,33 → "
+                        "ratio 1:2:1 → **CH₂O** (formaldehyd/glucose-serie)"
+                    )
+
+    else:  # Formel → % sammensætning
+        st.markdown("#### Formel → Procentvis massesammensætning")
+        formula_input = st.text_input(
+            "Kemisk formel:", placeholder="fx C6H12O6, Fe2O3, Ca(OH)2", key="emp_formula_pct"
+        )
+        if st.button("Beregn % sammensætning", type="primary", key="emp_pct_btn"):
+            if not formula_input:
+                st.error("Angiv en kemisk formel.")
+            else:
+                try:
+                    from calculators.molar_mass import calculate_molar_mass_with_steps
+                    M, steps, meta = calculate_molar_mass_with_steps(formula_input)
+                    comp = meta.get("composition", {})
+                    if not comp:
+                        st.error("Kunne ikke beregne sammensætning for denne formel.")
+                    else:
+                        st.success(f"Molarmasse: **{M:.4f} g/mol**")
+                        st.markdown("**Procentvis massesammensætning:**")
+                        rows = []
+                        for sym, data in comp.items():
+                            count = data.get("count", data.get("atom_count", 1))
+                            m_elem = ATOMIC_MASSES.get(sym, data.get("atomic_mass", 0))
+                            m_total_elem = count * m_elem
+                            pct = (m_total_elem / M) * 100
+                            rows.append({"Element": sym, "Antal": count,
+                                         "Atommasse (g/mol)": f"{m_elem:.3f}",
+                                         "Masse i formel": f"{m_total_elem:.4f}",
+                                         "Masseprocent": f"{pct:.2f}%"})
+                        import pandas as pd
+                        st.dataframe(pd.DataFrame(rows), use_container_width=True, hide_index=True)
+                except Exception as exc:
+                    st.error(f"Fejl: {exc}")
+
+    _quick_links([
+        ("⚖️ Molarmasse", "atoms-molar", "⚖️ Molar Mass"),
+        ("🔬 Begrænsende reaktant", "stoichiometry", "🔬 Begrænsende reaktant"),
+    ])
+
 
 def _default_gibbs_reaction_rows():
     return [
@@ -2168,7 +2345,7 @@ def show_acids_bases_page():
     st.title("🧪 Acids & Bases Calculator")
     st.markdown("---")
 
-    _ab_options = ["Stærk syre/base", "Svag syre/base", "Buffer", "Titrering", "📋 pH-beregner"]
+    _ab_options = ["Stærk syre/base", "Svag syre/base", "⚗️ Salthydrolyse", "Buffer", "Titrering", "📋 pH-beregner"]
     _ab_active = _render_styled_tab_nav(_ab_options, key="acids_bases_tab", nav_key="nav_acids_bases")
 
     if _ab_active == "Stærk syre/base":
@@ -2181,9 +2358,16 @@ def show_acids_bases_page():
     elif _ab_active == "Svag syre/base":
         show_weak_acids_bases_tab()
         _quick_links([
+            ("⚗️ Salthydrolyse", "acids-bases", "⚗️ Salthydrolyse"),
             ("Buffer", "acids-bases", "Buffer"),
             ("Titrering", "acids-bases", "Titrering"),
             ("⚗️ ICE-tabel", "ligevaegt", "🧊 ICE Table"),
+        ])
+    elif _ab_active == "⚗️ Salthydrolyse":
+        _show_salthydrolyse_tab()
+        _quick_links([
+            ("Svag syre/base", "acids-bases", "Svag syre/base"),
+            ("Buffer", "acids-bases", "Buffer"),
         ])
     elif _ab_active == "Buffer":
         show_buffers_tab()
@@ -2200,6 +2384,140 @@ def show_acids_bases_page():
         ])
     elif _ab_active == "📋 pH-beregner":
         show_pH_calculator_page()
+
+
+def _show_salthydrolyse_tab():
+    """pH af saltopløsninger via hydrolyse – DTU-relevant."""
+    import math
+    KW = 1.0e-14
+
+    st.markdown("### ⚗️ Salthydrolyse – pH af saltopløsninger")
+    st.markdown(
+        "Salte af svag syre + stærk base (fx CH₃COONa) eller stærk syre + svag base (fx NH₄Cl) "
+        "giver sur/basisk opløsning pga. hydrolyse af det konjugerede ion."
+    )
+
+    salt_type = st.radio(
+        "Salttype:",
+        [
+            "Svag syre + stærk base (fx CH₃COONa → basisk)",
+            "Stærk syre + svag base (fx NH₄Cl → sur)",
+            "Svag syre + svag base (fx CH₃COONH₄)",
+        ],
+        key="sh_type",
+    )
+
+    col1, col2 = st.columns(2)
+    with col1:
+        C = st.number_input("Saltkoncentration C (mol/L):", value=0.10, min_value=1e-9,
+                            format="%.4f", key="sh_conc")
+    with col2:
+        if "svag syre + stærk base" in salt_type:
+            ka = st.number_input("Ka for den svage syre:", value=1.8e-5, min_value=1e-14,
+                                  format="%.2e", key="sh_ka")
+        elif "stærk syre + svag base" in salt_type:
+            kb = st.number_input("Kb for den svage base:", value=1.8e-5, min_value=1e-14,
+                                  format="%.2e", key="sh_kb")
+        else:
+            ka = st.number_input("Ka for den svage syre:", value=1.8e-5, min_value=1e-14,
+                                  format="%.2e", key="sh_ka2")
+            kb = st.number_input("Kb for den svage base:", value=1.8e-5, min_value=1e-14,
+                                  format="%.2e", key="sh_kb2")
+
+    if st.button("Beregn pH", type="primary", key="sh_btn"):
+        try:
+            if "svag syre + stærk base" in salt_type:
+                # Kh = Kw/Ka (hydrolyse af A⁻)
+                # A⁻ + H₂O ⇌ HA + OH⁻
+                Kh = KW / ka
+                pka = -math.log10(ka)
+                # ICE approx: [OH⁻] = sqrt(Kh * C)
+                oh = math.sqrt(Kh * C)
+                poh = -math.log10(oh)
+                pH = 14 - poh
+                alpha_h = oh / C * 100
+
+                st.success(f"**pH = {pH:.3f}** (basisk opløsning ✓)")
+                st.markdown(f"""
+**Trin-for-trin:**
+
+1. Hydrolyse: A⁻ + H₂O ⇌ HA + OH⁻
+2. K_h = Kw / Ka = {KW:.2e} / {ka:.2e} = **{Kh:.3e}**
+3. ICE-tabel: [OH⁻] ≈ √(K_h × C) = √({Kh:.3e} × {C:.4f}) = **{oh:.4e} M**
+4. pOH = −log({oh:.4e}) = **{poh:.3f}**
+5. pH = 14 − pOH = 14 − {poh:.3f} = **{pH:.3f}**
+6. Hydrolysationsgrad: α = {oh:.4e}/{C:.4f} × 100 = **{alpha_h:.3f}%**
+
+💡 Alternativ formel: pH = 7 + ½(pKa + log C) = 7 + ½({pka:.3f} + log({C:.4f})) = **{7 + 0.5*(pka + math.log10(C)):.3f}**
+""")
+                st.info(f"K_h = {Kh:.3e} – hydrolysekonstant (lille → kun svag hydrolyse)")
+
+            elif "stærk syre + svag base" in salt_type:
+                # Kh = Kw/Kb (hydrolyse af BH⁺)
+                # BH⁺ + H₂O ⇌ B + H₃O⁺
+                Kh = KW / kb
+                pkb = -math.log10(kb)
+                pka_conj = 14 - pkb
+                h = math.sqrt(Kh * C)
+                pH = -math.log10(h)
+                alpha_h = h / C * 100
+
+                st.success(f"**pH = {pH:.3f}** (sur opløsning ✓)")
+                st.markdown(f"""
+**Trin-for-trin:**
+
+1. Hydrolyse: BH⁺ + H₂O ⇌ B + H₃O⁺
+2. K_h = Kw / Kb = {KW:.2e} / {kb:.2e} = **{Kh:.3e}**
+3. ICE-tabel: [H₃O⁺] ≈ √(K_h × C) = √({Kh:.3e} × {C:.4f}) = **{h:.4e} M**
+4. pH = −log({h:.4e}) = **{pH:.3f}**
+5. Hydrolysationsgrad: α = {h:.4e}/{C:.4f} × 100 = **{alpha_h:.3f}%**
+
+💡 Alternativ formel: pH = 7 − ½(pKb + log C) = 7 − ½({pkb:.3f} + log({C:.4f})) = **{7 - 0.5*(pkb + math.log10(C)):.3f}**
+""")
+
+            else:  # Svag syre + svag base
+                # pH ≈ 7 + ½(pKa − pKb)
+                pka = -math.log10(ka)
+                pkb = -math.log10(kb)
+                pH_approx = 7 + 0.5 * (pka - pkb)
+                Kh1 = KW / ka
+                Kh2 = KW / kb
+
+                st.success(f"**pH ≈ {pH_approx:.3f}** (approx. formel)")
+                st.markdown(f"""
+**Trin-for-trin (approx. formel):**
+
+For salt af svag syre (Ka) og svag base (Kb):
+
+pH ≈ 7 + ½(pKa − pKb)
+
+1. pKa = −log({ka:.2e}) = **{pka:.3f}**
+2. pKb = −log({kb:.2e}) = **{pkb:.3f}**
+3. pH ≈ 7 + ½({pka:.3f} − {pkb:.3f}) = **{pH_approx:.3f}**
+
+📌 Hvis pKa = pKb → pH = 7 (neutral opløsning)
+📌 Gyldigt når Ka og Kb er af sammenlignelig størrelse.
+""")
+                st.caption(
+                    f"K_h(syre) = Kw/Ka = {Kh1:.2e}, K_h(base) = Kw/Kb = {Kh2:.2e}"
+                )
+
+        except Exception as exc:
+            st.error(f"Fejl: {exc}")
+
+    st.markdown("---")
+    st.markdown("**Kendte eksempler:**")
+    ex_data = [
+        ("CH₃COONa", "Svag syre + stærk base", "Ka(CH₃COOH) = 1,8×10⁻⁵", "Basisk, pH > 7"),
+        ("NH₄Cl", "Stærk syre + svag base", "Kb(NH₃) = 1,8×10⁻⁵", "Sur, pH < 7"),
+        ("NaCl", "Stærk syre + stærk base", "—", "Neutral, pH = 7"),
+        ("CH₃COONH₄", "Svag syre + svag base", "Ka ≈ Kb → pH ≈ 7", "Næsten neutral"),
+    ]
+    import pandas as pd
+    st.dataframe(
+        pd.DataFrame(ex_data, columns=["Salt", "Type", "Konstant", "pH"]),
+        use_container_width=True, hide_index=True,
+    )
 
 
 def show_strong_acids_bases_tab():
@@ -2294,12 +2612,13 @@ def show_weak_acids_bases_tab():
     # Mode selection
     mode = st.radio(
         "Calculation Mode:",
-        ["Weak acid", "Weak base"],
+        ["Weak acid", "Weak base", "🔬 Ioniseringsgrad (α)"],
         horizontal=True
     )
     _weak_help = {
         "Weak acid": "💡 **Hvornår?** Svage syrer (eddikesyre, citronsyre) ioniserer kun delvist. Du skal kende Ka og startkoncentrationen.",
         "Weak base": "💡 **Hvornår?** Svage baser (ammoniak, aminer) reagerer delvist med vand. Du skal kende Kb (eller Ka for den konjugerede syre).",
+        "🔬 Ioniseringsgrad (α)": "💡 **Hvornår?** Du vil vide, hvilken andel af syren/basen der er ioniseret ved ligevægt – fx til at afgøre om 5%-reglen holder.",
     }
     st.info(_weak_help[mode])
 
@@ -2377,6 +2696,73 @@ def show_weak_acids_bases_tab():
             
             except Exception as e:
                 st.error(f"❌ **Fejl**: {str(e)}")
+
+    if mode == "🔬 Ioniseringsgrad (α)":
+        import math
+        st.markdown("#### 🔬 Ioniseringsgrad α for svag syre/base")
+        st.latex(r"\alpha = \frac{[\mathrm{H^+}]}{C_0} \quad \text{(svag syre)} \qquad \alpha = \frac{[\mathrm{OH^-}]}{C_0} \quad \text{(svag base)}")
+        st.caption("α angiver brøkdelen af syren/basen der er ioniseret ved ligevægt. Procentvis ionisering = α × 100%.")
+
+        acid_or_base = st.radio("Type:", ["Svag syre", "Svag base"], horizontal=True, key="alpha_type")
+        col1, col2 = st.columns(2)
+        with col1:
+            C0 = st.number_input("Startkoncentration C₀ (mol/L):", value=0.10, min_value=1e-10,
+                                  format="%.6f", key="alpha_C0")
+        with col2:
+            if acid_or_base == "Svag syre":
+                K = st.number_input("Ka:", value=1.8e-5, min_value=1e-14, format="%.2e", key="alpha_Ka")
+            else:
+                K = st.number_input("Kb:", value=1.8e-5, min_value=1e-14, format="%.2e", key="alpha_Kb")
+
+        if st.button("Beregn ioniseringsgrad", type="primary", key="alpha_btn"):
+            # Solve x² + Ka*x - Ka*C0 = 0 (exact quadratic)
+            a_coef, b_coef, c_coef = 1.0, K, -K * C0
+            discriminant = b_coef**2 - 4 * a_coef * c_coef
+            x = (-b_coef + math.sqrt(discriminant)) / (2 * a_coef)
+            alpha = x / C0
+            pct = alpha * 100
+            approx = math.sqrt(K / C0)
+
+            five_pct_ok = pct < 5.0
+
+            if acid_or_base == "Svag syre":
+                pH = -math.log10(x)
+                result_label = f"[H⁺] = {x:.4e} M,  pH = {pH:.3f}"
+            else:
+                pOH = -math.log10(x)
+                pH = 14 - pOH
+                result_label = f"[OH⁻] = {x:.4e} M,  pH = {pH:.3f}"
+
+            st.success(f"**α = {alpha:.4f}  →  {pct:.2f}% ioniseret**")
+            st.info(result_label)
+
+            if five_pct_ok:
+                st.success("✅ 5%-reglen holder (α < 5%) – approx. formel er gyldig.")
+            else:
+                st.warning(f"⚠️ 5%-reglen holder IKKE (α = {pct:.1f}% > 5%) – brug den eksakte kvaderatløsning.")
+
+            st.markdown(f"""
+**Trin-for-trin (eksakt):**
+
+ICE-tabel for HA ⇌ H⁺ + A⁻:
+
+| | HA | H⁺ | A⁻ |
+|---|---|---|---|
+| Start | {C0:.4f} | 0 | 0 |
+| Ændring | −x | +x | +x |
+| Ligevægt | {C0:.4f}−x | x | x |
+
+Ka = x² / ({C0:.4f} − x)
+
+Eksakt: x = (−Ka + √(Ka² + 4·Ka·C₀)) / 2 = **{x:.4e} M**
+
+Approx. (5%-regel): x ≈ √(Ka × C₀) = √({K:.2e} × {C0:.4f}) = **{approx:.4e} M** (fejl: {abs(x-approx)/x*100:.1f}%)
+
+α = x / C₀ = {x:.4e} / {C0:.4f} = **{alpha:.4f}** = **{pct:.2f}%**
+""")
+
+            st.markdown("---")
+            st.caption("💡 Jo mere fortyndet (lavere C₀) og jo svagere syren (højere Ka), jo større ioniseringsgrad.")
 
 
 def show_buffers_tab():
