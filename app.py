@@ -127,19 +127,19 @@ PAGE_QUERY_TO_LABEL = {value: key for key, value in PAGE_LABEL_TO_QUERY.items()}
 
 # Search index: maps user queries to specific calculators
 SEARCH_INDEX = [
-    {"title": "pH af stærk syre", "keywords": ["ph", "stærk syre", "saltsyre", "hcl", "hno3", "salpetersyre", "svovlsyre", "h2so4", "stærk", "syre"], "page": "acids-bases", "tab": "Strong Acids/Bases", "description": "Bruges til HCl, HNO₃, H₂SO₄ og andre syrer der ioniserer 100%"},
-    {"title": "pH af stærk base", "keywords": ["ph", "stærk base", "naoh", "koh", "base", "hydroxid"], "page": "acids-bases", "tab": "Strong Acids/Bases", "description": "Bruges til NaOH, KOH og andre baser der ioniserer 100%"},
-    {"title": "pH af svag syre", "keywords": ["ph", "svag syre", "ka", "eddikesyre", "ch3cooh", "hac", "svag", "syre", "acetic"], "page": "acids-bases", "tab": "Weak Acids/Bases", "description": "Bruges til eddikesyre, citronsyre og andre syrer med Ka-værdi"},
-    {"title": "pH af svag base", "keywords": ["ph", "svag base", "kb", "ammoniak", "nh3", "svag", "base", "amin"], "page": "acids-bases", "tab": "Weak Acids/Bases", "description": "Bruges til NH₃, aminer og andre baser med Kb-værdi"},
-    {"title": "Buffer pH (Henderson-Hasselbalch)", "keywords": ["buffer", "ph", "henderson", "hasselbalch", "bufferløsning", "acetat", "konjugeret"], "page": "acids-bases", "tab": "Buffers", "description": "Blanding af svag syre og dens konjugerede base"},
-    {"title": "Titrering", "keywords": ["titrering", "ækvivalenspunkt", "neutralisation", "titration", "halvækvivalenspunkt"], "page": "acids-bases", "tab": "Titrations", "description": "Beregn pH ved titrering af syre med base"},
+    {"title": "pH af stærk syre", "keywords": ["ph", "stærk syre", "saltsyre", "hcl", "hno3", "salpetersyre", "svovlsyre", "h2so4", "stærk", "syre"], "page": "acids-bases", "tab": "Stærk syre/base", "description": "Bruges til HCl, HNO₃, H₂SO₄ og andre syrer der ioniserer 100%"},
+    {"title": "pH af stærk base", "keywords": ["ph", "stærk base", "naoh", "koh", "base", "hydroxid"], "page": "acids-bases", "tab": "Stærk syre/base", "description": "Bruges til NaOH, KOH og andre baser der ioniserer 100%"},
+    {"title": "pH af svag syre", "keywords": ["ph", "svag syre", "ka", "eddikesyre", "ch3cooh", "hac", "svag", "syre", "acetic"], "page": "acids-bases", "tab": "Svag syre/base", "description": "Bruges til eddikesyre, citronsyre og andre syrer med Ka-værdi"},
+    {"title": "pH af svag base", "keywords": ["ph", "svag base", "kb", "ammoniak", "nh3", "svag", "base", "amin"], "page": "acids-bases", "tab": "Svag syre/base", "description": "Bruges til NH₃, aminer og andre baser med Kb-værdi"},
+    {"title": "Buffer pH (Henderson-Hasselbalch)", "keywords": ["buffer", "ph", "henderson", "hasselbalch", "bufferløsning", "acetat", "konjugeret"], "page": "acids-bases", "tab": "Buffer", "description": "Blanding af svag syre og dens konjugerede base"},
+    {"title": "Titrering", "keywords": ["titrering", "ækvivalenspunkt", "neutralisation", "titration", "halvækvivalenspunkt"], "page": "acids-bases", "tab": "Titrering", "description": "Beregn pH ved titrering af syre med base"},
     {"title": "Molarmasse", "keywords": ["molarmasse", "molar masse", "g/mol", "molekylvægt", "h2o", "nacl", "formel", "sammensætning"], "page": "atoms-molar", "tab": None, "description": "Find molarmassen for en kemisk forbindelse"},
     {"title": "Elektronkonfiguration", "keywords": ["elektron", "konfiguration", "orbital", "atom", "ion", "aufbau", "periodisk", "elektroner"], "page": "atoms-molar", "tab": None, "description": "Find elektronkonfiguration for atomer og ioner"},
-    {"title": "Balancer kemisk reaktion", "keywords": ["balancer", "reaktion", "ligning", "balance", "koefficient", "afstemning"], "page": "stoichiometry", "tab": "Balance Reaction", "description": "Balancer en kemisk reaktionsligning"},
-    {"title": "Begrænsende reaktant", "keywords": ["begrænsende", "limiting reagent", "reaktant", "udbytte", "yield", "overskud", "stofmængde"], "page": "stoichiometry", "tab": "Limiting Reagent", "description": "Find den begrænsende reaktant og det teoretiske udbytte"},
-    {"title": "Fortynding", "keywords": ["fortynding", "dilution", "koncentration", "c1v1", "c2v2", "molær"], "page": "stoichiometry", "tab": "Dilution", "description": "Beregn koncentration efter fortynding (C₁V₁ = C₂V₂)"},
+    {"title": "Balancer kemisk reaktion", "keywords": ["balancer", "reaktion", "ligning", "balance", "koefficient", "afstemning"], "page": "stoichiometry", "tab": "⚖️ Balancer reaktion", "description": "Balancer en kemisk reaktionsligning"},
+    {"title": "Begrænsende reaktant", "keywords": ["begrænsende", "limiting reagent", "reaktant", "udbytte", "yield", "overskud", "stofmængde"], "page": "stoichiometry", "tab": "🔬 Begrænsende reaktant", "description": "Find den begrænsende reaktant og det teoretiske udbytte"},
+    {"title": "Fortynding", "keywords": ["fortynding", "dilution", "koncentration", "c1v1", "c2v2", "molær"], "page": "stoichiometry", "tab": "💧 Fortynding", "description": "Beregn koncentration efter fortynding (C₁V₁ = C₂V₂)"},
     {"title": "Redoxafstemning", "keywords": ["redox", "oxidation", "reduktion", "halv-reaktion", "oxidationstal", "afstemning"], "page": "stoichiometry", "tab": "Redoxafstemning", "description": "Afstem redoxreaktioner med halvreaktionsmetoden"},
-    {"title": "Ideal gaslov (PV=nRT)", "keywords": ["ideal gas", "pv=nrt", "tryk", "volumen", "temperatur", "mol", "gaslov", "p", "v", "n", "t"], "page": "gases", "tab": "Ideal Gas Law", "description": "Beregn P, V, n eller T med idealgasloven"},
+    {"title": "Ideal gaslov (PV=nRT)", "keywords": ["ideal gas", "pv=nrt", "tryk", "volumen", "temperatur", "mol", "gaslov", "p", "v", "n", "t"], "page": "gases", "tab": "Ideel gaslov", "description": "Beregn P, V, n eller T med idealgasloven"},
     {"title": "Daltons lov (partialtryk)", "keywords": ["dalton", "partialtryk", "gasblanding", "molfraktion", "partial"], "page": "gases", "tab": None, "description": "Find partialtryk i en gasblanding"},
     {"title": "Van der Waals ligning", "keywords": ["van der waals", "reel gas", "real gas", "a", "b", "korrektionsfaktorer"], "page": "gases", "tab": None, "description": "Gaslov for reelle gasser med korrektionsfaktorer"},
     {"title": "Enthalpi (ΔH)", "keywords": ["enthalpi", "δh", "varme", "reaktionsvarme", "eksoterm", "endoterm", "hess", "dannelsesenthalpi"], "page": "thermochemistry", "tab": None, "description": "Beregn reaktionsenthalpi for en kemisk reaktion"},
@@ -161,17 +161,18 @@ SEARCH_INDEX = [
     {"title": "Formelsamling", "keywords": ["formel", "samling", "tabel", "oversigt", "konstanter", "alle formler"], "page": "formelsamling", "tab": None, "description": "Oversigt over alle kemiformler og konstanter"},
     {"title": "Osmotisk tryk", "keywords": ["osmose", "osmotisk", "tryk", "van't hoff", "kolligativ", "membran"], "page": "koge-fryse", "tab": None, "description": "Beregn osmotisk tryk med van't Hoffs lov"},
     # Eksamens-sprog
-    {"title": "pH af stærk syre", "keywords": ["beregn ph", "find ph", "hcl", "h2so4", "hno3", "stærk syre opgave"], "page": "acids-bases", "tab": "Strong Acids/Bases", "description": "HCl, HNO₃, H₂SO₄ – ioniserer 100%"},
-    {"title": "pH af svag syre", "keywords": ["beregn ph", "find ph", "ka", "eddikesyre", "svag syre opgave", "procentvis ionisering"], "page": "acids-bases", "tab": "Weak Acids/Bases", "description": "Ka-opgave – eddikesyre, citronsyre m.fl."},
-    {"title": "Buffer pH", "keywords": ["buffer", "henderson", "beregn ph buffer", "ha og a-", "konjugeret base"], "page": "acids-bases", "tab": "Buffers", "description": "pH af buffer med svag syre + konjugeret base"},
-    {"title": "Titrering", "keywords": ["titrering", "ækvivalenspunkt", "titrer", "neutraliser", "halvækvivalens", "beregn ph ved titrering"], "page": "acids-bases", "tab": "Titrations", "description": "pH ved titrering"},
-    {"title": "Er reaktionen spontan?", "keywords": ["spontan", "er reaktionen spontan", "δg", "gibbs", "spontanitet", "negativ δg"], "page": "thermochemistry", "tab": "Thermochemistry (Gibbs)", "description": "ΔG = ΔH − TΔS – find fortegnet"},
-    {"title": "Beregn ΔH° for reaktion", "keywords": ["beregn δh", "find δh", "reaktionsvarme", "hess", "eksoterm", "endoterm", "dannelsesenthalpi"], "page": "thermochemistry", "tab": "Enthalpy change (ΔH°)", "description": "Hess' lov med dannelsesentalpier"},
-    {"title": "Kalorimetri – temperaturstigning", "keywords": ["kalorimeter", "temperaturstigning", "q=mcδt", "specifik varme", "registrerer", "afgivet varme"], "page": "thermochemistry", "tab": "Calorimetry (q = m c ΔT)", "description": "q = mcΔT – varme fra temperaturændring"},
-    {"title": "Afstem reaktion", "keywords": ["afstem", "balancer ligning", "koefficienter", "afstemning", "balance reaktion"], "page": "stoichiometry", "tab": "⚖️ Balance Reaction", "description": "Afstemt kemisk ligning"},
-    {"title": "Begrænsende reaktant / udbytte", "keywords": ["begrænsende", "theoretical yield", "udbytte", "hvad er den begrænsende", "overskud", "limiting"], "page": "stoichiometry", "tab": "🔬 Limiting Reagent & Yields", "description": "Find limiting reagent og teoretisk udbytte"},
-    {"title": "Fortynding af opløsning", "keywords": ["fortynding", "fortyndes", "ny koncentration", "c1v1=c2v2", "fortynder", "tilsæt vand"], "page": "stoichiometry", "tab": "💧 Dilution", "description": "C₁V₁ = C₂V₂"},
-    {"title": "Ideel gaslov – find ubekendt", "keywords": ["pv=nrt", "gaslov", "find tryk", "find volumen", "find temperature", "find mol gas", "beregn gas"], "page": "gases", "tab": "Ideal Gas Law", "description": "PV = nRT – beregn P, V, n eller T"},
+    {"title": "pH af stærk syre", "keywords": ["beregn ph", "find ph", "hcl", "h2so4", "hno3", "stærk syre opgave"], "page": "acids-bases", "tab": "Stærk syre/base", "description": "HCl, HNO₃, H₂SO₄ – ioniserer 100%"},
+    {"title": "pH af svag syre", "keywords": ["beregn ph", "find ph", "ka", "eddikesyre", "svag syre opgave", "procentvis ionisering"], "page": "acids-bases", "tab": "Svag syre/base", "description": "Ka-opgave – eddikesyre, citronsyre m.fl."},
+    {"title": "Buffer pH", "keywords": ["buffer", "henderson", "beregn ph buffer", "ha og a-", "konjugeret base"], "page": "acids-bases", "tab": "Buffer", "description": "pH af buffer med svag syre + konjugeret base"},
+    {"title": "Titrering", "keywords": ["titrering", "ækvivalenspunkt", "titrer", "neutraliser", "halvækvivalens", "beregn ph ved titrering"], "page": "acids-bases", "tab": "Titrering", "description": "pH ved titrering"},
+    {"title": "Er reaktionen spontan?", "keywords": ["spontan", "er reaktionen spontan", "δg", "gibbs", "spontanitet", "negativ δg"], "page": "thermochemistry", "tab": "Gibbs (ΔG)", "description": "ΔG = ΔH − TΔS – find fortegnet"},
+    {"title": "Beregn ΔH° for reaktion", "keywords": ["beregn δh", "find δh", "reaktionsvarme", "hess", "eksoterm", "endoterm", "dannelsesenthalpi"], "page": "thermochemistry", "tab": "Enthalpi (ΔH°)", "description": "Hess' lov med dannelsesentalpier"},
+    {"title": "Kalorimetri – temperaturstigning", "keywords": ["kalorimeter", "temperaturstigning", "q=mcδt", "specifik varme", "registrerer", "afgivet varme"], "page": "thermochemistry", "tab": "Kalorimetri (q = mcΔT)", "description": "q = mcΔT – varme fra temperaturændring"},
+    {"title": "Afstem reaktion", "keywords": ["afstem", "balancer ligning", "koefficienter", "afstemning", "balance reaktion"], "page": "stoichiometry", "tab": "⚖️ Balancer reaktion", "description": "Afstemt kemisk ligning"},
+    {"title": "Begrænsende reaktant / udbytte", "keywords": ["begrænsende", "theoretical yield", "udbytte", "hvad er den begrænsende", "overskud", "limiting"], "page": "stoichiometry", "tab": "🔬 Begrænsende reaktant", "description": "Find limiting reagent og teoretisk udbytte"},
+    {"title": "Fortynding af opløsning", "keywords": ["fortynding", "fortyndes", "ny koncentration", "c1v1=c2v2", "fortynder", "tilsæt vand"], "page": "stoichiometry", "tab": "💧 Fortynding", "description": "C₁V₁ = C₂V₂"},
+    {"title": "Ideel gaslov – find ubekendt", "keywords": ["pv=nrt", "gaslov", "find tryk", "find volumen", "find temperature", "find mol gas", "beregn gas"], "page": "gases", "tab": "Ideel gaslov", "description": "PV = nRT – beregn P, V, n eller T"},
+    {"title": "Molarmasse fra densitet", "keywords": ["densitet", "molarmasse fra densitet", "m fra densitet", "rho", "ρ", "g/l", "molar masse densitet", "identificer gas", "ukendt gas", "nitrogen oxid", "kvælstofoxid"], "page": "gases", "tab": "🔬 M fra densitet", "description": "M = ρRT/P – find molarmassen fra densitet, tryk og temperatur"},
     {"title": "ICE-tabel / ligevægt", "keywords": ["ice tabel", "ice-tabel", "opstil ice", "opsæt ice", "ligevægtskoncentration", "beregn kc", "beregn kp"], "page": "ligevaegt", "tab": "🧊 ICE Table", "description": "ICE-tabel og ligevægtskoncentrationer"},
     {"title": "Q vs K – reaktionsretning", "keywords": ["reaktionskvotient", "q vs k", "hvilken retning", "går reaktionen frem", "går reaktionen tilbage", "forskydning"], "page": "ligevaegt", "tab": "📊 Reaktionskvotient Q", "description": "Beregn Q og sammenlign med K"},
     {"title": "Eksamensguide", "keywords": ["eksamensguide", "eksamen", "guide", "hjælp", "opgave", "hvilken beregner", "hvad skal jeg bruge"], "page": "eksamensguide", "tab": None, "description": "Oversigt over opgavetyper og hvilken beregner de kræver"},
@@ -238,6 +239,24 @@ def _render_styled_tab_nav(options: list, key: str, nav_key: str | None = None) 
             st.session_state[key] = target
     st.markdown(_TAB_NAV_CSS.format(key=key), unsafe_allow_html=True)
     return st.radio("Tab:", options, key=key, horizontal=True)
+
+
+def _quick_links(links: list[tuple[str, str, str | None]]) -> None:
+    """Render a 'Se også' shortcut bar with links to related calculators.
+
+    Each entry is (label, page, tab_or_None).
+    """
+    st.markdown("---")
+    st.caption("📎 **Se også:**")
+    cols = st.columns(len(links))
+    for col, (label, page, tab) in zip(cols, links):
+        key = f"ql_{page}_{(tab or '').replace(' ', '_').replace('/', '_')}"
+        with col:
+            if st.button(label, key=key, use_container_width=True):
+                st.query_params["page"] = page
+                if tab:
+                    st.session_state[f"nav_{page.replace('-', '_')}"] = tab
+                st.rerun()
 
 
 def render_search_sidebar():
@@ -440,28 +459,28 @@ def show_fundamentals_page():
     c1, c2, c3, c4 = st.columns(4)
     with c1:
         st.markdown("**🧪 Syrer & Baser**")
-        _nav_card("pH af stærk syre / base", "acids-bases", "HCl, NaOH m.fl. – ioniserer 100%", "sa", tab="Strong Acids/Bases")
-        _nav_card("pH af svag syre / base", "acids-bases", "Eddikesyre, ammoniak m.fl. – brug Ka / Kb", "wa", tab="Weak Acids/Bases")
-        _nav_card("Buffer pH", "acids-bases", "Henderson-Hasselbalch, blandingsberegning", "buf", tab="Buffers")
-        _nav_card("Titrering", "acids-bases", "pH ved titrering – syre + base", "titr", tab="Titrations")
+        _nav_card("pH af stærk syre / base", "acids-bases", "HCl, NaOH m.fl. – ioniserer 100%", "sa", tab="Stærk syre/base")
+        _nav_card("pH af svag syre / base", "acids-bases", "Eddikesyre, ammoniak m.fl. – brug Ka / Kb", "wa", tab="Svag syre/base")
+        _nav_card("Buffer pH", "acids-bases", "Henderson-Hasselbalch, blandingsberegning", "buf", tab="Buffer")
+        _nav_card("Titrering", "acids-bases", "pH ved titrering – syre + base", "titr", tab="Titrering")
     with c2:
         st.markdown("**🧮 Stofmængder & Reaktioner**")
         _nav_card("Molarmasse", "atoms-molar", "Find g/mol for en kemisk forbindelse", "mm")
-        _nav_card("Balancer reaktion", "stoichiometry", "Afstem koefficienterne i en reaktionsligning", "bal", tab="⚖️ Balance Reaction")
-        _nav_card("Begrænsende reaktant", "stoichiometry", "Find limiting reagent og teoretisk udbytte", "lr", tab="🔬 Limiting Reagent & Yields")
-        _nav_card("Fortynding (C₁V₁ = C₂V₂)", "stoichiometry", "Beregn koncentration efter fortynding", "dil", tab="💧 Dilution")
+        _nav_card("Balancer reaktion", "stoichiometry", "Afstem koefficienterne i en reaktionsligning", "bal", tab="⚖️ Balancer reaktion")
+        _nav_card("Begrænsende reaktant", "stoichiometry", "Find limiting reagent og teoretisk udbytte", "lr", tab="🔬 Begrænsende reaktant")
+        _nav_card("Fortynding (C₁V₁ = C₂V₂)", "stoichiometry", "Beregn koncentration efter fortynding", "dil", tab="💧 Fortynding")
     with c3:
         st.markdown("**🔥 Termokemi**")
-        _nav_card("Enthalpi ΔH", "thermochemistry", "Reaktionsvarme, Hess's lov, dannelsesenthalpi", "dh", tab="Enthalpy change (ΔH°)")
-        _nav_card("Gibbs fri energi ΔG", "thermochemistry", "Spontanitet, ΔG = ΔH − TΔS", "dg", tab="Thermochemistry (Gibbs)")
-        _nav_card("Kalorimetri (q = mcΔT)", "thermochemistry", "Varmeoverførsel og temperaturændring", "cal", tab="Calorimetry (q = m c ΔT)")
-        _nav_card("Opvarmnings-/afkølingskurve", "thermochemistry", "Energi ved faseovergange", "heat", tab="Heating/Cooling Curve")
+        _nav_card("Enthalpi ΔH", "thermochemistry", "Reaktionsvarme, Hess's lov, dannelsesenthalpi", "dh", tab="Enthalpi (ΔH°)")
+        _nav_card("Gibbs fri energi ΔG", "thermochemistry", "Spontanitet, ΔG = ΔH − TΔS", "dg", tab="Gibbs (ΔG)")
+        _nav_card("Kalorimetri (q = mcΔT)", "thermochemistry", "Varmeoverførsel og temperaturændring", "cal", tab="Kalorimetri (q = mcΔT)")
+        _nav_card("Opvarmnings-/afkølingskurve", "thermochemistry", "Energi ved faseovergange", "heat", tab="Opvarmningskurve")
     with c4:
         st.markdown("**📊 Gasser**")
-        _nav_card("Ideel gaslov PV = nRT", "gases", "Beregn P, V, n eller T", "ig", tab="Ideal Gas Law")
-        _nav_card("Daltons lov (partialtryk)", "gases", "Partialtryk i en gasblanding", "dal", tab="Dalton's Law")
-        _nav_card("Van der Waals", "gases", "Gaslov for reelle gasser", "vdw", tab="van der Waals")
-        _nav_card("Gasstoichiometri", "gases", "Volumen og stofmængder i gasreaktioner", "gst", tab="Gas Stoichiometry")
+        _nav_card("Ideel gaslov PV = nRT", "gases", "Beregn P, V, n eller T", "ig", tab="Ideel gaslov")
+        _nav_card("🔬 M fra densitet (ρ)", "gases", "Find molarmassen fra tryk, T og densitet – identificer ukendt gas", "mfd", tab="🔬 M fra densitet")
+        _nav_card("Daltons lov (partialtryk)", "gases", "Partialtryk i en gasblanding", "dal", tab="Daltons lov")
+        _nav_card("Gasstoichiometri", "gases", "Volumen og stofmængder i gasreaktioner", "gst", tab="Gasstoichiometri")
 
     st.markdown("---")
 
@@ -475,7 +494,7 @@ def show_fundamentals_page():
         _nav_card("Le Chatelier's princip", "ligevaegt", "Forudsig ligevægtsforskydning", "lec", tab="⚖️ Le Chateliers princip")
     with c6:
         st.markdown("**🔋 Elektrokemi**")
-        _nav_card("Cellespænding E°", "electrochemistry", "Standardcellespænding og spontanitet", "ecell", tab="Build a Cell")
+        _nav_card("Cellespænding E°", "electrochemistry", "Standardcellespænding og spontanitet", "ecell", tab="Byg en celle")
         _nav_card("Nernst ligning", "electrochemistry", "E ved ikke-standardbetingelser", "nernst", tab="Nernst")
         _nav_card("Faradays lov", "electrochemistry", "Elektrolyse – mængde stof vs. ladning", "farad", tab="⚡ Faradays lov")
         _nav_card("Redoxafstemning", "stoichiometry", "Afstem redoxreaktioner med halvreaktioner", "redox", tab="🔋 Redoxafstemning")
@@ -489,7 +508,7 @@ def show_fundamentals_page():
         st.markdown("**🌡️ Andet**")
         _nav_card("Kogepunktselevering / Frysepunkt", "koge-fryse", "Kolligative egenskaber og molalitet", "kf")
         _nav_card("Damptryk (Raoult)", "damptryk", "Damptryk over opløsninger", "vp")
-        _nav_card("Kinetik & halvliv", "kinetics", "Reaktionshastighed, Arrhenius, halvliv", "kin", tab="Integrated Rate Law")
+        _nav_card("Kinetik & halvliv", "kinetics", "Reaktionshastighed, Arrhenius, halvliv", "kin", tab="Integreret hastighedslov")
         _nav_card("Nuklear henfald", "nuklear", "α/β/γ-henfald og radioaktiv halveringstid", "nuc")
 
     st.markdown("---")
@@ -505,49 +524,49 @@ _EXAM_TASKS = [
     # ── Syrer & Baser ────────────────────────────────────────────────────────
     ("Beregn pH af 0,10 M HCl",
      "Nøgleord: stærk syre (HCl, HNO₃, H₂SO₄) + koncentration → pH = −log[H⁺]",
-     "Stærk syre", "acids-bases", "Strong Acids/Bases"),
+     "Stærk syre", "acids-bases", "Stærk syre/base"),
     ("En 0,050 M NaOH-opløsning – hvad er pH?",
      "Nøgleord: stærk base (NaOH, KOH) + koncentration → pOH, pH = 14 − pOH",
-     "Stærk base", "acids-bases", "Strong Acids/Bases"),
+     "Stærk base", "acids-bases", "Stærk syre/base"),
     ("En 0,100 M eddikesyre har Ka = 1,8×10⁻⁵. Beregn pH.",
      "Nøgleord: svag syre + Ka → brug ICE-tabel til at finde [H⁺]",
-     "Svag syre", "acids-bases", "Weak Acids/Bases"),
+     "Svag syre", "acids-bases", "Svag syre/base"),
     ("En bufferløsning indeholder 0,20 M CH₃COOH og 0,10 M CH₃COO⁻. Beregn pH.",
      "Nøgleord: buffer = svag syre + konjugeret base → Henderson-Hasselbalch: pH = pKa + log([A⁻]/[HA])",
-     "Buffer (Henderson-Hasselbalch)", "acids-bases", "Buffers"),
+     "Buffer (Henderson-Hasselbalch)", "acids-bases", "Buffer"),
     ("25 mL 0,10 M HCl titreres med 0,10 M NaOH. Find pH ved ækvivalenspunktet.",
      "Nøgleord: titrering + ækvivalenspunkt → bestem, hvad der er i overskud",
-     "Titrering", "acids-bases", "Titrations"),
+     "Titrering", "acids-bases", "Titrering"),
     # ── Termokemi ────────────────────────────────────────────────────────────
     ("Er reaktionen N₂ + 3H₂ → 2NH₃ spontan ved 25°C? ΔH° = −92 kJ, ΔS° = −198 J/K",
      "Nøgleord: spontan / ΔG / ΔH og ΔS givet → ΔG = ΔH − TΔS; spontan hvis ΔG < 0",
-     "Gibbs fri energi (ΔG)", "thermochemistry", "Thermochemistry (Gibbs)"),
+     "Gibbs fri energi (ΔG)", "thermochemistry", "Gibbs (ΔG)"),
     ("Beregn ΔH° for 2NO(g) + O₂(g) → 2NO₂(g) vha. dannelsesentalpier.",
      "Nøgleord: dannelsesentalpier (ΔHf°) givet → Hess: ΔH = Σ(ν·ΔHf° produkter) − Σ(ν·ΔHf° reaktanter)",
-     "Reaktionsenthalpi (ΔH°)", "thermochemistry", "Enthalpy change (ΔH°)"),
+     "Reaktionsenthalpi (ΔH°)", "thermochemistry", "Enthalpi (ΔH°)"),
     ("100 g vand opvarmes fra 20°C til 45°C i et kalorimeter. Beregn varmeafgivelsen.",
      "Nøgleord: masse + temperaturændring + specifik varme → q = mcΔT",
-     "Kalorimetri (q = mcΔT)", "thermochemistry", "Calorimetry (q = m c ΔT)"),
+     "Kalorimetri (q = mcΔT)", "thermochemistry", "Kalorimetri (q = mcΔT)"),
     # ── Stofmængder & Reaktioner ─────────────────────────────────────────────
     ("Afstem: Fe + O₂ → Fe₂O₃",
      "Nøgleord: afstem / koefficienter → balancer reaktion",
-     "Balancer reaktion", "stoichiometry", "⚖️ Balance Reaction"),
+     "Balancer reaktion", "stoichiometry", "⚖️ Balancer reaktion"),
     ("5,0 g H₂ reagerer med 32 g O₂. Hvad er den begrænsende reaktant?",
      "Nøgleord: to reaktanter + masser → beregn mol af hvert, find hvem der løber tørt først",
-     "Begrænsende reaktant", "stoichiometry", "🔬 Limiting Reagent & Yields"),
+     "Begrænsende reaktant", "stoichiometry", "🔬 Begrænsende reaktant"),
     ("Fortynding: 25 mL af 2,0 M HCl fortyndes til 500 mL. Find den nye koncentration.",
      "Nøgleord: fortynding + volumen ændres → C₁V₁ = C₂V₂",
-     "Fortynding", "stoichiometry", "💧 Dilution"),
+     "Fortynding", "stoichiometry", "💧 Fortynding"),
     ("Afstem redoxreaktionen MnO₄⁻ + Fe²⁺ → Mn²⁺ + Fe³⁺ i sur opløsning.",
      "Nøgleord: redox + sur/basisk opløsning → halvreaktionsmetoden",
      "Redoxafstemning", "stoichiometry", "🔋 Redoxafstemning"),
     # ── Gasser ───────────────────────────────────────────────────────────────
     ("2,5 mol N₂ ved 25°C og 1,5 atm – hvad er volumen?",
      "Nøgleord: mol + tryk + temperatur + volumen → PV = nRT (find ubekendt)",
-     "Ideel gaslov (PV = nRT)", "gases", "Ideal Gas Law"),
+     "Ideel gaslov (PV = nRT)", "gases", "Ideel gaslov"),
     ("En blanding af N₂ (0,80 mol) og O₂ (0,20 mol) har totaltryk 1,0 atm. Find partialtryk.",
      "Nøgleord: gasblanding + mol + totaltryk → Daltons lov: P_i = χ_i · P_total",
-     "Daltons lov (partialtryk)", "gases", "Dalton's Law"),
+     "Daltons lov (partialtryk)", "gases", "Daltons lov"),
     # ── Ligevægt ─────────────────────────────────────────────────────────────
     ("H₂ + I₂ ⇌ 2HI. Start: [H₂]₀=0,50 M, [I₂]₀=0,50 M. Beregn [HI] ved ligevægt (Kc=50).",
      "Nøgleord: ligevægtskonstant + startkoncentrationer → opstil ICE-tabel",
@@ -558,14 +577,14 @@ _EXAM_TASKS = [
     # ── Elektrokemi ──────────────────────────────────────────────────────────
     ("Beregn E°cell for Zn/Cu-cellen (E°Zn²⁺/Zn = −0,76 V, E°Cu²⁺/Cu = +0,34 V).",
      "Nøgleord: halvreaktionspotentialer givet → E°cell = E°katode − E°anode",
-     "Cellespænding (E°cell)", "electrochemistry", "Build a Cell"),
+     "Cellespænding (E°cell)", "electrochemistry", "Byg en celle"),
     ("E°cell = 1,10 V, n = 2. Beregn ΔG° og K.",
      "Nøgleord: E°cell + n → ΔG° = −nFE°; K fra ΔG° = −RT·lnK",
-     "ΔG° og K fra E°", "electrochemistry", "ΔG and K"),
+     "ΔG° og K fra E°", "electrochemistry", "ΔG og K"),
     # ── Kinetik ──────────────────────────────────────────────────────────────
     ("En 1. ordens reaktion har k = 0,35 s⁻¹. Hvad er halvliv? Hvad er [A] efter 5 s?",
      "Nøgleord: reaktionsorden + k → integreret hastighedslov; halvliv t½ = ln2/k",
-     "Integreret hastighedslov", "kinetics", "Integrated Rate Law"),
+     "Integreret hastighedslov", "kinetics", "Integreret hastighedslov"),
     ("k₁ = 1,0×10⁻³ s⁻¹ ved 25°C, Eₐ = 50 kJ/mol. Beregn k ved 35°C.",
      "Nøgleord: k ved én temp + Eₐ → Arrhenius: k₂ = k₁·exp(Eₐ/R·(1/T₁ − 1/T₂))",
      "Arrhenius", "kinetics", "Arrhenius"),
@@ -937,7 +956,7 @@ def show_molar_mass_page():
                         composition_table = format_composition_table(metadata['composition'])
                         st.markdown(composition_table)
 
-                    with st.expander("🔍 Show Steps", expanded=False):
+                    with st.expander("🔍 Vis trin", expanded=False):
                         for step in steps:
                             st.markdown(step)
 
@@ -950,7 +969,7 @@ def show_molar_mass_page():
                         st.dataframe(element_counts_df, use_container_width=True)
 
                 except Exception as e:
-                    st.error(f"❌ **Error**: {str(e)}")
+                    st.error(f"❌ **Fejl**: {str(e)}")
                     st.info("Please check your formula and try again.")
 
     if active_subpage == "⚛️ Elektronkonfiguration og atomradius":
@@ -1061,7 +1080,7 @@ def show_molar_mass_page():
                     else:
                         st.text("Ingen orbitalfordeling at vise for valgt visning.")
 
-                    with st.expander("🔍 Show Steps", expanded=False):
+                    with st.expander("🔍 Vis trin", expanded=False):
                         for step in steps:
                             st.markdown(step)
                 except Exception as e:
@@ -1416,7 +1435,7 @@ def _render_gibbs_calculator(include_page_header: bool = False):
                 contribution_df = pd.DataFrame(metadata["row_contributions"])
                 st.dataframe(contribution_df, use_container_width=True, hide_index=True)
 
-            with st.expander("Show steps", expanded=False):
+            with st.expander("Vis trin", expanded=False):
                 for step in steps:
                     st.markdown(step)
 
@@ -1435,23 +1454,40 @@ def show_stoichiometry_page():
     st.markdown("---")
     
     _st_options = [
-        "⚖️ Balance Reaction", "🔋 Redoxafstemning", "🔬 Limiting Reagent & Yields",
-        "Tung/let opløselighed", "🧭 Reaktionstype", "💧 Dilution",
+        "⚖️ Balancer reaktion", "🔋 Redoxafstemning", "🔬 Begrænsende reaktant",
+        "Tung/let opløselighed", "🧭 Reaktionstype", "💧 Fortynding",
     ]
     _st_active = _render_styled_tab_nav(_st_options, key="stoich_tab", nav_key="nav_stoichiometry")
 
-    if _st_active == "⚖️ Balance Reaction":
+    if _st_active == "⚖️ Balancer reaktion":
         show_reaction_balancing_tab()
+        _quick_links([
+            ("🔬 Begrænsende reaktant", "stoichiometry", "🔬 Begrænsende reaktant"),
+            ("🔋 Redoxafstemning", "stoichiometry", "🔋 Redoxafstemning"),
+        ])
     elif _st_active == "🔋 Redoxafstemning":
         show_redox_balancing_tab()
-    elif _st_active == "🔬 Limiting Reagent & Yields":
+        _quick_links([
+            ("⚖️ Balancer reaktion", "stoichiometry", "⚖️ Balancer reaktion"),
+            ("🔋 Byg en celle", "electrochemistry", "Byg en celle"),
+        ])
+    elif _st_active == "🔬 Begrænsende reaktant":
         show_limiting_reagent_tab()
+        _quick_links([
+            ("⚖️ Molarmasse", "atoms-molar", None),
+            ("💧 Fortynding", "stoichiometry", "💧 Fortynding"),
+            ("⚖️ Balancer reaktion", "stoichiometry", "⚖️ Balancer reaktion"),
+        ])
     elif _st_active == "Tung/let opløselighed":
         show_salt_solubility_tab()
     elif _st_active == "🧭 Reaktionstype":
         show_reaction_type_tab()
-    elif _st_active == "💧 Dilution":
+    elif _st_active == "💧 Fortynding":
         show_dilution_tab()
+        _quick_links([
+            ("🔬 Begrænsende reaktant", "stoichiometry", "🔬 Begrænsende reaktant"),
+            ("⚖️ Molarmasse", "atoms-molar", None),
+        ])
 
 
 def show_salt_solubility_tab():
@@ -1836,12 +1872,12 @@ def show_reaction_balancing_tab():
                         st.markdown(f"- {species}: {coeff}")
                     
                     # Steps section
-                    with st.expander("🔍 Show Steps", expanded=False):
+                    with st.expander("🔍 Vis trin", expanded=False):
                         for step in result['steps']:
                             st.markdown(step)
                     
                 except Exception as e:
-                    st.error(f"❌ **Error**: {str(e)}")
+                    st.error(f"❌ **Fejl**: {str(e)}")
                     st.info("Please check your equation and try again.")
     
     with col2:
@@ -1935,7 +1971,7 @@ def show_limiting_reagent_tab():
                         value = st.number_input("Mass (g):", value=10.0, step=0.1, key=f"value_{i}")
                         unit = "g"
                     elif mode == "moles":
-                        value = st.number_input("Moles:", value=1.0, step=0.1, key=f"value_{i}")
+                        value = st.number_input("Mol (n):", value=1.0, step=0.1, key=f"value_{i}")
                         unit = "mol"
                     else:  # solution
                         value = st.number_input("Molarity (M):", value=1.0, step=0.1, key=f"value_{i}")
@@ -2026,12 +2062,12 @@ def show_limiting_reagent_tab():
                                     st.markdown(f"Initial: {initial_moles:.4f} mol ({initial_mass:.3f} g) → All consumed")
                     
                     # Steps section
-                    with st.expander("🔍 Show Steps", expanded=False):
+                    with st.expander("🔍 Vis trin", expanded=False):
                         for step in steps:
                             st.markdown(step)
                     
                 except Exception as e:
-                    st.error(f"❌ **Error**: {str(e)}")
+                    st.error(f"❌ **Fejl**: {str(e)}")
                     st.info("Please check your inputs and try again.")
         
         except Exception as e:
@@ -2118,12 +2154,12 @@ def show_dilution_tab():
             st.markdown(f"**{unknown_symbol} = {result_value:.6f} {result_unit}**")
             
             # Steps section
-            with st.expander("🔍 Show Steps", expanded=False):
+            with st.expander("🔍 Vis trin", expanded=False):
                 for step in steps:
                     st.markdown(step)
         
         except Exception as e:
-            st.error(f"❌ **Error**: {str(e)}")
+            st.error(f"❌ **Fejl**: {str(e)}")
             st.info("Please check your inputs and try again.")
 
 
@@ -2132,18 +2168,37 @@ def show_acids_bases_page():
     st.title("🧪 Acids & Bases Calculator")
     st.markdown("---")
 
-    _ab_options = ["Strong Acids/Bases", "Weak Acids/Bases", "Buffers", "Titrations", "📋 pH Calculator"]
+    _ab_options = ["Stærk syre/base", "Svag syre/base", "Buffer", "Titrering", "📋 pH-beregner"]
     _ab_active = _render_styled_tab_nav(_ab_options, key="acids_bases_tab", nav_key="nav_acids_bases")
 
-    if _ab_active == "Strong Acids/Bases":
+    if _ab_active == "Stærk syre/base":
         show_strong_acids_bases_tab()
-    elif _ab_active == "Weak Acids/Bases":
+        _quick_links([
+            ("Svag syre/base", "acids-bases", "Svag syre/base"),
+            ("Buffer", "acids-bases", "Buffer"),
+            ("Titrering", "acids-bases", "Titrering"),
+        ])
+    elif _ab_active == "Svag syre/base":
         show_weak_acids_bases_tab()
-    elif _ab_active == "Buffers":
+        _quick_links([
+            ("Buffer", "acids-bases", "Buffer"),
+            ("Titrering", "acids-bases", "Titrering"),
+            ("⚗️ ICE-tabel", "ligevaegt", "🧊 ICE Table"),
+        ])
+    elif _ab_active == "Buffer":
         show_buffers_tab()
-    elif _ab_active == "Titrations":
+        _quick_links([
+            ("Svag syre/base", "acids-bases", "Svag syre/base"),
+            ("Titrering", "acids-bases", "Titrering"),
+        ])
+    elif _ab_active == "Titrering":
         show_titrations_tab()
-    elif _ab_active == "📋 pH Calculator":
+        _quick_links([
+            ("Stærk syre/base", "acids-bases", "Stærk syre/base"),
+            ("Svag syre/base", "acids-bases", "Svag syre/base"),
+            ("Buffer", "acids-bases", "Buffer"),
+        ])
+    elif _ab_active == "📋 pH-beregner":
         show_pH_calculator_page()
 
 
@@ -2176,12 +2231,12 @@ def show_strong_acids_bases_tab():
                 
                 st.success(f"✅ **pH = {ph:.3f}**")
                 
-                with st.expander("🔍 Show Steps", expanded=False):
+                with st.expander("🔍 Vis trin", expanded=False):
                     for step in steps:
                         st.markdown(step)
             
             except Exception as e:
-                st.error(f"❌ **Error**: {str(e)}")
+                st.error(f"❌ **Fejl**: {str(e)}")
     
     elif mode == "Single strong base":
         st.markdown("#### Strong Base pH")
@@ -2195,12 +2250,12 @@ def show_strong_acids_bases_tab():
                 
                 st.success(f"✅ **pH = {ph:.3f}**")
                 
-                with st.expander("🔍 Show Steps", expanded=False):
+                with st.expander("🔍 Vis trin", expanded=False):
                     for step in steps:
                         st.markdown(step)
             
             except Exception as e:
-                st.error(f"❌ **Error**: {str(e)}")
+                st.error(f"❌ **Fejl**: {str(e)}")
     
     else:  # Mixture
         st.markdown("#### Strong Acid + Base Mixture")
@@ -2224,12 +2279,12 @@ def show_strong_acids_bases_tab():
                 st.success(f"✅ **pH = {ph:.3f}**")
                 st.info(f"**Limiting species:** {metadata['limiting_species']}")
                 
-                with st.expander("🔍 Show Steps", expanded=False):
+                with st.expander("🔍 Vis trin", expanded=False):
                     for step in steps:
                         st.markdown(step)
             
             except Exception as e:
-                st.error(f"❌ **Error**: {str(e)}")
+                st.error(f"❌ **Fejl**: {str(e)}")
 
 
 def show_weak_acids_bases_tab():
@@ -2268,12 +2323,12 @@ def show_weak_acids_bases_tab():
                 st.success(f"✅ **pH = {ph:.3f}**")
                 st.info(f"**Percent ionization:** {metadata['percent_ionization']:.2f}%")
                 
-                with st.expander("🔍 Show Steps", expanded=False):
+                with st.expander("🔍 Vis trin", expanded=False):
                     for step in steps:
                         st.markdown(step)
             
             except Exception as e:
-                st.error(f"❌ **Error**: {str(e)}")
+                st.error(f"❌ **Fejl**: {str(e)}")
     
     else:  # Weak base
         st.markdown("#### Weak Base pH")
@@ -2316,12 +2371,12 @@ def show_weak_acids_bases_tab():
                 if 'percent_ionization' in metadata:
                     st.info(f"**Percent ionization:** {metadata['percent_ionization']:.2f}%")
                 
-                with st.expander("🔍 Show Steps", expanded=False):
+                with st.expander("🔍 Vis trin", expanded=False):
                     for step in steps:
                         st.markdown(step)
             
             except Exception as e:
-                st.error(f"❌ **Error**: {str(e)}")
+                st.error(f"❌ **Fejl**: {str(e)}")
 
 
 def show_buffers_tab():
@@ -2362,12 +2417,12 @@ def show_buffers_tab():
                 
                 st.success(f"✅ **pH = {ph:.3f}**")
                 
-                with st.expander("🔍 Show Steps", expanded=False):
+                with st.expander("🔍 Vis trin", expanded=False):
                     for step in steps:
                         st.markdown(step)
             
             except Exception as e:
-                st.error(f"❌ **Error**: {str(e)}")
+                st.error(f"❌ **Fejl**: {str(e)}")
     
     elif mode == "Mixing solutions":
         st.markdown("#### Buffer pH from Mixing")
@@ -2391,12 +2446,12 @@ def show_buffers_tab():
                 
                 st.success(f"✅ **pH = {ph:.3f}**")
                 
-                with st.expander("🔍 Show Steps", expanded=False):
+                with st.expander("🔍 Vis trin", expanded=False):
                     for step in steps:
                         st.markdown(step)
             
             except Exception as e:
-                st.error(f"❌ **Error**: {str(e)}")
+                st.error(f"❌ **Fejl**: {str(e)}")
     
     else:  # Target pH
         st.markdown("#### Target Buffer pH")
@@ -2412,12 +2467,12 @@ def show_buffers_tab():
                 st.success(f"✅ **[A⁻]/[HA] ratio = {ratio:.3f}**")
                 st.info(f"**Target pH:** {target_ph:.1f}, **pKa:** {pka:.2f}")
                 
-                with st.expander("🔍 Show Steps", expanded=False):
+                with st.expander("🔍 Vis trin", expanded=False):
                     for step in steps:
                         st.markdown(step)
             
             except Exception as e:
-                st.error(f"❌ **Error**: {str(e)}")
+                st.error(f"❌ **Fejl**: {str(e)}")
 
 
 def show_titrations_tab():
@@ -2458,12 +2513,12 @@ def show_titrations_tab():
                 st.success(f"✅ **pH = {ph:.3f}**")
                 st.info(f"**Point type:** {point_type}")
                 
-                with st.expander("🔍 Show Steps", expanded=False):
+                with st.expander("🔍 Vis trin", expanded=False):
                     for step in steps:
                         st.markdown(step)
             
             except Exception as e:
-                st.error(f"❌ **Error**: {str(e)}")
+                st.error(f"❌ **Fejl**: {str(e)}")
     
     else:  # Weak acid + Strong base
         st.markdown("#### Weak Acid + Strong Base")
@@ -2488,17 +2543,17 @@ def show_titrations_tab():
                 st.success(f"✅ **pH = {ph:.3f}**")
                 st.info(f"**Point type:** {point_type}")
                 
-                with st.expander("🔍 Show Steps", expanded=False):
+                with st.expander("🔍 Vis trin", expanded=False):
                     for step in steps:
                         st.markdown(step)
             
             except Exception as e:
-                st.error(f"❌ **Error**: {str(e)}")
+                st.error(f"❌ **Fejl**: {str(e)}")
 
 
 def show_pH_calculator_page():
     """Display the pH calculator page with 5 subtabs for different calculation types."""
-    st.title("📋 pH Calculator")
+    st.title("📋 pH-beregner")
     st.markdown("---")
     st.markdown("Calculate pH for strong acids, weak acids, bases, and buffer systems.")
     
@@ -2562,7 +2617,7 @@ def show_pH_strong_acid_base_tab():
                     st.markdown(f"**pOH = {poh:.3f}**")
                     st.markdown(f"**Kw = [H₃O⁺][OH⁻] = {h3o * oh:.2e}**")
                 
-                with st.expander("🔍 Show Steps"):
+                with st.expander("🔍 Vis trin"):
                     st.markdown("**Step 1: Strong Acid Dissociation**")
                     st.markdown("For a strong acid (e.g., HCl): HA → H₃O⁺ + A⁻")
                     st.markdown(f"Since it completely dissociates: [H₃O⁺] = [HA]₀ = {concentration:.2e} M")
@@ -2595,7 +2650,7 @@ def show_pH_strong_acid_base_tab():
                     st.markdown(f"**pOH = {poh:.3f}**")
                     st.markdown(f"**Kw = [H₃O⁺][OH⁻] = {h3o * oh:.2e}**")
                 
-                with st.expander("🔍 Show Steps"):
+                with st.expander("🔍 Vis trin"):
                     st.markdown("**Step 1: Strong Base Dissociation**")
                     st.markdown("For a strong base (e.g., NaOH): BOH → B⁺ + OH⁻")
                     st.markdown(f"Since it completely dissociates: [OH⁻] = [BOH]₀ = {concentration:.2e} M")
@@ -2611,7 +2666,7 @@ def show_pH_strong_acid_base_tab():
                     st.markdown(f"Kw = [H₃O⁺][OH⁻] = {h3o:.2e} × {oh:.2e} = **{h3o * oh:.2e}**")
         
         except Exception as e:
-            st.error(f"❌ **Error**: {str(e)}")
+            st.error(f"❌ **Fejl**: {str(e)}")
 
 
 def show_pH_weak_acid_base_tab():
@@ -2678,7 +2733,7 @@ def show_pH_weak_acid_base_tab():
                     st.markdown(f"**pKa = {pka:.3f}**")
                     st.markdown(f"**pOH = {poh:.3f}**")
                 
-                with st.expander("🔍 Show Steps"):
+                with st.expander("🔍 Vis trin"):
                     st.markdown("**Weak Acid Equilibrium:**")
                     st.markdown(f"HA ⇌ H₃O⁺ + A⁻")
                     st.markdown(f"Initial (M): {concentration:.2e} | 0 | 0")
@@ -2729,7 +2784,7 @@ def show_pH_weak_acid_base_tab():
                     st.markdown(f"**pKb = {pkb:.3f}**")
                     st.markdown(f"**pKa(conj. acid) = {pka_conj:.3f}**")
                 
-                with st.expander("🔍 Show Steps"):
+                with st.expander("🔍 Vis trin"):
                     st.markdown("**Weak Base Equilibrium:**")
                     st.markdown(f"B + H₂O ⇌ BH⁺ + OH⁻")
                     st.markdown(f"Initial (M): {concentration:.2e} | 0 | 0")
@@ -2747,7 +2802,7 @@ def show_pH_weak_acid_base_tab():
                     st.markdown(f"pH = 14.00 - pOH = 14.00 - {poh:.3f} = **{ph:.3f}**")
         
         except Exception as e:
-            st.error(f"❌ **Error**: {str(e)}")
+            st.error(f"❌ **Fejl**: {str(e)}")
 
 
 def show_pH_ksp_solubility_tab():
@@ -2803,7 +2858,7 @@ def show_pH_ksp_solubility_tab():
                 st.markdown(f"**[H₃O⁺] = {h3o:.2e} M**")
                 st.markdown(f"**pOH = {poh:.3f}**")
             
-            with st.expander("🔍 Show Steps"):
+            with st.expander("🔍 Vis trin"):
                 st.markdown("**Solubility Equilibrium:**")
                 st.markdown(f"M{num_cations}X{num_anions} ⇌ {num_cations}M⁺ + {num_anions}X⁻")
                 st.markdown(f"(where M = cation, X = anion)")
@@ -2826,7 +2881,7 @@ def show_pH_ksp_solubility_tab():
                 st.markdown(f"pH = 14.00 - pOH = **{ph:.3f}**")
         
         except Exception as e:
-            st.error(f"❌ **Error**: {str(e)}")
+            st.error(f"❌ **Fejl**: {str(e)}")
 
 
 def show_pH_buffer_tab():
@@ -2875,7 +2930,7 @@ def show_pH_buffer_tab():
                 st.markdown(f"**Ratio [A⁻]/[HA] = {ratio:.3f}**")
                 st.markdown(f"**pKa = {pka:.3f}**")
             
-            with st.expander("🔍 Show Steps"):
+            with st.expander("🔍 Vis trin"):
                 st.markdown("**Henderson-Hasselbalch Equation:**")
                 st.markdown(f"pH = pKa + log₁₀([A⁻]/[HA])")
                 st.markdown(f"pH = {pka:.3f} + log₁₀({conc_a:.2e} / {conc_ha:.2e})")
@@ -2889,7 +2944,7 @@ def show_pH_buffer_tab():
                     st.markdown(f"log₁₀(1) = 0, so **pH = pKa = {pka:.3f}**")
         
         except Exception as e:
-            st.error(f"❌ **Error**: {str(e)}")
+            st.error(f"❌ **Fejl**: {str(e)}")
 
 
 def show_pH_buffer_addition_tab():
@@ -2962,7 +3017,7 @@ def show_pH_buffer_addition_tab():
                 moles_a_final = moles_a - moles_added
                 
                 if moles_a_final < 0:
-                    st.error("❌ **Error**: Added acid exceeds conjugate base. Buffer capacity exceeded!")
+                    st.error("❌ **Fejl**: Added acid exceeds conjugate base. Buffer capacity exceeded!")
                     return
             
             else:  # NaOH
@@ -2971,7 +3026,7 @@ def show_pH_buffer_addition_tab():
                 moles_a_final = moles_a + moles_added
                 
                 if moles_ha_final < 0:
-                    st.error("❌ **Error**: Added base exceeds weak acid. Buffer capacity exceeded!")
+                    st.error("❌ **Fejl**: Added base exceeds weak acid. Buffer capacity exceeded!")
                     return
             
             # Total volume after addition
@@ -3002,7 +3057,7 @@ def show_pH_buffer_addition_tab():
                 st.markdown(f"**[HA] → [A⁻]**")
                 st.markdown(f"**{conc_ha_final:.2e} → {conc_a_final:.2e}**")
             
-            with st.expander("🔍 Show Steps"):
+            with st.expander("🔍 Vis trin"):
                 st.markdown("**Step 1: Calculate initial moles**")
                 st.markdown(f"n(HA) = {conc_ha_initial:.2e} M × {buffer_volume:.1f} mL = **{moles_ha:.2e} mol**")
                 st.markdown(f"n(A⁻) = {conc_a_initial:.2e} M × {buffer_volume:.1f} mL = **{moles_a:.2e} mol**")
@@ -3038,7 +3093,7 @@ def show_pH_buffer_addition_tab():
                 st.markdown(f"ΔpH = {ph_final:.3f} - {ph_initial:.3f} = **{delta_ph:+.3f}**")
         
         except Exception as e:
-            st.error(f"❌ **Error**: {str(e)}")
+            st.error(f"❌ **Fejl**: {str(e)}")
 
 
 def show_equilibrium_page():
@@ -3206,12 +3261,12 @@ def show_ice_table_tab():
                             st.markdown(f"- [{species}] = {conc:.6f} M")
                     
                     # Steps section
-                    with st.expander("🔍 Show Steps", expanded=False):
+                    with st.expander("🔍 Vis trin", expanded=False):
                         for step in steps:
                             st.markdown(step)
                 
                 except Exception as e:
-                    st.error(f"❌ **Error**: {str(e)}")
+                    st.error(f"❌ **Fejl**: {str(e)}")
         
         except Exception as e:
             st.error(f"❌ **Error parsing reaction**: {str(e)}")
@@ -3269,12 +3324,12 @@ def show_kc_kp_conversion_tab():
             st.info(f"**Temperature:** {temperature:.1f} K, **Δn:** {delta_n}")
             
             # Steps section
-            with st.expander("🔍 Show Steps", expanded=False):
+            with st.expander("🔍 Vis trin", expanded=False):
                 for step in steps:
                     st.markdown(step)
         
         except Exception as e:
-            st.error(f"❌ **Error**: {str(e)}")
+            st.error(f"❌ **Fejl**: {str(e)}")
 
 
 def show_reaction_quotient_tab():
@@ -3350,12 +3405,12 @@ def show_reaction_quotient_tab():
                         st.markdown(f"**Direction:** {result['direction']}")
                     
                     # Steps section
-                    with st.expander("🔍 Show Steps", expanded=False):
+                    with st.expander("🔍 Vis trin", expanded=False):
                         for step in steps:
                             st.markdown(step)
                 
                 except Exception as e:
-                    st.error(f"❌ **Error**: {str(e)}")
+                    st.error(f"❌ **Fejl**: {str(e)}")
         
         except Exception as e:
             st.error(f"❌ **Error parsing reaction**: {str(e)}")
@@ -3431,12 +3486,12 @@ def show_solubility_tab():
                         st.markdown(f"- [{species}] = {conc:.6f} M")
                     
                     # Steps section
-                    with st.expander("🔍 Show Steps", expanded=False):
+                    with st.expander("🔍 Vis trin", expanded=False):
                         for step in steps:
                             st.markdown(step)
                 
                 except Exception as e:
-                    st.error(f"❌ **Error**: {str(e)}")
+                    st.error(f"❌ **Fejl**: {str(e)}")
     
     else:  # Ksp from solubility
         st.markdown("#### Calculate Ksp from Solubility")
@@ -3470,12 +3525,12 @@ def show_solubility_tab():
                     st.markdown(f"**Ksp = {result['ksp']:.2e}**")
                     
                     # Steps section
-                    with st.expander("🔍 Show Steps", expanded=False):
+                    with st.expander("🔍 Vis trin", expanded=False):
                         for step in steps:
                             st.markdown(step)
                 
                 except Exception as e:
-                    st.error(f"❌ **Error**: {str(e)}")
+                    st.error(f"❌ **Fejl**: {str(e)}")
 
 
 def show_gas_laws_page():
@@ -3593,12 +3648,12 @@ def show_gas_laws_page():
         return base_mol / factors_to_mol[to_unit]
 
     _gas_options = [
-        "Unit Conversion", "Ideal Gas Law", "Dalton's Law",
-        "Gas Stoichiometry", "van der Waals", "💨 Grahams lov", "🔁 Kombineret gaslov",
+        "Enhedsomregning", "Ideel gaslov", "🔬 M fra densitet", "Daltons lov",
+        "Gasstoichiometri", "van der Waals", "💨 Grahams lov", "🔁 Kombineret gaslov",
     ]
     _gas_active = _render_styled_tab_nav(_gas_options, key="gases_tab", nav_key="nav_gases")
 
-    if _gas_active == "Unit Conversion":
+    if _gas_active == "Enhedsomregning":
         st.markdown("### 🔁 Unit Conversion")
         st.markdown("Convert between pressure, volume, and temperature units.")
 
@@ -3626,9 +3681,9 @@ def show_gas_laws_page():
             if st.button("Convert Pressure", type="primary", key="gas_conv_pressure_btn"):
                 try:
                     result = convert_pressure(pressure_value, pressure_from, pressure_to)
-                    st.success(f"✅ **Result**: {result:.6g} {pressure_to}")
+                    st.success(f"✅ **Resultat**: {result:.6g} {pressure_to}")
                 except Exception as e:
-                    st.error(f"❌ **Error**: {str(e)}")
+                    st.error(f"❌ **Fejl**: {str(e)}")
 
         with subtab2:
             st.caption("Standardenhed for volumen: m^3.")
@@ -3652,9 +3707,9 @@ def show_gas_laws_page():
             if st.button("Convert Volume", type="primary", key="gas_conv_volume_btn"):
                 try:
                     result = convert_volume(volume_value, volume_from, volume_to)
-                    st.success(f"✅ **Result**: {result:.6g} {volume_to}")
+                    st.success(f"✅ **Resultat**: {result:.6g} {volume_to}")
                 except Exception as e:
-                    st.error(f"❌ **Error**: {str(e)}")
+                    st.error(f"❌ **Fejl**: {str(e)}")
 
         with subtab3:
             st.caption("Standardenhed for temperatur: Kelvin (K).")
@@ -3679,9 +3734,9 @@ def show_gas_laws_page():
             if st.button("Convert Temperature", type="primary", key="gas_conv_temp_btn"):
                 try:
                     result = convert_temperature(temperature_value, temperature_from, temperature_to)
-                    st.success(f"✅ **Result**: {result:.6g} {temperature_to}")
+                    st.success(f"✅ **Resultat**: {result:.6g} {temperature_to}")
                 except Exception as e:
-                    st.error(f"❌ **Error**: {str(e)}")
+                    st.error(f"❌ **Fejl**: {str(e)}")
 
         with subtab4:
             st.caption("Standardenhed for masse: g.")
@@ -3714,9 +3769,9 @@ def show_gas_laws_page():
                     mass_from_unit = get_mass_unit_symbol(mass_from)
                     mass_to_unit = get_mass_unit_symbol(mass_to)
                     result = convert_mass(mass_value, mass_from_unit, mass_to_unit)
-                    st.success(f"✅ **Result**: {result:.10g} {mass_to_unit}")
+                    st.success(f"✅ **Resultat**: {result:.10g} {mass_to_unit}")
                 except Exception as e:
-                    st.error(f"❌ **Error**: {str(e)}")
+                    st.error(f"❌ **Fejl**: {str(e)}")
 
         with subtab5:
             st.markdown("Konverter gaskonstanten R mellem almindelige kemi-enheder.")
@@ -3759,9 +3814,9 @@ def show_gas_laws_page():
             if st.button("Convert Gas Constant", type="primary", key="gas_conv_r_btn"):
                 try:
                     result = convert_gas_constant(gas_constant_value, gas_constant_from, gas_constant_to)
-                    st.success(f"✅ **Result**: {result:.10g} {gas_constant_to}")
+                    st.success(f"✅ **Resultat**: {result:.10g} {gas_constant_to}")
                 except Exception as e:
-                    st.error(f"❌ **Error**: {str(e)}")
+                    st.error(f"❌ **Fejl**: {str(e)}")
 
         with subtab6:
             st.caption("Standardenhed for længde: meter (m).")
@@ -3793,9 +3848,9 @@ def show_gas_laws_page():
                 try:
                     # Accept either 'um' or 'μm' in conversion helper
                     result = convert_length(length_value, length_from, length_to)
-                    st.success(f"✅ **Result**: {result:.6g} {length_to}")
+                    st.success(f"✅ **Resultat**: {result:.6g} {length_to}")
                 except Exception as e:
-                    st.error(f"❌ **Error**: {str(e)}")
+                    st.error(f"❌ **Fejl**: {str(e)}")
 
         with subtab7:
             st.caption("Standardenhed for mængde: mol.")
@@ -3828,45 +3883,45 @@ def show_gas_laws_page():
                     moles_from_unit = moles_from.split(" ", 1)[0]
                     moles_to_unit = moles_to.split(" ", 1)[0]
                     result = convert_moles(moles_value, moles_from_unit, moles_to_unit)
-                    st.success(f"✅ **Result**: {result:.10g} {moles_to_unit}")
+                    st.success(f"✅ **Resultat**: {result:.10g} {moles_to_unit}")
                 except Exception as e:
-                    st.error(f"❌ **Error**: {str(e)}")
+                    st.error(f"❌ **Fejl**: {str(e)}")
 
-    elif _gas_active == "Ideal Gas Law":
-        st.markdown("### 🎈 Ideal Gas Law: PV = nRT")
-        st.markdown("Calculate any one variable given the other three.")
+    elif _gas_active == "Ideel gaslov":
+        st.markdown("### 🎈 Ideel gaslov: PV = nRT")
+        st.markdown("Beregn én ubekendt ud fra de tre kendte.")
         
         col1, col2 = st.columns(2)
         
         with col1:
-            st.markdown("**Input Variables:**")
+            st.markdown("**Kendte størrelser:**")
             pressure = st.number_input(
-                "Pressure:",
+                "Tryk:",
                 value=None,
-                placeholder="Enter pressure (leave empty to calculate)",
+                placeholder="Indtast tryk (lad stå tom for at beregne)",
                 help="Pressure value",
                 key="gas_ideal_pressure"
             )
             volume = st.number_input(
-                "Volume:",
+                "Volumen:",
                 value=None,
-                placeholder="Enter volume (leave empty to calculate)",
+                placeholder="Indtast volumen (lad stå tom for at beregne)",
                 help="Volume value",
                 key="gas_ideal_volume"
             )
         
         with col2:
             moles = st.number_input(
-                "Moles:",
+                "Mol (n):",
                 value=None,
-                placeholder="Enter moles (leave empty to calculate)",
+                placeholder="Indtast mol (lad stå tom for at beregne)",
                 help="Number of moles",
                 key="gas_ideal_moles"
             )
             temperature = st.number_input(
-                "Temperature:",
+                "Temperatur:",
                 value=None,
-                placeholder="Enter temperature",
+                placeholder="Indtast temperatur",
                 help="Temperature value",
                 key="gas_ideal_temperature"
             )
@@ -3874,18 +3929,18 @@ def show_gas_laws_page():
         # Unit selection
         col1, col2, col3 = st.columns(3)
         with col1:
-            pressure_unit = st.selectbox("Pressure Unit:", ["atm", "bar", "kPa", "MPa", "Pa"], key="gas_ideal_punit")
+            pressure_unit = st.selectbox("Tryksenhed:", ["atm", "bar", "kPa", "MPa", "Pa"], key="gas_ideal_punit")
         with col2:
-            volume_unit = st.selectbox("Volume Unit:", ["L", "mL", "m³"], key="gas_ideal_vunit")
+            volume_unit = st.selectbox("Volumenenhed:", ["L", "mL", "m³"], key="gas_ideal_vunit")
         with col3:
-            temperature_unit = st.selectbox("Temperature Unit:", ["K", "°C"], key="gas_ideal_tunit")
+            temperature_unit = st.selectbox("Temperaturenhed:", ["K", "°C"], key="gas_ideal_tunit")
         
-        if st.button("Calculate", type="primary"):
+        if st.button("Beregn", type="primary"):
             try:
                 # Count provided variables
                 provided_vars = sum(1 for var in [pressure, volume, moles, temperature] if var is not None)
                 if provided_vars != 3:
-                    st.error("❌ **Error**: Exactly three variables must be provided to calculate the fourth.")
+                    st.error("❌ **Fejl**: Exactly three variables must be provided to calculate the fourth.")
                 else:
                     with st.spinner("Calculating..."):
                         result = calculate_ideal_gas_law_with_steps(
@@ -3893,21 +3948,72 @@ def show_gas_laws_page():
                             pressure_unit=pressure_unit, volume_unit=volume_unit, temperature_unit=temperature_unit
                         )
                     
-                    st.success(f"✅ **Result**: {result['result']:.4g} {result['unit']}")
+                    st.success(f"✅ **Resultat**: {result['result']:.4g} {result['unit']}")
                     
                     # Steps section
-                    with st.expander("🔍 Show Steps", expanded=False):
+                    with st.expander("🔍 Vis trin", expanded=False):
                         st.markdown(result['steps'])
             
             except Exception as e:
-                st.error(f"❌ **Error**: {str(e)}")
-    
-    elif _gas_active == "Dalton's Law":
-        st.markdown("### 🌊 Dalton's Law of Partial Pressures")
-        st.markdown("Calculate partial pressures from moles or mole fractions.")
+                st.error(f"❌ **Fejl**: {str(e)}")
+
+        _quick_links([
+            ("🔬 M fra densitet", "gases", "🔬 M fra densitet"),
+            ("⚖️ Molarmasse", "atoms-molar", None),
+            ("📊 Gasstoichiometri", "gases", "Gasstoichiometri"),
+        ])
+
+    elif _gas_active == "🔬 M fra densitet":
+        st.markdown("### 🔬 Find molarmasse fra densitet")
+        st.markdown(
+            "**Formel:** M = ρRT / P  \n"
+            "Bruges når du kender tryk, temperatur og densitet (g/L) – typisk til at identificere en ukendt gas."
+        )
+        st.info(
+            "**Eksempel (som på billedet):** T = 100 °C, P = 1,0 atm, ρ = 3,0 g/L  \n"
+            "→ M = (3,0 × 0,08206 × 373) / 1,0 ≈ **91,8 g/mol** → N₂O₄ (M = 92,01 g/mol) ✓"
+        )
+        col1, col2 = st.columns(2)
+        with col1:
+            density = st.number_input("Densitet ρ (g/L)", value=3.0, min_value=0.001, format="%.4f", key="mfd_density")
+            pressure_mfd = st.number_input("Tryk P", value=1.0, min_value=1e-9, format="%.4f", key="mfd_pressure")
+            pressure_unit_mfd = st.selectbox("Tryksenhed", ["atm", "bar", "kPa", "Pa"], key="mfd_punit")
+        with col2:
+            temp_mfd = st.number_input("Temperatur T", value=100.0, format="%.2f", key="mfd_temp")
+            temp_unit_mfd = st.selectbox("Temperaturenhed", ["°C", "K"], key="mfd_tunit")
+
+        if st.button("Beregn molarmasse", type="primary", key="mfd_btn"):
+            R = 0.08206  # L·atm/(mol·K)
+            T_K = temp_mfd + 273.15 if temp_unit_mfd == "°C" else temp_mfd
+            p_atm = pressure_mfd
+            unit_factors = {"atm": 1.0, "bar": 1.0 / 1.01325, "kPa": 1.0 / 101.325, "Pa": 1.0 / 101325.0}
+            p_atm = pressure_mfd * unit_factors[pressure_unit_mfd]
+            M = density * R * T_K / p_atm
+            st.success(f"**M ≈ {M:.2f} g/mol**")
+            st.markdown(f"""
+**Trin-for-trin:**
+
+1. Omarranger PV = nRT: da n = m/M og ρ = m/V gælder **M = ρRT/P**
+2. Omregn temperatur: T = {temp_mfd} {temp_unit_mfd} = **{T_K:.2f} K**
+3. Omregn tryk til atm: P = {pressure_mfd} {pressure_unit_mfd} = **{p_atm:.4f} atm**
+4. Indsæt:
+   M = ({density:.4f} g/L × 0,08206 L·atm/mol·K × {T_K:.2f} K) / {p_atm:.4f} atm
+   **M = {M:.2f} g/mol**
+""")
+            st.caption("💡 Sammenlign med kendte molarmasser: NO = 30, NO₂ = 46, N₂O = 44, N₂O₄ = 92, N₂O₅ = 108 g/mol")
+
+        _quick_links([
+            ("⚖️ Molarmasse", "atoms-molar", None),
+            ("🎈 Ideel gaslov", "gases", "Ideel gaslov"),
+            ("📊 Gasstoichiometri", "gases", "Gasstoichiometri"),
+        ])
+
+    elif _gas_active == "Daltons lov":
+        st.markdown("### 🌊 Daltons lov – partialtryk")
+        st.markdown("Beregn partialtryk ud fra mol eller molfraktioner.")
         
         input_method = st.radio(
-            "Input Method:",
+            "Inputmetode:",
             ["Moles", "Mole Fractions"], key="gas_dalton_mode"
         )
         _dalton_help = {
@@ -3942,7 +4048,7 @@ def show_gas_laws_page():
                 species_data.append({"name": name, "mole_fraction": fraction})
         
         total_pressure = st.number_input("Total pressure:", value=1.0, min_value=0.0, key="gas_dalton_ptot")
-        pressure_unit = st.selectbox("Pressure Unit:", ["atm", "bar", "kPa", "Pa"], key="gas_dalton_punit")
+        pressure_unit = st.selectbox("Tryksenhed:", ["atm", "bar", "kPa", "Pa"], key="gas_dalton_punit")
         
         # Collected over water option
         collected_over_water = st.checkbox("Collected over water")
@@ -3972,13 +4078,13 @@ def show_gas_laws_page():
                     st.markdown(f"**Gas pressure (excluding water vapor)**: {result['gas_pressure']:.4f} {pressure_unit}")
                 
                 # Steps section
-                with st.expander("🔍 Show Steps", expanded=False):
+                with st.expander("🔍 Vis trin", expanded=False):
                     st.markdown(result['steps'])
             
             except Exception as e:
-                st.error(f"❌ **Error**: {str(e)}")
+                st.error(f"❌ **Fejl**: {str(e)}")
     
-    elif _gas_active == "Gas Stoichiometry":
+    elif _gas_active == "Gasstoichiometri":
         st.markdown("### ⚗️ Gas Stoichiometry")
         st.markdown("Calculate limiting reagent and theoretical gas product volume.")
         
@@ -4010,14 +4116,14 @@ def show_gas_laws_page():
             
             col1, col2, col3 = st.columns(3)
             with col1:
-                temperature = st.number_input("Temperature:", value=298.15, min_value=0.0, key="gas_stoich_T")
+                temperature = st.number_input("Temperatur:", value=298.15, min_value=0.0, key="gas_stoich_T")
             with col2:
-                pressure = st.number_input("Pressure:", value=1.0, min_value=0.0, key="gas_stoich_P")
+                pressure = st.number_input("Tryk:", value=1.0, min_value=0.0, key="gas_stoich_P")
             with col3:
-                temperature_unit = st.selectbox("Temperature Unit:", ["K", "°C"], key="gas_stoich_Tunit")
+                temperature_unit = st.selectbox("Temperaturenhed:", ["K", "°C"], key="gas_stoich_Tunit")
             
-            pressure_unit = st.selectbox("Pressure Unit:", ["atm", "bar", "kPa", "Pa"], key="gas_stoich_Punit")
-            volume_unit = st.selectbox("Volume Unit:", ["L", "mL", "m³"], key="gas_stoich_Vunit")
+            pressure_unit = st.selectbox("Tryksenhed:", ["atm", "bar", "kPa", "Pa"], key="gas_stoich_Punit")
+            volume_unit = st.selectbox("Volumenenhed:", ["L", "mL", "m³"], key="gas_stoich_Vunit")
             
             if st.button("Calculate Stoichiometry", type="primary"):
                 try:
@@ -4040,11 +4146,11 @@ def show_gas_laws_page():
                     st.markdown(f"**Product Volume**: {result['product_volume']:.4f} {volume_unit}")
                     
                     # Steps section
-                    with st.expander("🔍 Show Steps", expanded=False):
+                    with st.expander("🔍 Vis trin", expanded=False):
                         st.markdown(result['steps'])
                 
                 except Exception as e:
-                    st.error(f"❌ **Error**: {str(e)}")
+                    st.error(f"❌ **Fejl**: {str(e)}")
     
     elif _gas_active == "van der Waals":
         st.markdown("### 🔬 van der Waals Equation")
@@ -4063,15 +4169,15 @@ def show_gas_laws_page():
         
         with col1:
             gas = st.selectbox("Gas:", available_gases)
-            moles = st.number_input("Moles:", value=1.0, min_value=0.0)
-            volume = st.number_input("Volume:", value=1.0, min_value=0.0)
+            moles = st.number_input("Mol (n):", value=1.0, min_value=0.0)
+            volume = st.number_input("Volumen:", value=1.0, min_value=0.0)
         
         with col2:
-            temperature = st.number_input("Temperature:", value=298.15, min_value=0.0)
-            volume_unit = st.selectbox("Volume Unit:", ["L", "mL", "m³"])
-            temperature_unit = st.selectbox("Temperature Unit:", ["K", "°C"])
+            temperature = st.number_input("Temperatur:", value=298.15, min_value=0.0)
+            volume_unit = st.selectbox("Volumenenhed:", ["L", "mL", "m³"])
+            temperature_unit = st.selectbox("Temperaturenhed:", ["K", "°C"])
         
-        pressure_unit = st.selectbox("Pressure Unit:", ["atm", "bar", "kPa", "Pa"])
+        pressure_unit = st.selectbox("Tryksenhed:", ["atm", "bar", "kPa", "Pa"])
         
         if st.button("Calculate van der Waals Pressure", type="primary"):
             try:
@@ -4094,11 +4200,11 @@ def show_gas_laws_page():
                 st.markdown(f"**Compressibility Factor (Z)**: {result['compressibility_factor']:.4f}")
                 
                 # Steps section
-                with st.expander("🔍 Show Steps", expanded=False):
+                with st.expander("🔍 Vis trin", expanded=False):
                     st.markdown(result['steps'])
             
             except Exception as e:
-                st.error(f"❌ **Error**: {str(e)}")
+                st.error(f"❌ **Fejl**: {str(e)}")
 
     elif _gas_active == "💨 Grahams lov":
         render_graham_tab()
@@ -4232,7 +4338,7 @@ def show_solutions_page():
 
     with tab1:
         st.markdown("#### Molarity: M = n/V")
-        unknown = st.selectbox("Unknown", ["M", "n", "V"], index=0)
+        unknown = st.selectbox("Ubekendt", ["M", "n", "V"], index=0)
         M = st.number_input("M (mol/L)", value=0.500)
         n = st.number_input("n (mol)", value=0.250)
         V = st.number_input("V (L)", value=0.500)
@@ -4247,7 +4353,7 @@ def show_solutions_page():
                 res, steps = solve_molarity(M, n, V)
                 key = list(res.keys())[0]
                 st.success(f"{key} = {res[key]:.6g}")
-                with st.expander("Show steps"):
+                with st.expander("Vis trin"):
                     st.markdown(steps)
             except Exception as e:
                 st.error(str(e))
@@ -4263,7 +4369,7 @@ def show_solutions_page():
                 try:
                     g, steps = grams_for_solution(formula, M_t, V_f)
                     st.success(f"grams = {g:.4g} g")
-                    with st.expander("Show steps"):
+                    with st.expander("Vis trin"):
                         st.markdown(steps)
                 except Exception as e:
                     st.error(str(e))
@@ -4273,7 +4379,7 @@ def show_solutions_page():
                 try:
                     V1, steps = volume_stock_for_dilution(M_stock, M_t, V_f)
                     st.success(f"V_stock = {V1:.6g} L")
-                    with st.expander("Show steps"):
+                    with st.expander("Vis trin"):
                         st.markdown(steps)
                 except Exception as e:
                     st.error(str(e))
@@ -4295,7 +4401,7 @@ def show_solutions_page():
                 res, steps = solve_molality(m, n, kg)
                 key = list(res.keys())[0]
                 st.success(f"{key} = {res[key]:.6g}")
-                with st.expander("Show steps"):
+                with st.expander("Vis trin"):
                     st.markdown(steps)
             except Exception as e:
                 st.error(str(e))
@@ -4304,38 +4410,38 @@ def show_solutions_page():
         st.markdown("#### Percent concentration")
         mode = st.selectbox("Mode", ["w/w", "v/v", "w/v"]) 
         if mode == "w/w":
-            unknown = st.selectbox("Unknown", ["%", "m_solute", "m_total"]) 
+            unknown = st.selectbox("Ubekendt", ["%", "m_solute", "m_total"]) 
             a = st.number_input("m_solute (g) or %", value=10.0)
             b = st.number_input("m_total (g) or %", value=110.0)
             if st.button("Compute w/w%", type="primary"):
                 try:
                     val, steps = percent_w_w(a, b, unknown)
                     st.success(f"Result = {val:.6g}")
-                    with st.expander("Show steps"):
+                    with st.expander("Vis trin"):
                         st.markdown(steps)
                 except Exception as e:
                     st.error(str(e))
         elif mode == "v/v":
-            unknown = st.selectbox("Unknown", ["%", "V_solute", "V_total"]) 
+            unknown = st.selectbox("Ubekendt", ["%", "V_solute", "V_total"]) 
             a = st.number_input("V_solute (mL) or %", value=10.0)
             b = st.number_input("V_total (mL) or %", value=100.0)
             if st.button("Compute v/v%", type="primary"):
                 try:
                     val, steps = percent_v_v(a, b, unknown)
                     st.success(f"Result = {val:.6g}")
-                    with st.expander("Show steps"):
+                    with st.expander("Vis trin"):
                         st.markdown(steps)
                 except Exception as e:
                     st.error(str(e))
         else:
-            unknown = st.selectbox("Unknown", ["%", "m_solute", "V_solution"]) 
+            unknown = st.selectbox("Ubekendt", ["%", "m_solute", "V_solution"]) 
             a = st.number_input("m_solute (g) or %", value=5.0)
             b = st.number_input("V_solution (mL) or %", value=100.0)
             if st.button("Compute w/v%", type="primary"):
                 try:
                     val, steps = percent_w_v(a, b, unknown)
                     st.success(f"Result = {val:.6g}")
-                    with st.expander("Show steps"):
+                    with st.expander("Vis trin"):
                         st.markdown(steps)
                 except Exception as e:
                     st.error(str(e))
@@ -4350,7 +4456,7 @@ def show_solutions_page():
             try:
                 val, steps = ppm_general(sol, tot, basis, unit)
                 st.success(f"{unit} = {val:.6g}")
-                with st.expander("Show steps"):
+                with st.expander("Vis trin"):
                     st.markdown(steps)
             except Exception as e:
                 st.error(str(e))
@@ -4360,7 +4466,7 @@ def show_solutions_page():
             try:
                 val, steps = ppm_aqueous_from_mg_per_L(mgL)
                 st.success(f"ppm = {val:.6g}")
-                with st.expander("Show steps"):
+                with st.expander("Vis trin"):
                     st.markdown(steps)
             except Exception as e:
                 st.error(str(e))
@@ -4375,7 +4481,7 @@ def show_solutions_page():
             try:
                 Mf, steps = mix_solutions([V1, V2], [M1, M2])
                 st.success(f"M_final = {Mf:.6g} M")
-                with st.expander("Show steps"):
+                with st.expander("Vis trin"):
                     st.markdown(steps)
             except Exception as e:
                 st.error(str(e))
@@ -4392,7 +4498,7 @@ def show_solutions_page():
                 try:
                     xA, xB, steps = mole_fraction_from_masses(formulaA, mA, formulaB, mB)
                     st.success(f"x_A = {xA:.6g}, x_B = {xB:.6g}")
-                    with st.expander("Show steps"):
+                    with st.expander("Vis trin"):
                         st.markdown(steps)
                 except Exception as e:
                     st.error(str(e))
@@ -4404,7 +4510,7 @@ def show_solutions_page():
                 try:
                     xA, xB, steps = mole_fraction_from_moles(nA, nB)
                     st.success(f"x_A = {xA:.6g}, x_B = {xB:.6g}")
-                    with st.expander("Show steps"):
+                    with st.expander("Vis trin"):
                         st.markdown(steps)
                 except Exception as e:
                     st.error(str(e))
@@ -4421,14 +4527,14 @@ def show_solutions_page():
             try:
                 I, steps = ionic_strength([(name1, c1, int(z1)), (name2, c2, int(z2))])
                 st.success(f"I = {I:.6g}")
-                with st.expander("Show steps"):
+                with st.expander("Vis trin"):
                     st.markdown(steps)
             except Exception as e:
                 st.error(str(e))
 
 def show_kinetics_page():
     """Display Kinetics calculators."""
-    st.title("⚡ Kinetics")
+    st.title("⚡ Kinetik")
     st.markdown("---")
     from calculators.kinetics import (
         calculate_integrated_rate_with_steps,
@@ -4438,14 +4544,14 @@ def show_kinetics_page():
         calculate_arrhenius_two_point_Ea_with_steps,
     )
 
-    _kin_options = ["Integrated Rate Law", "Determine Order & k", "Arrhenius", "Rate Relationships"]
+    _kin_options = ["Integreret hastighedslov", "Bestem orden & k", "Arrhenius", "Hastighedsrelationer"]
     _kin_active = _render_styled_tab_nav(_kin_options, key="kinetics_tab", nav_key="nav_kinetics")
 
-    if _kin_active == "Integrated Rate Law":
-        st.markdown("#### Integrated Rate Law")
+    if _kin_active == "Integreret hastighedslov":
+        st.markdown("#### Integreret hastighedslov")
         st.caption("💡 Brug dette til at beregne koncentration eller tid for en reaktion af 0., 1. eller 2. orden.")
-        order = st.selectbox("Order", [0, 1, 2], index=1)
-        unknown = st.selectbox("Unknown", ["Ct", "C0", "k", "t"], index=0)
+        order = st.selectbox("Orden", [0, 1, 2], index=1)
+        unknown = st.selectbox("Ubekendt", ["Ct", "C0", "k", "t"], index=0)
         C0 = st.number_input("C0 (M)", value=0.100, min_value=0.0)
         Ct = st.number_input("Ct (M)", value=0.010, min_value=0.0)
         k = st.number_input("k (units depend on order)", value=0.350, min_value=0.0)
@@ -4458,17 +4564,22 @@ def show_kinetics_page():
             k = None
         else:
             t = None
-        if st.button("Solve", type="primary"):
+        if st.button("Beregn", type="primary"):
             try:
                 val, steps, meta = calculate_integrated_rate_with_steps(order, C0, Ct, k, t)
                 st.success(f"{unknown} = {val:.6g}")
-                with st.expander("Show steps"):
+                with st.expander("Vis trin"):
                     for s in steps:
                         st.markdown(s)
             except Exception as e:
                 st.error(str(e))
+        _quick_links([
+            ("Bestem orden & k", "kinetics", "Bestem orden & k"),
+            ("Arrhenius", "kinetics", "Arrhenius"),
+            ("☢️ Nuklear halvliv", "nuklear", None),
+        ])
 
-    elif _kin_active == "Determine Order & k":
+    elif _kin_active == "Bestem orden & k":
         st.markdown("#### Determine Order & k (two-point)")
         col1, col2 = st.columns(2)
         with col1:
@@ -4477,11 +4588,11 @@ def show_kinetics_page():
         with col2:
             t2 = st.number_input("t2 (s)", value=10.0, min_value=0.0)
             C2 = st.number_input("C2 (M)", value=0.003, min_value=1e-12, format="%.6f")
-        if st.button("Determine", type="primary"):
+        if st.button("Beregn", type="primary"):
             try:
                 res, steps, meta = calculate_determine_order_k_with_steps(t1, C1, t2, C2)
                 st.success(f"Order = {res['order']}, k = {res['k']:.6g}, residual = {res['residual']:.3e}")
-                with st.expander("Show steps"):
+                with st.expander("Vis trin"):
                     for s in steps:
                         st.markdown(s)
             except Exception as e:
@@ -4490,39 +4601,39 @@ def show_kinetics_page():
     elif _kin_active == "Arrhenius":
         st.markdown("#### Arrhenius")
         st.caption("💡 **Fremad:** du kender k₁ ved T₁ og Eₐ → beregn k₂ ved T₂. **Baglæns:** du kender k₁ og k₂ → beregn Eₐ.")
-        st.markdown("Single-point forward")
+        st.markdown("Forlæns (én måling)")
         k1 = st.number_input("k1 (s^-1)", value=1.0e-3, format="%.6e")
         T1 = st.number_input("T1 (K)", value=298.15)
         T2 = st.number_input("T2 (K)", value=308.15)
         Ea = st.number_input("Ea (kJ/mol)", value=50.0)
-        if st.button("Compute k2", type="primary"):
+        if st.button("Beregn k₂", type="primary"):
             try:
                 k2, steps, _ = calculate_arrhenius_forward_with_steps(k1, T1, T2, Ea)
                 st.success(f"k2 = {k2:.6g} s^-1")
-                with st.expander("Show steps"):
+                with st.expander("Vis trin"):
                     for s in steps:
                         st.markdown(s)
             except Exception as e:
                 st.error(str(e))
-        st.markdown("Two-point Ea")
+        st.markdown("Baglæns – find Eₐ (to målinger)")
         k2v = st.number_input("k2 (s^-1)", value=3.0e-3, format="%.6e")
-        if st.button("Compute Ea", type="primary"):
+        if st.button("Beregn Eₐ", type="primary"):
             try:
                 Ea_kJ, steps, _ = calculate_arrhenius_two_point_Ea_with_steps(k1, T1, k2v, T2)
                 st.success(f"Ea = {Ea_kJ:.4g} kJ/mol")
-                with st.expander("Show steps"):
+                with st.expander("Vis trin"):
                     for s in steps:
                         st.markdown(s)
             except Exception as e:
                 st.error(str(e))
 
-    elif _kin_active == "Rate Relationships":
-        st.markdown("#### Rate Relationships by Stoichiometry")
+    elif _kin_active == "Hastighedsrelationer":
+        st.markdown("#### Hastighedsrelationer ud fra støkiometri")
         st.info("Given a balanced reaction aA + bB -> cC + dD, rates relate as −(1/a)d[A]/dt = −(1/b)d[B]/dt = (1/c)d[C]/dt …")
 
 
 def show_electrochemistry_page():
-    st.title("🔋 Electrochemistry")
+    st.title("🔋 Elektrokemi")
     st.markdown("---")
     from calculators.electrochemistry import (
         calculate_standard_cell_with_steps,
@@ -4541,26 +4652,32 @@ def show_electrochemistry_page():
         match_candidate_potential_value,
     )
 
-    _ec_options = ["Build a Cell", "Nernst", "ΔG and K", "Redox Thermodynamics", "⚡ Faradays lov"]
+    _ec_options = ["Byg en celle", "Nernst", "ΔG og K", "Redoks termodynamik", "⚡ Faradays lov"]
     _ec_active = _render_styled_tab_nav(_ec_options, key="electro_tab", nav_key="nav_electrochemistry")
 
-    if _ec_active == "Build a Cell":
+    if _ec_active == "Byg en celle":
         from core.electrochem import load_reduction_potentials
         df = load_reduction_potentials()
-        cath = st.selectbox("Cathode (reduction)", df['half_reaction'].tolist(), key="electro_cath")
-        an = st.selectbox("Anode (reduction)", df['half_reaction'].tolist(), key="electro_an")
-        if st.button("Compute E°cell", type="primary", key="electro_cell_btn"):
+        cath = st.selectbox("Katode (reduktion)", df['half_reaction'].tolist(), key="electro_cath")
+        an = st.selectbox("Anode (reduktion)", df['half_reaction'].tolist(), key="electro_an")
+        if st.button("Beregn E°celle", type="primary", key="electro_cell_btn"):
             try:
                 res, steps, _ = calculate_standard_cell_with_steps(cath, an)
                 st.success(f"E°cell = {res['E0_cell_V']:.4g} V, n = {res['n']}")
-                with st.expander("Show steps"):
+                with st.expander("Vis trin"):
                     for s in steps:
                         st.markdown(s)
             except Exception as e:
                 st.error(str(e))
 
+        _quick_links([
+            ("Nernst", "electrochemistry", "Nernst"),
+            ("ΔG og K", "electrochemistry", "ΔG og K"),
+            ("🔋 Redoxafstemning", "stoichiometry", "🔋 Redoxafstemning"),
+        ])
+
     elif _ec_active == "Nernst":
-        st.markdown("#### Nernst Calculator")
+        st.markdown("#### Nernst-beregner")
         E0 = st.number_input("E°cell (V)", value=1.10, key="nernst_E0")
         n = st.number_input("n (electrons)", value=2, min_value=1, key="nernst_n")
         T = st.number_input("T (K)", value=298.15, min_value=0.0, key="nernst_T")
@@ -4569,42 +4686,47 @@ def show_electrochemistry_page():
         Cu2 = st.number_input("[Cu2+] (M)", value=1.00, min_value=1e-12, format="%.4f", key="nernst_Cu2")
         Q = calculate_daniell_Q(Zn2, Cu2)
         st.info(f"Q = {Q:.6g}")
-        if st.button("Compute E", type="primary", key="nernst_btn"):
+        if st.button("Beregn E", type="primary", key="nernst_btn"):
             try:
                 E, steps, _ = calculate_nernst_with_steps(E0, int(n), T, Q)
                 st.success(f"E = {E:.6g} V")
-                with st.expander("Show steps"):
+                with st.expander("Vis trin"):
                     for s in steps:
                         st.markdown(s)
             except Exception as e:
                 st.error(str(e))
 
-    elif _ec_active == "ΔG and K":
-        st.markdown("#### ΔG° and K")
+    elif _ec_active == "ΔG og K":
+        st.markdown("#### ΔG° og K")
         n = st.number_input("n (electrons)", value=2, min_value=1, key="g_n")
         E0 = st.number_input("E°cell (V)", value=1.10, format="%.4f", key="g_E0")
-        if st.button("Compute ΔG°", type="primary", key="dg_btn"):
+        if st.button("Beregn ΔG°", type="primary", key="dg_btn"):
             try:
                 dG_kJ, steps, _ = calculate_deltaG_from_E_with_steps(int(n), E0)
                 st.success(f"ΔG° = {dG_kJ:.4g} kJ/mol")
-                with st.expander("Show steps"):
+                with st.expander("Vis trin"):
                     for s in steps:
                         st.markdown(s)
             except Exception as e:
                 st.error(str(e))
         st.markdown("---")
         T = st.number_input("T (K)", value=298.15, key="g_T")
-        if st.button("Compute K", key="K_btn"):
+        if st.button("Beregn K", key="K_btn"):
             try:
                 K, log10K, steps, _ = calculate_K_from_E0_with_steps(int(n), E0, T)
                 st.success(f"K = {K:.3g} (log10K = {log10K:.3f})")
-                with st.expander("Show steps"):
+                with st.expander("Vis trin"):
                     for s in steps:
                         st.markdown(s)
             except Exception as e:
                 st.error(str(e))
+        _quick_links([
+            ("Byg en celle", "electrochemistry", "Byg en celle"),
+            ("Nernst", "electrochemistry", "Nernst"),
+            ("⚗️ Kc/Kp", "ligevaegt", "🔄 Kc/Kp konvertering"),
+        ])
 
-    elif _ec_active == "Redox Thermodynamics":
+    elif _ec_active == "Redoks termodynamik":
         st.markdown("### Redox, ΔG°, E°cell and K")
         st.caption("Eksamensvenlig redox-termokemi med tydelige mellemregninger og enhedskontrol.")
 
@@ -5114,7 +5236,7 @@ m = 298.5 × 26.98 = **8055 g ≈ 8.06 kg**
 
 def show_thermochemistry_page():
     """Display new Thermochemistry calculators (Part 4)."""
-    st.title("🔥 Thermochemistry")
+    st.title("🔥 Termokemi")
     st.markdown("---")
 
     from calculators.thermochemistry import (
@@ -5131,17 +5253,17 @@ def show_thermochemistry_page():
     from core.hess_solver import solve_hess_problem
 
     tab_enthalpy, tab_gibbs, tab_calorimetry, tab_heating = st.tabs([
-        "Enthalpy change (ΔH°)",
-        "Thermochemistry (Gibbs)",
-        "Calorimetry (q = m c ΔT)",
-        "Heating/Cooling Curve",
+        "Enthalpi (ΔH°)",
+        "Gibbs (ΔG)",
+        "Kalorimetri (q = mcΔT)",
+        "Opvarmningskurve",
     ])
 
     with tab_gibbs:
         _render_gibbs_calculator(include_page_header=False)
 
     with tab_calorimetry:
-        st.markdown("#### Calorimetry")
+        st.markdown("#### Kalorimetri")
         col1, col2 = st.columns(2)
         with col1:
             mass_g = st.number_input("Mass (g)", value=100.0, min_value=0.0)
@@ -5165,7 +5287,7 @@ def show_thermochemistry_page():
                 deltaT = None
             out_unit = st.selectbox("Output unit", ["kJ", "J"], index=0, key="thermo_cal_unit")
 
-        if st.button("Calculate q", type="primary"):
+        if st.button("Beregn q", type="primary"):
             try:
                 q_val, steps, meta = calculate_calorimetry_with_steps(
                     mass_g=mass_g,
@@ -5177,22 +5299,26 @@ def show_thermochemistry_page():
                     output_unit=out_unit,
                 )
                 st.success(f"q = {q_val:.4g} {out_unit}")
-                with st.expander("Show steps"):
+                with st.expander("Vis trin"):
                     for s in steps:
                         st.markdown(s)
             except Exception as e:
                 st.error(str(e))
+        _quick_links([
+            ("Enthalpi (ΔH°)", "thermochemistry", None),
+            ("Gibbs (ΔG)", "thermochemistry", None),
+        ])
 
     with tab_heating:
-        st.markdown("#### Heating/Cooling Curve (Water)")
+        st.markdown("#### Opvarmningskurve (vand)")
         mass_g = st.number_input("Mass (g)", value=10.0, min_value=0.0, key="hc_mass")
         T_i = st.number_input("T_initial (°C)", value=-10.0, key="hc_ti")
         T_f = st.number_input("T_final (°C)", value=110.0, key="hc_tf")
-        if st.button("Calculate heating curve", type="primary"):
+        if st.button("Beregn opvarmningskurve", type="primary"):
             try:
                 q_kJ, steps, meta = calculate_heating_curve_water_with_steps(mass_g, T_i, T_f)
                 st.success(f"Total q = {q_kJ:.4g} kJ")
-                with st.expander("Show steps"):
+                with st.expander("Vis trin"):
                     for s in steps:
                         st.markdown(s)
             except Exception as e:
@@ -5205,7 +5331,7 @@ def show_thermochemistry_page():
         ])
 
     with enthalpy_tab1:
-        st.markdown("#### Reaction Enthalpy (ΔH°)")
+        st.markdown("#### Reaktionsenthalpi (ΔH°)")
         st.markdown("Hess' lov: ΔH°_rxn = Σ(ν·ΔH_f° produkter) − Σ(ν·ΔH_f° reaktanter)")
 
         if "thermo_rxn_input" not in st.session_state:
@@ -5229,9 +5355,9 @@ def show_thermochemistry_page():
 
         col_btn1, col_btn2 = st.columns(2)
         with col_btn1:
-            do_balance = st.button("Balance reaction", key="thermo_balance_btn")
+            do_balance = st.button("Balancer reaktion", key="thermo_balance_btn")
         with col_btn2:
-            do_compute = st.button("Calculate ΔH°", type="primary", key="thermo_compute_btn")
+            do_compute = st.button("Beregn ΔH°", type="primary", key="thermo_compute_btn")
 
         try:
             ast = parseReaction(rxn)
@@ -5509,7 +5635,7 @@ def show_colligatives_page():
                 )
                 st.success(f"ΔTf = {res['deltaTf_C']:.4g} °C, Tf = {res['Tf_C']:.4g} °C")
                 st.success(f"ΔTb = {res['deltaTb_C']:.4g} °C, Tb = {res['Tb_C']:.4g} °C")
-                with st.expander("Show steps"):
+                with st.expander("Vis trin"):
                     for s in steps:
                         st.markdown(s)
             except Exception as e:
@@ -5532,7 +5658,7 @@ def show_colligatives_page():
             try:
                 pi_atm, steps, meta = osmotic_pressure_with_steps(M, moles, vol, T, i)
                 st.success(f"π = {pi_atm:.4g} atm")
-                with st.expander("Show steps"):
+                with st.expander("Vis trin"):
                     for s in steps:
                         st.markdown(s)
             except Exception as e:
@@ -5548,7 +5674,7 @@ def show_colligatives_page():
                 try:
                     P, steps, meta = raoult_nonvolatile_with_steps(x_s, P_star)
                     st.success(f"P_solution = {P:.4g} kPa")
-                    with st.expander("Show steps"):
+                    with st.expander("Vis trin"):
                         for s in steps:
                             st.markdown(s)
                 except Exception as e:
@@ -5565,7 +5691,7 @@ def show_colligatives_page():
                     res, steps, meta = raoult_binary_with_steps(x_A, P_A, x_B, P_B)
                     st.success(f"P_total = {res['P_total']:.4g} kPa")
                     st.info(f"P_A = {res['P_A']:.4g} kPa, P_B = {res['P_B']:.4g} kPa")
-                    with st.expander("Show steps"):
+                    with st.expander("Vis trin"):
                         for s in steps:
                             st.markdown(s)
                 except Exception as e:
