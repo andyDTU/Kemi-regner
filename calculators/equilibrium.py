@@ -14,6 +14,59 @@ from core.reaction import balance_equation, parse_reaction_equation
 from core.formula import parse_chemical_formula
 
 
+def _parse_salt_to_ions(formula: str) -> Dict[str, int]:
+    """
+    Parse a salt formula into ionic components, respecting polyatomic ions
+    in parentheses and common polyatomic anions.
+
+    Returns dict of {ion_label: stoich_coeff}, e.g.:
+      Cu(OH)2  → {Cu: 1, OH: 2}
+      CaF2     → {Ca: 1, F: 2}
+      Ca3(PO4)2→ {Ca: 3, PO4: 2}
+      BaSO4    → {Ba: 1, SO4: 1}
+    """
+    import re
+
+    # Known polyatomic anions (longest match first to avoid partial hits)
+    _POLY = [
+        "Cr2O7", "C2H3O2", "CH3COO",
+        "ClO4", "ClO3", "ClO2", "MnO4", "CrO4",
+        "HPO4", "H2PO4",
+        "SO4", "SO3", "CO3", "PO4", "NO3", "NO2",
+        "ClO", "CN", "OH", "NH4",
+    ]
+
+    result: Dict[str, int] = {}
+    remaining = formula.strip()
+
+    # Step 1: extract (group)n patterns – these are definitely polyatomic ions
+    paren_re = re.compile(r'\(([A-Za-z0-9]+)\)(\d*)')
+    for m in paren_re.finditer(formula):
+        ion = m.group(1)
+        n = int(m.group(2)) if m.group(2) else 1
+        result[ion] = result.get(ion, 0) + n
+        remaining = remaining.replace(m.group(0), "", 1)
+
+    # Step 2: scan remaining for known polyatomic ions (no parens)
+    for poly in _POLY:
+        pat = re.compile(rf'{re.escape(poly)}(\d*)')
+        m = pat.search(remaining)
+        if m:
+            n = int(m.group(1)) if m.group(1) else 1
+            result[poly] = result.get(poly, 0) + n
+            remaining = remaining[:m.start()] + remaining[m.end():]
+
+    # Step 3: parse remaining as simple element symbols
+    elem_re = re.compile(r'([A-Z][a-z]?)(\d*)')
+    for m in elem_re.finditer(remaining):
+        elem = m.group(1)
+        n = int(m.group(2)) if m.group(2) else 1
+        if elem:
+            result[elem] = result.get(elem, 0) + n
+
+    return {k: v for k, v in result.items() if k}  # drop empty keys
+
+
 def solve_ice_table_with_steps(reaction_str: str, initial_concentrations: Dict[str, float],
                                kc: float) -> Tuple[Dict[str, Any], List[str], Dict[str, Any]]:
     """
@@ -283,42 +336,18 @@ def calculate_solubility_with_steps(salt_formula: str, ksp: float,
     # Step 1: Parse salt formula
     steps.append("**Step 1: Parse salt formula**")
     try:
-        element_counts = parse_chemical_formula(salt_formula)
+        ion_counts = _parse_salt_to_ions(salt_formula)
         steps.append(f"Salt: {salt_formula}")
-        steps.append("Dissociation: " + salt_formula + " → ")
-        
-        # Determine ions from formula (simplified approach)
-        if len(element_counts) == 2:
-            ions = list(element_counts.keys())
-            coeffs = list(element_counts.values())
-            
-            if coeffs[0] == 1 and coeffs[1] == 1:
-                # 1:1 salt like AgCl
-                ion1, ion2 = ions[0], ions[1]
-                steps.append(f"{ion1}⁺ + {ion2}⁻")
-                stoichiometry = {ion1: 1, ion2: 1}
-            elif coeffs[0] == 1 and coeffs[1] == 2:
-                # 1:2 salt like CaF2
-                ion1, ion2 = ions[0], ions[1]
-                steps.append(f"{ion1}²⁺ + 2{ion2}⁻")
-                stoichiometry = {ion1: 1, ion2: 2}
-            elif coeffs[0] == 2 and coeffs[1] == 1:
-                # 2:1 salt like Na2SO4
-                ion1, ion2 = ions[0], ions[1]
-                steps.append(f"2{ion1}⁺ + {ion2}²⁻")
-                stoichiometry = {ion1: 2, ion2: 1}
-            else:
-                # General case
-                steps.append("complex dissociation")
-                stoichiometry = {ion: coeff for ion, coeff in element_counts.items()}
-        else:
-            # Complex salt
-            steps.append("complex dissociation")
-            stoichiometry = {ion: coeff for ion, coeff in element_counts.items()}
-            
+        ions = list(ion_counts.keys())
+        coeffs = list(ion_counts.values())
+        diss_parts = " + ".join(
+            f"{c}{i}" if c > 1 else str(i) for i, c in zip(ions, coeffs)
+        )
+        steps.append(f"Dissociation: {salt_formula} → {diss_parts}")
+        stoichiometry = ion_counts
     except Exception as e:
         raise ValueError(f"Could not parse salt formula: {e}")
-    
+
     # Step 2: Write Ksp expression
     steps.append("\n**Step 2: Write Ksp expression**")
     steps.append("Ksp = [Ion1]^coeff1 × [Ion2]^coeff2 × ...")
@@ -408,42 +437,18 @@ def calculate_solubility_product_with_steps(salt_formula: str, solubility: float
     # Step 1: Parse salt formula
     steps.append("**Step 1: Parse salt formula**")
     try:
-        element_counts = parse_chemical_formula(salt_formula)
+        ion_counts = _parse_salt_to_ions(salt_formula)
         steps.append(f"Salt: {salt_formula}")
-        steps.append("Dissociation: " + salt_formula + " → ")
-        
-        # Determine ions from formula (simplified approach)
-        if len(element_counts) == 2:
-            ions = list(element_counts.keys())
-            coeffs = list(element_counts.values())
-            
-            if coeffs[0] == 1 and coeffs[1] == 1:
-                # 1:1 salt like AgCl
-                ion1, ion2 = ions[0], ions[1]
-                steps.append(f"{ion1}⁺ + {ion2}⁻")
-                stoichiometry = {ion1: 1, ion2: 1}
-            elif coeffs[0] == 1 and coeffs[1] == 2:
-                # 1:2 salt like CaF2
-                ion1, ion2 = ions[0], ions[1]
-                steps.append(f"{ion1}²⁺ + 2{ion2}⁻")
-                stoichiometry = {ion1: 1, ion2: 2}
-            elif coeffs[0] == 2 and coeffs[1] == 1:
-                # 2:1 salt like Na2SO4
-                ion1, ion2 = ions[0], ions[1]
-                steps.append(f"2{ion1}⁺ + {ion2}²⁻")
-                stoichiometry = {ion1: 2, ion2: 1}
-            else:
-                # General case
-                steps.append("complex dissociation")
-                stoichiometry = {ion: coeff for ion, coeff in element_counts.items()}
-        else:
-            # Complex salt
-            steps.append("complex dissociation")
-            stoichiometry = {ion: coeff for ion, coeff in element_counts.items()}
-            
+        ions = list(ion_counts.keys())
+        coeffs = list(ion_counts.values())
+        diss_parts = " + ".join(
+            f"{c}{i}" if c > 1 else str(i) for i, c in zip(ions, coeffs)
+        )
+        steps.append(f"Dissociation: {salt_formula} → {diss_parts}")
+        stoichiometry = ion_counts
     except Exception as e:
         raise ValueError(f"Could not parse salt formula: {e}")
-    
+
     # Step 2: Write Ksp expression
     steps.append("\n**Step 2: Write Ksp expression**")
     steps.append("Ksp = [Ion1]^coeff1 × [Ion2]^coeff2 × ...")
