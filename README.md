@@ -42,7 +42,7 @@ Når der er kommet nye funktioner:
 cd ~/Desktop/Kemi-regner
 git pull
 bash run.sh
-python scripts/download_structure_images.py
+python3 scripts/download_structure_images.py
 ```
 
 > `download_structure_images.py` springer automatisk allerede hentede billeder over – kun nye stoffer hentes.
@@ -87,7 +87,7 @@ Forbered følgende **inden** eksamen (med internet):
 ```bash
 cd ~/Desktop/Kemi-regner
 git pull
-python scripts/download_structure_images.py
+python3 scripts/download_structure_images.py
 ```
 
 Til eksamen:
@@ -147,6 +147,9 @@ Klik på **🏠 Fundamentals** for at se alle beregnere som opgavekort.
 
 **"bash: run.sh: command not found"**  
 Sørg for at du er i den rigtige mappe: `cd ~/Desktop/Kemi-regner`
+
+**"command not found: python"**  
+På Mac hedder kommandoen `python3` (ikke `python`). Brug `python3 scripts/download_structure_images.py`.
 
 **"command not found: git"**  
 Installér Git fra [git-scm.com](https://git-scm.com)
