@@ -67,6 +67,53 @@ def render_vsepr_tab():
                 key="vsepr_same",
             )
 
+            with st.expander("❓ Hvordan finder jeg BP og LP?", expanded=False):
+                st.markdown(
+                    "**Trin 1 – Find det centrale atom**  \n"
+                    "Det atom med **lavest elektronegativity** er typisk centralt (H er aldrig centralt).  \n"
+                    "_Eksempel: I XeF₂ er Xe centralt, i ClO₃⁻ er Cl centralt._\n\n"
+                    "---\n"
+                    "**Trin 2 – Tæl BP (bindende par)**  \n"
+                    "BP = **antal terminale atomer** bondet til det centrale atom.  \n"
+                    "Dobbelt- og tripelbindinger tæller stadig som **ét** par i VSEPR.  \n"
+                    "_XeF₂ → 2 F → BP = 2 | SOF₄ → 4 F + 1 O → BP = 5 | ClO₃⁻ → 3 O → BP = 3_\n\n"
+                    "---\n"
+                    "**Trin 3 – Find LP (frie elektronpar på centrale atom)**  \n"
+                    "Brug denne fremgangsmåde:\n\n"
+                    "1. **V** = valenselektroner i det centrale atom _(H=1, C=4, N=5, O=6, F/Cl/Br=7, S=6, P=5, Xe=8)_\n"
+                    "2. Juster for ladning: **+1 per negativ ladning**, −1 per positiv\n"
+                    "3. Træk elektroner brugt i bindinger: **V_justeret − 2 × BP**\n"
+                    "4. **LP = resultat ÷ 2**\n\n"
+                    "| Molekyle | V | Ladning | V_just. | BP | V_just − 2×BP | LP |\n"
+                    "|---------|---|---------|---------|----|--------------|----|  \n"
+                    "| XeF₂    | 8 | 0       | 8       | 2  | 8 − 4 = 4    | **2** → men OBS: brug Lewisstruktur |\n"
+                    "| NH₃     | 5 | 0       | 5       | 3  | 5 − 6 = −1?  | Brug Lewisstruktur → **1** |\n"
+                    "| H₂O     | 6 | 0       | 6       | 2  | 6 − 4 = 2    | **1**? → Lewis → **2** |\n\n"
+                    "> **Vigtig note:** Formlen `LP = (V − 2×BP) / 2` virker for enkeltbindinger, men ved "
+                    "dobbeltbindinger (O, S) og expanderet oktet (Xe, S, Cl, P) er **Lewisstrukturen sikrere**.  \n\n"
+                    "---\n"
+                    "**Lewisstruktur-metoden (mest pålidelig)**\n\n"
+                    "1. Tæl **alle** valenselektroner (inkl. ladning)\n"
+                    "2. Tegn bindinger til alle terminale atomer\n"
+                    "3. Fyld terminale atomer med lone pairs til oktet\n"
+                    "4. Resterende elektroner på centrale atom = LP × 2\n\n"
+                    "_Eksempel ClO₃⁻:_ Total = 7+3×6+1 = 26 e⁻. "
+                    "3 bindinger = 6 e⁻. Resterende = 20. "
+                    "3 O med 3 lone pairs = 18 e⁻. Tilbage til Cl = 2 e⁻ = **1 lone pair** → AB₃E → trigonal pyramidal.\n\n"
+                    "---\n"
+                    "**Valenselektroner – hurtig reference:**\n\n"
+                    "| Gruppe | Grundstoffer | V |\n"
+                    "|--------|-------------|---|\n"
+                    "| 1 | H, Li, Na, K | 1 |\n"
+                    "| 2 | Be, Mg, Ca | 2 |\n"
+                    "| 13 | B, Al | 3 |\n"
+                    "| 14 | C, Si | 4 |\n"
+                    "| 15 | N, P | 5 |\n"
+                    "| 16 | O, S, Se | 6 |\n"
+                    "| 17 | F, Cl, Br, I | 7 |\n"
+                    "| 18 | Xe, Kr | 8 |\n"
+                )
+
         run = st.button("Beregn geometri", type="primary", key="vsepr_run")
 
     with col_right:

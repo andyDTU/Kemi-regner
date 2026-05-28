@@ -4725,13 +4725,16 @@ def show_solubility_tab():
                         )
                     
                     st.success("✅ **Solubility Calculated!**")
-                    
+
                     # Results
-                    st.markdown(f"**Molar solubility:** {result['solubility']:.6f} M")
-                    
+                    s = result['solubility']
+                    s_fmt = f"{s:.4e}" if s < 1e-3 else f"{s:.6f}"
+                    st.markdown(f"**Molar solubility:** {s_fmt} M")
+
                     st.markdown("**Equilibrium concentrations:**")
                     for species, conc in result['equilibrium_concentrations'].items():
-                        st.markdown(f"- [{species}] = {conc:.6f} M")
+                        c_fmt = f"{conc:.4e}" if conc < 1e-3 else f"{conc:.6f}"
+                        st.markdown(f"- [{species}] = {c_fmt} M")
                     
                     # Steps section
                     with st.expander("🔍 Vis trin", expanded=False):
