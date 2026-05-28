@@ -8145,6 +8145,106 @@ _FILTER_TO_CATEGORY = {
 
 
 
+def _bonding_info(s: Substance) -> dict:
+    """Auto-determine intramolecular bond type and dominant IMF for a substance."""
+    import re as _re
+
+    NOBLE_GASES = {"He", "Ne", "Ar", "Kr", "Xe", "Rn"}
+    METALS = {
+        "Li","Na","K","Rb","Cs","Fr",
+        "Be","Mg","Ca","Sr","Ba","Ra",
+        "Al","Ga","In","Tl","Sn","Pb","Bi","Ge",
+        "Fe","Cu","Zn","Ag","Au","Pt","Cr","Mn","Co","Ni",
+        "Ti","V","W","Mo","Pd","Hg","Sc","Zr","Nb","Ru","Rh","Ir","Os",
+    }
+
+    f = s.formula.strip()
+    atoms = _re.findall(r"[A-Z][a-z]?", f)
+    unique_atoms = set(atoms)
+
+    # ── Noble gas ──────────────────────────────────────────────────────────
+    if f in NOBLE_GASES:
+        return {
+            "intramolecular": "Ingen (monatomisk ædel gas)",
+            "imf": "London-dispersions (van der Waals)",
+            "imf_icon": "🔵",
+            "note": (
+                "Ædel gas – fuldstændigt fyldt yderste skal, danner ingen kovalente eller ioniske bindinger. "
+                "I fast og flydende form holdes atomerne kun sammen af svage **London-dispersions-kræfter**."
+            ),
+        }
+
+    # ── Pure metal ─────────────────────────────────────────────────────────
+    if f in METALS or (len(unique_atoms) == 1 and unique_atoms <= METALS):
+        return {
+            "intramolecular": "Metalbindinger",
+            "imf": "Metalbindinger",
+            "imf_icon": "⚙️",
+            "note": (
+                "Rent metal – atomer holdt sammen af **metalbindinger** (delokaliserede valenselektroner "
+                "i et 'elektronhav'). God elektrisk og termisk ledningsevne."
+            ),
+        }
+
+    # ── Ionic compound ─────────────────────────────────────────────────────
+    has_metal = bool(unique_atoms & METALS)
+    has_NH4 = "NH4" in f
+    is_ionic = s.salt_components or s.category == "salt" or (has_metal and len(unique_atoms) > 1) or has_NH4
+
+    if is_ionic:
+        return {
+            "intramolecular": "Ioniske bindinger",
+            "imf": "Ioniske bindinger (elektrostatisk tiltrækning)",
+            "imf_icon": "⚡",
+            "note": (
+                "Ionisk forbindelse – **positive og negative ioner** tiltrækker hinanden elektrostatisk. "
+                "Høje smeltepunkter, sprødt, leder strøm i smeltet/opløst form."
+            ),
+        }
+
+    # ── Covalent – determine IMF ────────────────────────────────────────────
+    has_H = "H" in unique_atoms
+    has_O = "O" in unique_atoms
+    has_N = "N" in unique_atoms
+    has_F = "F" in unique_atoms
+    hbond = has_H and (has_O or has_N or has_F)
+    is_polar = s.polarity == "polar"
+
+    bond_label = "Kovalente bindinger (polar)" if is_polar else "Kovalente bindinger (upolar)"
+
+    if hbond:
+        return {
+            "intramolecular": bond_label,
+            "imf": "Hydrogenbindinger + London-dispersions",
+            "imf_icon": "💧",
+            "note": (
+                "Molekylet indeholder O–H, N–H eller F–H → **hydrogenbindinger** er de dominerende "
+                "intermolekylære kræfter (stærkeste IMF for molekylære forbindelser). "
+                "Desuden London-dispersions."
+            ),
+        }
+    elif is_polar:
+        return {
+            "intramolecular": bond_label,
+            "imf": "Dipol-dipol-kræfter + London-dispersions",
+            "imf_icon": "↔️",
+            "note": (
+                "Polært molekyle – permanent dipolmoment → **dipol-dipol-kræfter** + London-dispersions. "
+                "Stærkere IMF end rene London-kræfter."
+            ),
+        }
+    else:
+        return {
+            "intramolecular": bond_label,
+            "imf": "London-dispersions (van der Waals)",
+            "imf_icon": "🔵",
+            "note": (
+                "Upolært kovalent molekyle – kun **London-dispersions-kræfter** (van der Waals). "
+                "Svagere IMF; lavere koge-/frysepunkt end polære molekyler."
+            ),
+        }
+
+
 def _render_substance_card(s: Substance) -> None:
     """Render a detailed substance card in Streamlit."""
     def _fmt_constant(value: float) -> str:
@@ -8196,6 +8296,14 @@ def _render_substance_card(s: Substance) -> None:
         with st.expander("🏷️ Klassifikation", expanded=True):
             for line in classification_lines:
                 st.markdown(line)
+
+    # ── Bindingstype & IMF ─────────────────────────────────────────────────
+    _bi = _bonding_info(s)
+    with st.expander("🔗 Bindingstype & intermolekylære kræfter", expanded=True):
+        bc1, bc2 = st.columns(2)
+        bc1.metric("Intramolekylær binding", _bi["intramolecular"])
+        bc2.metric(f"{_bi['imf_icon']} Dominerende IMF", _bi["imf"])
+        st.info(_bi["note"])
 
     # ── Struktur (VSEPR) og billede ───────────────────────────────────────
     with st.expander("🧩 Struktur (VSEPR)", expanded=True):
