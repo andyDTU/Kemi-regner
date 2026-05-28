@@ -1263,14 +1263,117 @@ SUBSTANCES: List[Substance] = [
         formula="FePO4",
         category="salt",
         subtype="tungt opløseligt salt",
-        description="Jern(III)-fosfat er et tungt opløseligt salt, som kobler fosfatkemi til overgangsmetal-ioner.",
+        description="Jern(III)-fosfat er et tungt opløseligt salt, som kobler fosfatkemi til overgangsmetal-ioner. Er også den fuldt afladede katodeform i LFP-batterier (se LiFePO₄).",
         synonyms=["iron(III) phosphate", "ferric phosphate"],
-        tags=["salt", "uorganisk", "tungt opløseligt", "fosfat", "FePO4"],
+        tags=["salt", "uorganisk", "tungt opløseligt", "fosfat", "FePO4", "batteri", "LFP"],
         molar_mass=150.82,
         physical_state="fast",
         solubility_note="Fosfat; normalt tungt opløseligt",
         salt_components=["Fe3+", "PO4^3-"],
-        common_exam_note="Vigtig fældningsforbindelse: Fe³⁺ + PO4³⁻ giver et tungt opløseligt fosfat efter hovedreglen for fosfater.",
+        common_exam_note="Vigtig fældningsforbindelse: Fe³⁺ + PO4³⁻ giver et tungt opløseligt fosfat. Dannes ved afladning af LFP-batteri: LiFePO₄ → Li⁺ + e⁻ + FePO₄.",
+    ),
+    Substance(
+        id="lifepo4",
+        name_da="Lithiumjernfosfat",
+        name_en="Lithium iron phosphate",
+        formula="LiFePO4",
+        category="salt",
+        subtype="fast oxid/salt",
+        description=(
+            "Lithiumjern(II)fosfat er katodermaterialet i LFP-lithium-ion-batterier (LFP = LiFePO₄). "
+            "Under afladning afgiver katoden lithiumioner og elektroner: "
+            "LiFePO₄ → FePO₄ + Li⁺ + e⁻. "
+            "Under opladning sker den modsatte reaktion. "
+            "Jernets oxidationstilstand skifter mellem +2 (LiFePO₄) og +3 (FePO₄). "
+            "Stabil, sikker og langlivet batteri-kemi – bruges bl.a. i elbiler og stationære lagre."
+        ),
+        synonyms=[
+            "lithium iron(II) phosphate", "lithium ferrous phosphate",
+            "LFP", "LFP-batteri", "lithiumjernfosfat",
+        ],
+        tags=[
+            "salt", "uorganisk", "fast", "batteri", "LFP", "LiFePO4",
+            "elektrokemi", "katode", "lithium", "redox", "overgangsmetal",
+        ],
+        molar_mass=157.76,
+        physical_state="fast",
+        solubility_note="Uopløseligt i vand – fast katode-materiale",
+        common_exam_note=(
+            "Eksamensfavorit: katodereaktionen LiFePO₄ ⇌ FePO₄ + Li⁺ + e⁻ (afladning). "
+            "Fe skifter: +2 → +3 (oxidation ved katoden under afladning). "
+            "Cellepotentiale E° ≈ 3,45 V vs. Li/Li⁺. "
+            "Molarmasse: Li(6,94) + Fe(55,85) + P(30,97) + 4×O(16,00) = 157,76 g/mol."
+        ),
+    ),
+    Substance(
+        id="licoO2",
+        name_da="Lithiumcobaltoxid",
+        name_en="Lithium cobalt oxide",
+        formula="LiCoO2",
+        category="oxid",
+        subtype="fast oxid/salt",
+        description=(
+            "LiCoO₂ er katodermaterialet i klassiske lithium-ion-batterier (bruges i mobiltelefoner og laptops). "
+            "Katodereaktion under afladning: LiCoO₂ → Li₁₋ₓCoO₂ + xLi⁺ + xe⁻. "
+            "Co skifter oxidationstilstand: Co³⁺ ↔ Co⁴⁺. "
+            "Højere energitæthed end LFP, men mindre termisk stabilitet."
+        ),
+        synonyms=["lithium cobaltate", "lithiumcobaltoxid", "LCO"],
+        tags=["oxid", "uorganisk", "fast", "batteri", "LCO", "LiCoO2", "elektrokemi", "katode", "lithium", "cobalt"],
+        molar_mass=97.87,
+        physical_state="fast",
+        solubility_note="Uopløseligt i vand – fast katode-materiale",
+        common_exam_note=(
+            "Klassisk lithium-ion-batteri-katode. "
+            "Afladning: LiCoO₂ → Li⁺ + e⁻ + CoO₂. "
+            "E° ≈ 3,7–4,2 V vs. Li/Li⁺. "
+            "Co³⁺ oxideres til Co⁴⁺ ved afladning."
+        ),
+    ),
+    Substance(
+        id="mno2_batteri",
+        name_da="Mangandioxid",
+        name_en="Manganese dioxide",
+        formula="MnO2",
+        category="oxid",
+        subtype="fast oxid/salt",
+        description=(
+            "MnO₂ er katodermaterialet i alkaliske engangsbatterier (AA/AAA). "
+            "Katodereaktion: MnO₂ + H₂O + e⁻ → MnOOH + OH⁻. "
+            "Anoden er zink: Zn + 2OH⁻ → Zn(OH)₂ + 2e⁻. "
+            "Bruges også som oxidationsmiddel i organisk kemi."
+        ),
+        synonyms=["manganese dioxide", "mangandioxid", "MnO2", "pyrolusit"],
+        tags=["oxid", "uorganisk", "fast", "batteri", "MnO2", "elektrokemi", "katode", "mangan", "oxidationsmiddel"],
+        molar_mass=86.94,
+        physical_state="fast",
+        solubility_note="Uopløseligt i vand",
+        common_exam_note=(
+            "Katode i alkalisk batteri: MnO₂ + H₂O + e⁻ → MnOOH + OH⁻. "
+            "Mn(IV) reduceres til Mn(III). "
+            "Samlet cellerektion: Zn + 2MnO₂ → ZnO + Mn₂O₃."
+        ),
+    ),
+    Substance(
+        id="li_metal",
+        name_da="Lithium (metal)",
+        name_en="Lithium metal",
+        formula="Li",
+        category="metal",
+        description=(
+            "Lithiummetallet er anoden i lithiummetalbatterier og referencelektrode for lithium-ion-batterier. "
+            "Standardreduktionspotentiale: Li⁺ + e⁻ → Li, E° = −3,04 V (det laveste kendte). "
+            "Meget reaktivt alkalimetal – reagerer voldsomt med vand og luft."
+        ),
+        synonyms=["lithium", "Li metal", "lithiumanode"],
+        tags=["metal", "alkalimetal", "batteri", "elektrokemi", "anode", "Li", "lithium", "elektrodepotentiale"],
+        molar_mass=6.941,
+        physical_state="fast",
+        common_exam_note=(
+            "Anodereference for batterier: E°(Li⁺/Li) = −3,04 V – laveste standardpotentiale. "
+            "Li⁺ + e⁻ → Li(s). "
+            "Cellespænding beregnes: E°cell = E°katode − E°(Li⁺/Li)."
+        ),
     ),
     Substance(
         id="ag3po4",
