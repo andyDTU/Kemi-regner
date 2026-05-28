@@ -305,32 +305,6 @@ def render_search_sidebar():
         else:
             st.sidebar.caption("Ingen resultater – prøv et andet søgeord.")
 
-    # ── Emne-genveje ─────────────────────────────────────────────────────────
-    st.sidebar.markdown("---")
-    st.sidebar.caption("📚 **Hop til emne:**")
-    _TOPIC_SHORTCUTS = [
-        ("🧪 Syrer", "acids-bases"),
-        ("🔥 Termo", "thermochemistry"),
-        ("📊 Gasser", "gases"),
-        ("⚗️ Ligevægt", "ligevaegt"),
-        ("🔋 Elektro", "electrochemistry"),
-        ("⚡ Kinetik", "kinetics"),
-        ("🧮 Stofmæng.", "stoichiometry"),
-        ("⚖️ Mol/Atom", "atoms-molar"),
-        ("🌡️ Kolligative", "koge-fryse"),
-        ("📝 Eksamen", "eksamensguide"),
-    ]
-    pairs = [_TOPIC_SHORTCUTS[i:i+2] for i in range(0, len(_TOPIC_SHORTCUTS), 2)]
-    for pair in pairs:
-        cols = st.sidebar.columns(len(pair))
-        for col, (label, page) in zip(cols, pair):
-            with col:
-                if st.button(label, key=f"topic_nav_{page}", use_container_width=True):
-                    page_label = PAGE_QUERY_TO_LABEL.get(page, "🏠 Fundamentals")
-                    st.session_state["_pending_page"] = page_label
-                    st.query_params["page"] = page
-                    st.rerun()
-    st.sidebar.markdown("---")
 
 
 def main():
@@ -777,10 +751,40 @@ def show_exam_guide_page():
             "M fra kolligative egenskaber",
         ],
     }
+    # ── Hop til emne ─────────────────────────────────────────────────────────
+    _EXAM_SHORTCUTS = [
+        ("📋 Alle",        None),
+        ("🧪 Syrer",       "🧪 Syrer & Baser"),
+        ("🔥 Termo",       "🔥 Termokemi"),
+        ("🧮 Stofmæng.",   "🧮 Stofmængder & Reaktioner"),
+        ("📊 Gasser",      "📊 Gasser"),
+        ("⚗️ Ligevægt",    "⚗️ Ligevægt"),
+        ("🔋 Elektro",     "🔋 Elektrokemi"),
+        ("⚡ Kinetik",     "⚡ Kinetik"),
+        ("⚖️ Atoms",       "⚖️ Atoms & Molarmasse"),
+        ("🌡️ Kolligative", "🌡️ Kolligative egenskaber"),
+    ]
+    active_group = st.session_state.get("_exam_group_filter", None)
+    st.caption("📚 Hop til emne:")
+    _SC_ROW = 5
+    sc_rows = [_EXAM_SHORTCUTS[i:i+_SC_ROW] for i in range(0, len(_EXAM_SHORTCUTS), _SC_ROW)]
+    for ri, row in enumerate(sc_rows):
+        cols = st.columns(len(row))
+        for col, (sc_label, grp_key) in zip(cols, row):
+            with col:
+                btn_t = "primary" if active_group == grp_key else "secondary"
+                if st.button(sc_label, key=f"exam_sc_{ri}_{sc_label}", use_container_width=True, type=btn_t):
+                    st.session_state["_exam_group_filter"] = grp_key
+                    st.rerun()
+    st.markdown("---")
+
     name_to_task = {t[2]: t for t in _EXAM_TASKS}
     btn_counter = 0
 
     for group_label, task_names in groups.items():
+        if active_group and group_label != active_group:
+            btn_counter += sum(1 for n in task_names if n in name_to_task)
+            continue
         tasks_in_group = [name_to_task[n] for n in task_names if n in name_to_task]
         if exam_q:
             q_low = exam_q.lower()
