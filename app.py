@@ -8159,15 +8159,19 @@ def _render_substance_card(s: Substance) -> None:
     with st.expander("🧩 Struktur (VSEPR)", expanded=True):
         st.markdown(f"**VSEPR-struktur:** {get_vsepr_description(s)}")
         st.markdown(f"**Tetraedrisk type:** {get_vsepr_distortion_label(s)}")
-        image_info = _resolve_structure_image(s.name_da, s.name_en or "", s.formula)
-        if image_info["url"]:
-            try:
-                st.image(image_info["url"], caption=image_info["caption"], use_container_width=False)
-                st.caption(f"Kilde: {image_info['source']}")
-            except AttributeError:
-                st.markdown(f"Strukturbillede: {image_info['caption']}")
+        _local_img = Path(__file__).parent / "data" / "structure_images" / f"{s.id}.png"
+        if _local_img.exists():
+            st.image(str(_local_img), caption=f"2D-struktur: {s.name_da}", use_container_width=False)
         else:
-            st.info("Intet online struktur-billede fundet automatisk for dette stof.")
+            image_info = _resolve_structure_image(s.name_da, s.name_en or "", s.formula)
+            if image_info["url"]:
+                try:
+                    st.image(image_info["url"], caption=image_info["caption"], use_container_width=False)
+                    st.caption(f"Kilde: {image_info['source']}")
+                except AttributeError:
+                    st.markdown(f"Strukturbillede: {image_info['caption']}")
+            else:
+                st.info("Intet struktur-billede fundet. Kør `scripts/download_structure_images.py` for offline-brug.")
 
     # ── Kemiske egenskaber ─────────────────────────────────────────────────
     chem_lines = []
