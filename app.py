@@ -8409,11 +8409,16 @@ def _render_substance_card(s: Substance) -> None:
     with st.expander("🧩 Struktur (VSEPR)", expanded=True):
         st.markdown(f"**VSEPR-struktur:** {get_vsepr_description(s)}")
         st.markdown(f"**Tetraedrisk type:** {get_vsepr_distortion_label(s)}")
-        _local_img = Path(__file__).parent / "data" / "structure_images" / f"{s.id}.png"
+        _local_img = Path(__file__).resolve().parent / "data" / "structure_images" / f"{s.id}.png"
         if _local_img.exists():
             st.image(str(_local_img), caption=f"2D-struktur: {s.name_da}", use_container_width=False)
         else:
-            st.info("Intet lokalt strukturbillede. Kør `python scripts/download_structure_images.py` én gang for at hente dem.")
+            _img_dir = _local_img.parent
+            _n_cached = len(list(_img_dir.glob("*.png"))) if _img_dir.exists() else 0
+            if _n_cached == 0:
+                st.info("📥 Ingen strukturbilleder hentet endnu. Kør `python3 scripts/download_structure_images.py` én gang.")
+            else:
+                st.caption(f"Intet billede for dette stof ({_n_cached} billeder tilgængelige).")
 
     # ── Kemiske egenskaber ─────────────────────────────────────────────────
     chem_lines = []

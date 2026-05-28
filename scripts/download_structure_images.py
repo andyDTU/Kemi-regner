@@ -18,7 +18,7 @@ from urllib.error import URLError, HTTPError
 # (periodictable etc.) are available without manual activation.
 import subprocess
 
-_REPO_ROOT = Path(__file__).parent.parent
+_REPO_ROOT = Path(__file__).resolve().parent.parent
 _VENV_DIR = _REPO_ROOT / ".venv"
 
 # Python executable path differs between Mac/Linux and Windows
