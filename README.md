@@ -57,24 +57,24 @@ python3 scripts/download_structure_images.py
 
 ### Start
 
-Åbn **Kommandoprompt** eller **PowerShell** og kør:
+Åbn **Kommandoprompt** og kør:
 
-```bash
+```
 cd %USERPROFILE%\Desktop
 git clone https://github.com/andyDTU/Kemi-regner.git
 cd Kemi-regner
-pip install -r requirements.txt
-streamlit run app.py
+run.bat
 ```
+
+Dobbeltklik alternativt på **`run.bat`** i File Explorer.  
+Scriptet installerer automatisk alt og åbner appen på **http://localhost:8501**.
 
 ### Opdatér til nyeste version (Windows)
 
-```bash
+```
 cd %USERPROFILE%\Desktop\Kemi-regner
 git pull
-pip install -r requirements.txt
-python scripts/download_structure_images.py
-streamlit run app.py
+run.bat
 ```
 
 ---
