@@ -14,11 +14,25 @@ from urllib.parse import quote
 from urllib.request import urlopen, Request
 from urllib.error import URLError, HTTPError
 
-# If running outside the virtual environment, re-exec with the venv's Python
-# so all packages (periodictable etc.) are available without manual activation.
+# Ensure we run inside the project's virtual environment so all packages
+# (periodictable etc.) are available without manual activation.
 _REPO_ROOT = Path(__file__).parent.parent
 _VENV_PYTHON = _REPO_ROOT / ".venv" / "bin" / "python3"
-if _VENV_PYTHON.exists() and Path(sys.executable).resolve() != _VENV_PYTHON.resolve():
+
+if not _VENV_PYTHON.exists():
+    import subprocess
+    print("Opretter virtuelt miljø og installerer pakker (kun første gang, ~1-2 min)...")
+    subprocess.check_call([sys.executable, "-m", "venv", str(_REPO_ROOT / ".venv")])
+    subprocess.check_call([
+        str(_VENV_PYTHON), "-m", "pip", "install", "--quiet", "--upgrade", "pip",
+    ])
+    subprocess.check_call([
+        str(_VENV_PYTHON), "-m", "pip", "install", "--quiet",
+        "-r", str(_REPO_ROOT / "requirements.txt"),
+    ])
+    print("Pakker installeret.\n")
+
+if Path(sys.executable).resolve() != _VENV_PYTHON.resolve():
     os.execv(str(_VENV_PYTHON), [str(_VENV_PYTHON)] + sys.argv)
 
 # Add repo root to path so we can import molecule_db
