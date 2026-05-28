@@ -1143,118 +1143,129 @@ def show_molar_mass_page():
                     st.info("Please check your formula and try again.")
 
     if active_subpage == "⚛️ Elektronkonfiguration og atomradius":
-        st.markdown("### Elektronkonfiguration")
-        st.markdown("Angiv symbol eller atomnummer med valgfri ladning.")
+        st.markdown("### Elektronkonfiguration & Bindingskarakter")
+        ec_mode = st.radio(
+            "Tilstand:",
+            ["⚛️ Enkelt atom / ion", "🔗 Bindingskarakter (ionisk/kovalent)"],
+            horizontal=True,
+            key="ec_mode",
+        )
+        st.markdown("---")
 
-        col1, col2 = st.columns([3, 1])
-        with col1:
-            species_input = st.text_input(
-                "Input (symbol eller atomnummer):",
-                placeholder="e.g., Na, O2-, O^2-, Fe3+, Fe2+, Cl-, Br1-, Cu+, Cr2+",
-                help="Understøtter symbol/atomnummer + ladning som fx 2+, +2, 2-, -2."
-            )
-            show_all_orbitals = st.checkbox(
-                "Vis alle skaller (inkl. kerneskaller)",
-                value=True,
-            )
-        with col2:
-            st.markdown("### Eksempler:")
-            st.markdown("- **Na**")
-            st.markdown("- **O2-**")
-            st.markdown("- **Fe3+**")
-            st.markdown("- **Fe2+**")
-            st.markdown("- **Cr2+**")
+        if ec_mode == "🔗 Bindingskarakter (ionisk/kovalent)":
+            _show_bindingskarakter_section()
 
-        if st.button("Beregn elektronkonfiguration", type="primary"):
-            if not species_input.strip():
-                st.error("Indtast et grundstof (symbol eller atomnummer).")
-            else:
-                try:
-                    with st.spinner("Beregner elektronkonfiguration..."):
-                        result, steps, metadata = calculate_electron_configuration_with_steps(
-                            species_input,
-                            orbital_view="all" if show_all_orbitals else "valence",
+        if ec_mode == "⚛️ Enkelt atom / ion":
+            st.markdown("Angiv symbol eller atomnummer med valgfri ladning.")
+            col1, col2 = st.columns([3, 1])
+            with col1:
+                species_input = st.text_input(
+                    "Input (symbol eller atomnummer):",
+                    placeholder="e.g., Na, O2-, O^2-, Fe3+, Fe2+, Cl-, Br1-, Cu+, Cr2+",
+                    help="Understøtter symbol/atomnummer + ladning som fx 2+, +2, 2-, -2."
+                )
+                show_all_orbitals = st.checkbox(
+                    "Vis alle skaller (inkl. kerneskaller)",
+                    value=True,
+                )
+            with col2:
+                st.markdown("### Eksempler:")
+                st.markdown("- **Na**")
+                st.markdown("- **O2-**")
+                st.markdown("- **Fe3+**")
+                st.markdown("- **Fe2+**")
+                st.markdown("- **Cr2+**")
+
+            if st.button("Beregn elektronkonfiguration", type="primary"):
+                if not species_input.strip():
+                    st.error("Indtast et grundstof (symbol eller atomnummer).")
+                else:
+                    try:
+                        with st.spinner("Beregner elektronkonfiguration..."):
+                            result, steps, metadata = calculate_electron_configuration_with_steps(
+                                species_input,
+                                orbital_view="all" if show_all_orbitals else "valence",
+                            )
+
+                        st.success("✅ Beregning gennemført")
+                        st.markdown(
+                            f"**Symbol:** {metadata['symbol']}  " +
+                            f"**Z:** {metadata['Z']}  " +
+                            f"**Ladning:** {metadata['charge']:+d}  " +
+                            f"**Elektroner:** {metadata['electrons']}"
                         )
 
-                    st.success("✅ Beregning gennemført")
-                    st.markdown(
-                        f"**Symbol:** {metadata['symbol']}  " +
-                        f"**Z:** {metadata['Z']}  " +
-                        f"**Ladning:** {metadata['charge']:+d}  " +
-                        f"**Elektroner:** {metadata['electrons']}"
-                    )
+                        st.markdown("### Elektronkonfiguration")
+                        st.caption("Aufbau = orbitalernes energirækkefølge. Skal-sorteret = organiseret efter hovedskal (n).")
+                        st.markdown("**Auffyldningsrækkefølge (Aufbau):**")
+                        st.markdown(format_electron_configuration_html(result['aufbau']), unsafe_allow_html=True)
+                        st.markdown("**Skal-sorteret elektronkonfiguration:**")
+                        st.markdown(
+                            format_electron_configuration_grouped_html(result['shell_sorted_grouped']),
+                            unsafe_allow_html=True,
+                        )
+                        st.markdown("**Ædelgasnotation:**")
+                        st.markdown(format_electron_configuration_html(result['noble']), unsafe_allow_html=True)
 
-                    st.markdown("### Elektronkonfiguration")
-                    st.caption("Aufbau = orbitalernes energirækkefølge. Skal-sorteret = organiseret efter hovedskal (n).")
-                    st.markdown("**Auffyldningsrækkefølge (Aufbau):**")
-                    st.markdown(format_electron_configuration_html(result['aufbau']), unsafe_allow_html=True)
-                    st.markdown("**Skal-sorteret elektronkonfiguration:**")
-                    st.markdown(
-                        format_electron_configuration_grouped_html(result['shell_sorted_grouped']),
-                        unsafe_allow_html=True,
-                    )
-                    st.markdown("**Ædelgasnotation:**")
-                    st.markdown(format_electron_configuration_html(result['noble']), unsafe_allow_html=True)
-
-                    radius = result.get("radius") or {}
-                    radius_value = radius.get("value")
-                    if radius_value is None:
-                        radius_note = radius.get("note", "ingen data")
-                        st.markdown(f"**Radius:** ukendt ({radius_note})")
-                    else:
-                        if metadata["charge"] == 0:
-                            radius_type = "atomradius (neutral)"
-                        elif metadata["charge"] > 0:
-                            radius_type = "ionradius (kation)"
+                        radius = result.get("radius") or {}
+                        radius_value = radius.get("value")
+                        if radius_value is None:
+                            radius_note = radius.get("note", "ingen data")
+                            st.markdown(f"**Radius:** ukendt ({radius_note})")
                         else:
-                            radius_type = "ionradius (anion)"
-                        st.markdown(f"**Radius:** {radius_value:.3g} {radius.get('unit', 'pm')} ({radius_type})")
+                            if metadata["charge"] == 0:
+                                radius_type = "atomradius (neutral)"
+                            elif metadata["charge"] > 0:
+                                radius_type = "ionradius (kation)"
+                            else:
+                                radius_type = "ionradius (anion)"
+                            st.markdown(f"**Radius:** {radius_value:.3g} {radius.get('unit', 'pm')} ({radius_type})")
 
-                    st.markdown(f"**Elektroner i yderste skal:** {metadata['outer_shell_electrons']}")
+                        st.markdown(f"**Elektroner i yderste skal:** {metadata['outer_shell_electrons']}")
 
-                    st.caption(f"Maskinlæsbar (long): {result['long']}")
-                    st.caption(f"Maskinlæsbar (aufbau): {result['aufbau']}")
-                    st.caption(f"Maskinlæsbar (shell sorted): {result['shell_sorted']}")
-                    st.caption(f"Maskinlæsbar (noble): {result['noble']}")
-                    if radius.get("source"):
-                        st.caption(f"Radius-kilde: {radius['source']}")
+                        st.caption(f"Maskinlæsbar (long): {result['long']}")
+                        st.caption(f"Maskinlæsbar (aufbau): {result['aufbau']}")
+                        st.caption(f"Maskinlæsbar (shell sorted): {result['shell_sorted']}")
+                        st.caption(f"Maskinlæsbar (noble): {result['noble']}")
+                        if radius.get("source"):
+                            st.caption(f"Radius-kilde: {radius['source']}")
 
-                    st.markdown("**Orbitalfordeling (Hund + Pauli):**")
-                    distribution_rows = result.get("orbital_distribution") or []
-                    if distribution_rows:
-                        for row in distribution_rows:
-                            st.text(row["text"])
+                        st.markdown("**Orbitalfordeling (Hund + Pauli):**")
+                        distribution_rows = result.get("orbital_distribution") or []
+                        if distribution_rows:
+                            for row in distribution_rows:
+                                st.text(row["text"])
 
-                        quantum_rows = []
-                        for row in distribution_rows:
-                            for orbital in row.get("orbitals", []):
-                                occupancy = orbital.get("occupancy")
-                                quantum_rows.append(
-                                    {
-                                        "Underskal": row.get("subshell_label"),
-                                        "Orbital": orbital.get("name"),
-                                        "n": orbital.get("n"),
-                                        "l": orbital.get("l"),
-                                        "m": orbital.get("m"),
-                                        "Besættelse": occupancy if occupancy else "tom",
-                                    }
-                                )
+                            quantum_rows = []
+                            for row in distribution_rows:
+                                for orbital in row.get("orbitals", []):
+                                    occupancy = orbital.get("occupancy")
+                                    quantum_rows.append(
+                                        {
+                                            "Underskal": row.get("subshell_label"),
+                                            "Orbital": orbital.get("name"),
+                                            "n": orbital.get("n"),
+                                            "l": orbital.get("l"),
+                                            "m": orbital.get("m"),
+                                            "Besættelse": occupancy if occupancy else "tom",
+                                        }
+                                    )
 
-                        st.markdown("**Kvantetal (n, l, m):**")
-                        st.dataframe(pd.DataFrame(quantum_rows), hide_index=True, use_container_width=True)
-                        st.caption(
-                            "n = hovedkvantetal (skal/energiniveau), "
-                            "l = bikvantetal (underskal: s=0, p=1, d=2, f=3), "
-                            "m = magnetisk kvantetal (orbitalens orientering, fra -l til +l)."
-                        )
-                    else:
-                        st.text("Ingen orbitalfordeling at vise for valgt visning.")
+                            st.markdown("**Kvantetal (n, l, m):**")
+                            st.dataframe(pd.DataFrame(quantum_rows), hide_index=True, use_container_width=True)
+                            st.caption(
+                                "n = hovedkvantetal (skal/energiniveau), "
+                                "l = bikvantetal (underskal: s=0, p=1, d=2, f=3), "
+                                "m = magnetisk kvantetal (orbitalens orientering, fra -l til +l)."
+                            )
+                        else:
+                            st.text("Ingen orbitalfordeling at vise for valgt visning.")
 
-                    with st.expander("🔍 Vis trin", expanded=False):
-                        for step in steps:
-                            st.markdown(step)
-                except Exception as e:
-                    st.error(f"❌ **Fejl**: {str(e)}")
+                        with st.expander("🔍 Vis trin", expanded=False):
+                            for step in steps:
+                                st.markdown(step)
+                    except Exception as e:
+                        st.error(f"❌ **Fejl**: {str(e)}")
 
     if active_subpage == "🧭 Interaktivt periodisk system":
         render_periodic_table_tab()
@@ -1370,6 +1381,163 @@ def show_molar_mass_page():
 
     if active_subpage == "⚗️ Formel ladning":
         _show_formel_ladning_tab()
+
+
+def _show_bindingskarakter_section():
+    """Bindingskarakter: ΔEN, % ionisk karakter og rangering af forbindelser."""
+    import re
+    import math
+
+    # Pauling elektronegativity (kilde: standard tabel)
+    _EN = {
+        "H": 2.20, "Li": 0.98, "Be": 1.57, "B": 2.04, "C": 2.55,
+        "N": 3.04, "O": 3.44, "F": 3.98, "Na": 0.93, "Mg": 1.31,
+        "Al": 1.61, "Si": 1.90, "P": 2.19, "S": 2.58, "Cl": 3.16,
+        "K": 0.82, "Ca": 1.00, "Sc": 1.36, "Ti": 1.54, "V": 1.63,
+        "Cr": 1.66, "Mn": 1.55, "Fe": 1.83, "Co": 1.88, "Ni": 1.91,
+        "Cu": 1.90, "Zn": 1.65, "Ga": 1.81, "Ge": 2.01, "As": 2.18,
+        "Se": 2.55, "Br": 2.96, "Rb": 0.82, "Sr": 0.95, "Y": 1.22,
+        "Zr": 1.33, "Ag": 1.93, "Cd": 1.69, "Sn": 1.96, "Sb": 2.05,
+        "Te": 2.10, "I": 2.66, "Cs": 0.79, "Ba": 0.89, "La": 1.10,
+        "Hg": 2.00, "Tl": 1.62, "Pb": 2.33, "Bi": 2.02,
+    }
+
+    def _parse_binary(formula: str):
+        """Returnér (el1, el2) fra en binær forbindelsesformel, fx 'NaF' → ('Na','F')."""
+        formula = formula.strip()
+        # Match alle grundstofsymboler (stor + evt. lille)
+        tokens = re.findall(r"[A-Z][a-z]?", formula)
+        unique = list(dict.fromkeys(tokens))  # bevar rækkefølge, fjern dubletter
+        if len(unique) == 1:
+            return unique[0], unique[0]   # homodiatomisk (F2, N2 …)
+        if len(unique) == 2:
+            return unique[0], unique[1]
+        return None, None
+
+    def _bond_type(den: float) -> str:
+        if den < 0.4:
+            return "Upolar kovalent"
+        if den < 1.7:
+            return "Polar kovalent"
+        return "Ionisk"
+
+    def _pct_ionic(den: float) -> float:
+        return (1 - math.exp(-0.25 * den ** 2)) * 100
+
+    st.markdown("### 🔗 Bindingskarakter (ionisk/kovalent)")
+    with st.expander("ℹ️ Teori", expanded=False):
+        st.markdown(
+            "**Elektronegativity-forskel (ΔEN)** bestemmer bindingskarakteren:\n\n"
+            "| ΔEN | Bindingstype |\n"
+            "|-----|-------------|\n"
+            "| < 0,4 | Upolar kovalent |\n"
+            "| 0,4 – 1,7 | Polar kovalent |\n"
+            "| > 1,7 | Ionisk |\n\n"
+            "**% ionisk karakter** (Paulings formel):\n\n"
+            "% = (1 − e^(−0,25 · ΔEN²)) × 100\n\n"
+            "**Rangering:** Større ΔEN → større ionisk karakter → mere ionisk."
+        )
+
+    # ── Tilføj forbindelser ───────────────────────────────────────────────────
+    if "bc_compounds" not in st.session_state:
+        st.session_state["bc_compounds"] = []
+
+    st.caption("Tilføj forbindelser/bindinger at sammenligne (fx NaF, BaO, F2, NO):")
+    c1, c2, c3 = st.columns([2, 2, 1])
+    formula_in = c1.text_input(
+        "Forbindelsesformel:",
+        placeholder="fx NaF, BaS, F2, NO, HCl",
+        key="bc_formula",
+    )
+    label_in = c2.text_input(
+        "Valgfrit label (fx 'A'):",
+        placeholder="lades tom → brug formlen",
+        key="bc_label",
+    )
+    c3.markdown("<br>", unsafe_allow_html=True)
+    if c3.button("➕ Tilføj", key="bc_add", use_container_width=True):
+        if formula_in.strip():
+            el1, el2 = _parse_binary(formula_in.strip())
+            if el1 and el2:
+                en1 = _EN.get(el1)
+                en2 = _EN.get(el2)
+                if en1 is None or en2 is None:
+                    missing = el1 if en1 is None else el2
+                    st.error(f"Elektronegativity for **{missing}** kendes ikke i databasen.")
+                else:
+                    lbl = label_in.strip() or formula_in.strip()
+                    den = abs(en1 - en2)
+                    st.session_state["bc_compounds"].append({
+                        "label": lbl,
+                        "formula": formula_in.strip(),
+                        "el1": el1, "el2": el2,
+                        "en1": en1, "en2": en2,
+                        "den": den,
+                        "pct": _pct_ionic(den),
+                        "type": _bond_type(den),
+                    })
+                    st.rerun()
+            else:
+                st.error("Kunne ikke parse forbindelsen – skriv fx NaF, BaO, F2, NO.")
+
+    compounds = st.session_state["bc_compounds"]
+
+    if compounds:
+        st.markdown("#### Resultater")
+        hdr = st.columns([1.5, 1, 1, 1, 1, 1.5, 1, 0.6])
+        for col, h in zip(hdr, ["Forbindelse", "El₁", "EN₁", "El₂", "EN₂", "ΔEN", "% ionisk", ""]):
+            col.markdown(f"**{h}**")
+
+        for i, c in enumerate(compounds):
+            row = st.columns([1.5, 1, 1, 1, 1, 1.5, 1, 0.6])
+            row[0].markdown(f"**{c['label']}**")
+            row[1].markdown(c["el1"])
+            row[2].markdown(f"{c['en1']:.2f}")
+            row[3].markdown(c["el2"])
+            row[4].markdown(f"{c['en2']:.2f}")
+            row[5].markdown(f"**{c['den']:.2f}** – *{c['type']}*")
+            row[6].markdown(f"{c['pct']:.1f}%")
+            if row[7].button("✕", key=f"bc_del_{i}", use_container_width=True):
+                st.session_state["bc_compounds"].pop(i)
+                st.rerun()
+
+        st.markdown("---")
+        # Rangering: faldende ionisk karakter
+        ranked = sorted(compounds, key=lambda x: x["den"], reverse=True)
+        st.markdown("#### Rangering – faldende ionisk karakter")
+        medals = ["🥇", "🥈", "🥉"] + [f"{n}." for n in range(4, 20)]
+        rank_parts = []
+        prev_den = None
+        rank_idx = 0
+        for c in ranked:
+            if prev_den is not None and abs(c["den"] - prev_den) < 0.001:
+                pass  # delt plads
+            else:
+                rank_idx += 1
+            prev_den = c["den"]
+            rank_parts.append(f"**{c['label']}** (ΔEN={c['den']:.2f}, {c['pct']:.0f}% ionisk)")
+
+        st.markdown("  >  ".join(rank_parts))
+
+        st.markdown("#### Individuel analyse")
+        for c in ranked:
+            if c["type"] == "Ionisk":
+                col_badge = "🔴 Ionisk"
+            elif c["type"] == "Polar kovalent":
+                col_badge = "🟡 Polar kovalent"
+            else:
+                col_badge = "🟢 Upolar kovalent"
+            st.markdown(
+                f"**{c['label']}** ({c['el1']}–{c['el2']}):  "
+                f"ΔEN = |{c['en1']:.2f} − {c['en2']:.2f}| = **{c['den']:.2f}**  |  "
+                f"{c['pct']:.1f}% ionisk  |  {col_badge}"
+            )
+
+        if st.button("🗑 Ryd alle forbindelser", key="bc_clr"):
+            st.session_state["bc_compounds"] = []
+            st.rerun()
+    else:
+        st.info("Tilføj forbindelser ovenfor for at beregne og sammenligne bindingskarakter.")
 
 
 def _show_formel_ladning_tab():
