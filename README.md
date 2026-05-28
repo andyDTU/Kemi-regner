@@ -42,7 +42,10 @@ Når der er kommet nye funktioner:
 cd ~/Desktop/Kemi-regner
 git pull
 bash run.sh
+python scripts/download_structure_images.py
 ```
+
+> `download_structure_images.py` springer automatisk allerede hentede billeder over – kun nye stoffer hentes.
 
 ---
 
@@ -63,6 +66,40 @@ cd Kemi-regner
 pip install -r requirements.txt
 streamlit run app.py
 ```
+
+### Opdatér til nyeste version (Windows)
+
+```bash
+cd %USERPROFILE%\Desktop\Kemi-regner
+git pull
+pip install -r requirements.txt
+python scripts/download_structure_images.py
+streamlit run app.py
+```
+
+---
+
+## 📝 Exam-mode (begrænset netværk)
+
+Appen kører **100% offline** – den forsøger aldrig at kontakte internet under brug.  
+Forbered følgende **inden** eksamen (med internet):
+
+```bash
+cd ~/Desktop/Kemi-regner
+git pull
+python scripts/download_structure_images.py
+```
+
+Til eksamen:
+
+```bash
+bash run.sh
+```
+
+Åbn **http://localhost:8501** i din browser. Alt virker uden internet.
+
+> `download_structure_images.py` henter strukturbilleder for alle stoffer (~20 MB, ~5–10 min).  
+> Billederne gemmes lokalt og skal kun hentes **én gang** per computer.
 
 ---
 
@@ -98,10 +135,11 @@ Klik på **🏠 Fundamentals** for at se alle beregnere som opgavekort.
 | ⚗️ Ligevægt | ICE-tabel, Kc/Kp, reaktionskvotient Q, Le Chatelier |
 | 🔋 Elektrokemi | Cellespænding E°, Nernst, ΔG og K, Faradays lov |
 | ⚡ Kinetik | Integreret hastighedslov, halvliv, Arrhenius |
-| 🌡️ Kolligative egenskaber | Kogepunktselevering, frysepunktssænkning, osmotisk tryk |
+| 🌡️ Kolligative egenskaber | Kogepunktselevering, frysepunktssænkning, osmotisk tryk, find molarmasse |
 | 🌫️ Damptryk | Raoults lov |
 | 🔷 Geometri & Bindinger | VSEPR, Lewis-struktur, IMF, bindingsentalpier |
 | ☢️ Nuklear kemi | α/β/γ-henfald, halvliv |
+| 🧬 Organisk kemi | Funktionelle grupper, reaktionsprediktor, strukturreference |
 
 ---
 
