@@ -34,13 +34,17 @@ def render_kogepunkt_frysepunkt_page() -> None:
     st.title("🌡️ Koge- og frysepunkt (colligative properties)")
     st.markdown("---")
 
-    tab_boiling, tab_freezing, tab_osmotic = st.tabs(["Kogepunktsforhøjelse", "Frysepunktsnedsættelse", "Osmotisk tryk"])
+    tab_boiling, tab_freezing, tab_osmotic, tab_molmass = st.tabs([
+        "Kogepunktsforhøjelse", "Frysepunktsnedsættelse", "Osmotisk tryk", "🔍 Find molarmasse",
+    ])
     with tab_boiling:
         _render_boiling_point_elevation_tab()
     with tab_freezing:
         _render_freezing_point_depression_tab()
     with tab_osmotic:
         _render_osmotic_pressure_tab()
+    with tab_molmass:
+        _render_molar_mass_from_colligative_tab()
 
 
 def _render_boiling_point_elevation_tab() -> None:
@@ -441,6 +445,118 @@ def _render_osmotic_pressure_tab() -> None:
 
     except Exception as exc:
         st.error(str(exc))
+
+
+def _render_molar_mass_from_colligative_tab() -> None:
+    st.markdown("#### 🔍 Find molarmasse fra kolligative egenskaber")
+    st.markdown(
+        "Baglæns beregning: du kender den **målte temperaturændring** (eller osmotisk tryk) og "
+        "**massen af det ukendte stof** – kalkulatoren finder molarmassen M (g/mol)."
+    )
+    st.markdown("---")
+
+    method = st.radio(
+        "Metode:",
+        ["Frysepunktsnedsættelse (ΔTf)", "Kogepunktsforhøjelse (ΔTb)", "Osmotisk tryk (π)"],
+        horizontal=True,
+        key="mm_col_method",
+    )
+    import math as _math
+
+    if method in ("Frysepunktsnedsættelse (ΔTf)", "Kogepunktsforhøjelse (ΔTb)"):
+        is_freezing = method.startswith("Frys")
+        k_label  = "Frysepunktskonstant Kf (°C·kg/mol):" if is_freezing else "Kogepunktskonstant Kb (°C·kg/mol):"
+        dt_label = "Frysepunktssænkning ΔTf (°C):" if is_freezing else "Kogepunktsstigning ΔTb (°C):"
+        k_default = 1.86 if is_freezing else 0.512
+        k_key     = "mm_col_kf" if is_freezing else "mm_col_kb"
+        dt_key    = "mm_col_dtf" if is_freezing else "mm_col_dtb"
+
+        st.latex(
+            r"M = \frac{m_{\text{stof}} \cdot i \cdot K_{f/b}}{\Delta T \cdot m_{\text{opl.}}\,[\text{kg}]}"
+        )
+
+        col1, col2 = st.columns(2)
+        with col1:
+            mass_stof    = st.number_input("Masse af ukendt stof (g):", value=5.0, min_value=1e-6, step=0.1, key="mm_col_mstof")
+            mass_solvent = st.number_input("Masse af opløsningsmiddel (g):", value=100.0, min_value=1e-3, step=1.0, key="mm_col_msolv")
+        with col2:
+            delta_t = st.number_input(dt_label, value=0.93, min_value=1e-6, step=0.01, key=dt_key)
+            k_val   = st.number_input(k_label, value=k_default, min_value=1e-6, step=0.01, key=k_key)
+            i_val   = st.number_input("van't Hoff-faktor i:", value=1.0, min_value=0.01, step=0.1, key="mm_col_i")
+
+        if st.button("Beregn molarmasse", type="primary", key="mm_col_btn_dt"):
+            kg_solvent  = mass_solvent / 1000.0
+            molality    = delta_t / (i_val * k_val)
+            n_mol       = molality * kg_solvent
+            M           = mass_stof / n_mol
+
+            st.success(f"✅ **Molarmasse M = {M:.2f} g/mol**")
+            c1, c2, c3 = st.columns(3)
+            c1.metric("Molalitet m", f"{molality:.5f} mol/kg")
+            c2.metric("Stofmængde n", f"{n_mol:.5f} mol")
+            c3.metric("Molarmasse M", f"{M:.2f} g/mol")
+
+            with st.expander("🔍 Trin-for-trin", expanded=True):
+                k_sym = "Kf" if is_freezing else "Kb"
+                dt_sym = "ΔTf" if is_freezing else "ΔTb"
+                st.markdown(f"""
+**Kendte værdier:**
+- Masse af stof: {mass_stof} g
+- Masse af opløsningsmiddel: {mass_solvent} g = **{kg_solvent:.4f} kg**
+- {dt_sym} = {delta_t} °C
+- {k_sym} = {k_val} °C·kg/mol
+- i = {i_val}
+
+**Trin 1 – Find molalitet:**
+$$m = \\frac{{{dt_sym}}}{{i \\cdot {k_sym}}} = \\frac{{{delta_t}}}{{{i_val} \\times {k_val}}} = {molality:.5f}\\,\\text{{mol/kg}}$$
+
+**Trin 2 – Find stofmængde:**
+$$n = m \\times m_{{\\text{{opl.}}}} = {molality:.5f} \\times {kg_solvent:.4f} = {n_mol:.5f}\\,\\text{{mol}}$$
+
+**Trin 3 – Find molarmasse:**
+$$M = \\frac{{m_{{\\text{{stof}}}}}}{{n}} = \\frac{{{mass_stof}}}{{{n_mol:.5f}}} = \\mathbf{{{M:.2f}\\,\\text{{g/mol}}}}$$
+""")
+
+    else:  # Osmotisk tryk
+        st.latex(r"M = \frac{m_{\text{stof}} \cdot i \cdot R \cdot T}{\pi \cdot V}")
+        st.caption("R = 0,08206 L·atm/(mol·K)")
+
+        col1, col2 = st.columns(2)
+        with col1:
+            mass_stof_os = st.number_input("Masse af ukendt stof (g):", value=1.0, min_value=1e-6, step=0.1, key="mm_os_mstof")
+            vol_os       = st.number_input("Volumen af opløsning (L):", value=1.0, min_value=1e-6, step=0.1, key="mm_os_vol")
+        with col2:
+            pi_os   = st.number_input("Osmotisk tryk π (atm):", value=1.0, min_value=1e-9, step=0.01, key="mm_os_pi")
+            temp_os = st.number_input("Temperatur (°C):", value=25.0, step=0.5, key="mm_os_temp")
+            i_os    = st.number_input("van't Hoff-faktor i:", value=1.0, min_value=0.01, step=0.1, key="mm_os_i")
+
+        if st.button("Beregn molarmasse", type="primary", key="mm_col_btn_os"):
+            R    = 0.08206  # L·atm/(mol·K)
+            T_K  = temp_os + 273.15
+            n_os = (pi_os * vol_os) / (i_os * R * T_K)
+            M_os = mass_stof_os / n_os
+
+            st.success(f"✅ **Molarmasse M = {M_os:.2f} g/mol**")
+            c1, c2, c3 = st.columns(3)
+            c1.metric("Temperatur", f"{T_K:.2f} K")
+            c2.metric("Stofmængde n", f"{n_os:.5f} mol")
+            c3.metric("Molarmasse M", f"{M_os:.2f} g/mol")
+
+            with st.expander("🔍 Trin-for-trin", expanded=True):
+                st.markdown(f"""
+**Kendte værdier:**
+- Masse af stof: {mass_stof_os} g
+- Volumen: {vol_os} L
+- π = {pi_os} atm
+- T = {temp_os} °C = **{T_K:.2f} K**
+- i = {i_os}, R = 0,08206 L·atm/(mol·K)
+
+**Trin 1 – Find stofmængde fra π = i·n/V·R·T:**
+$$n = \\frac{{\\pi \\cdot V}}{{i \\cdot R \\cdot T}} = \\frac{{{pi_os} \\times {vol_os}}}{{{i_os} \\times 0.08206 \\times {T_K:.2f}}} = {n_os:.5f}\\,\\text{{mol}}$$
+
+**Trin 2 – Find molarmasse:**
+$$M = \\frac{{m_{{\\text{{stof}}}}}}{{n}} = \\frac{{{mass_stof_os}}}{{{n_os:.5f}}} = \\mathbf{{{M_os:.2f}\\,\\text{{g/mol}}}}$$
+""")
 
 
 def _parse_required_float(raw_value: Optional[str], field_name: str) -> float:
