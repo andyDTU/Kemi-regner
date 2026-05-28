@@ -21,8 +21,8 @@ def calculate_half_life_with_steps(order: int, C0: Optional[float], k: float):
     return half_life(order, C0, k)
 
 
-def calculate_determine_order_k_with_steps(t1: float, C1: float, t2: float, C2: float, candidate_orders=None):
-    return determine_order_and_k_two_point(t1, C1, t2, C2, candidate_orders)
+def calculate_determine_order_k_with_steps(C0: float, t1: float, C1: float, t2: float, C2: float, candidate_orders=None):
+    return determine_order_and_k_two_point(C0, t1, C1, t2, C2, candidate_orders)
 
 
 def calculate_arrhenius_forward_with_steps(k1: float, T1_K: float, T2_K: float, Ea_kJ_per_mol: float):

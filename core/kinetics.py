@@ -137,39 +137,70 @@ def half_life(order: int, C0: Optional[float], k: float) -> Tuple[float, List[st
     raise ValueError("Order must be 0, 1, or 2")
 
 
-def determine_order_and_k_two_point(t1: float, C1: float, t2: float, C2: float,
+def determine_order_and_k_two_point(C0: float, t1: float, C1: float, t2: float, C2: float,
                                     candidate_orders: Optional[List[int]] = None) -> Tuple[Dict, List[str], Dict]:
     """
-    Determine reaction order (0,1,2) and k from two points by minimizing relative error.
-    Returns (best_result, steps, metadata). best_result has keys: order, k, residuals.
+    Determine reaction order (0,1,2) and k from initial concentration C0 at t=0
+    and two later measurements (t1, C1) and (t2, C2).
+
+    For each candidate order, k is computed independently from each measurement.
+    The order with the most consistent k (lowest relative spread) is selected.
+
+    Returns (best_result, steps, metadata).
     """
     if candidate_orders is None:
         candidate_orders = [0, 1, 2]
     if any(x < 0 for x in (t1, t2)):
-        raise ValueError("Times must be non-negative")
-    if any(x <= 0 for x in (C1, C2)):
-        raise ValueError("Concentrations must be positive")
+        raise ValueError("Tider skal være positive")
+    if t1 == 0 or t2 == 0:
+        raise ValueError("t1 og t2 skal begge være > 0 (de er tider for målepunkterne, ikke t=0)")
+    if t1 >= t2:
+        raise ValueError("t1 skal være mindre end t2")
+    if any(x <= 0 for x in (C0, C1, C2)):
+        raise ValueError("Koncentrationer skal være positive")
+    if C1 >= C0 or C2 >= C0:
+        raise ValueError("Målekoncentrationer skal være lavere end startkoncentrationen C₀")
 
-    steps: List[str] = ["Determine order & k from two points"]
-    residuals = []
-    for order in candidate_orders:
+    def _k_from_point(order: int, C0_: float, t_: float, C_: float) -> float:
         if order == 0:
-            k_val = (C1 - C2) / (t2 - t1) if t2 != t1 else float('inf')
-            C2_pred = C1 - k_val * (t2 - t1)
+            return (C0_ - C_) / t_
         elif order == 1:
-            k_val = (math.log(C1) - math.log(C2)) / (t2 - t1) if t2 != t1 else float('inf')
-            C2_pred = C1 * math.exp(-k_val * (t2 - t1))
-        else:
-            # 2nd order
-            k_val = (1.0 / C2 - 1.0 / C1) / (t2 - t1) if t2 != t1 else float('inf')
-            C2_pred = C1 / (1.0 + k_val * C1 * (t2 - t1))
-        rel_err = abs(C2_pred - C2) / C2
-        steps.append(f"Order {order}: k = {k_val:.6g}, C2_pred = {C2_pred:.6g}, rel_err = {rel_err:.3e}")
-        residuals.append((order, k_val, rel_err))
+            return math.log(C0_ / C_) / t_
+        else:  # 2nd order
+            return (1.0 / C_ - 1.0 / C0_) / t_
 
-    residuals.sort(key=lambda x: x[2])
-    best_order, best_k, best_err = residuals[0]
-    result = {"order": best_order, "k": best_k, "residual": best_err, "residuals": residuals}
+    steps: List[str] = []
+    order_results = []
+
+    order_names = {0: "0. orden", 1: "1. orden", 2: "2. orden"}
+    formulas = {
+        0: r"k = \frac{[A]_0 - [A]}{t}",
+        1: r"k = \frac{\ln([A]_0/[A])}{t}",
+        2: r"k = \frac{1/[A] - 1/[A]_0}{t}",
+    }
+
+    for order in candidate_orders:
+        k1_val = _k_from_point(order, C0, t1, C1)
+        k2_val = _k_from_point(order, C0, t2, C2)
+        if k1_val <= 0 or k2_val <= 0:
+            order_results.append((order, float('nan'), float('inf'), k1_val, k2_val))
+            continue
+        k_avg = (k1_val + k2_val) / 2.0
+        rel_spread = abs(k1_val - k2_val) / k_avg
+        order_results.append((order, k_avg, rel_spread, k1_val, k2_val))
+
+    order_results.sort(key=lambda x: x[2])
+    best_order, best_k, best_spread, best_k1, best_k2 = order_results[0]
+
+    result = {
+        "order": best_order,
+        "k": best_k,
+        "k1": best_k1,
+        "k2": best_k2,
+        "spread": best_spread,
+        "all_orders": order_results,
+        "formulas": formulas,
+    }
     return result, steps, {}
 
 

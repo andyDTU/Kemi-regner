@@ -6320,21 +6320,89 @@ def show_kinetics_page():
         ])
 
     elif _kin_active == "Bestem orden & k":
-        st.markdown("#### Determine Order & k (two-point)")
+        st.subheader("Bestem reaktionsorden og k")
+        st.markdown(
+            "Angiv startkoncentrationen **[A]₀** ved t = 0 samt **to** målte koncentrationer på "
+            "to forskellige tidspunkter. For hver tænkelig orden beregnes k uafhængigt fra hvert "
+            "målepunkt – den orden med mest konsistent k er den korrekte."
+        )
+        st.info(
+            "💡 **Metode:** For hvert ordreforslag beregnes k fra (t₁, [A]₁) og igen fra (t₂, [A]₂) "
+            "— begge med [A]₀ som reference. Den orden med mindst spredning i k er svaret."
+        )
+
+        col0, _ = st.columns([1, 1])
+        with col0:
+            C0_ord = st.number_input("[A]₀  – startkoncentration ved t = 0  (M)", value=0.500,
+                                     min_value=1e-9, format="%.4f", key="ord_C0")
         col1, col2 = st.columns(2)
         with col1:
-            t1 = st.number_input("t1 (s)", value=0.0, min_value=0.0)
-            C1 = st.number_input("C1 (M)", value=0.100, min_value=1e-12, format="%.6f")
+            st.markdown("**Målepunkt 1**")
+            t1_ord = st.number_input("t₁ (s)", value=60.0, min_value=1e-9, key="ord_t1")
+            C1_ord = st.number_input("[A] ved t₁  (M)", value=0.354, min_value=1e-9,
+                                     format="%.4f", key="ord_C1")
         with col2:
-            t2 = st.number_input("t2 (s)", value=10.0, min_value=0.0)
-            C2 = st.number_input("C2 (M)", value=0.003, min_value=1e-12, format="%.6f")
-        if st.button("Beregn", type="primary"):
+            st.markdown("**Målepunkt 2**")
+            t2_ord = st.number_input("t₂ (s)", value=120.0, min_value=1e-9, key="ord_t2")
+            C2_ord = st.number_input("[A] ved t₂  (M)", value=0.250, min_value=1e-9,
+                                     format="%.4f", key="ord_C2")
+
+        if st.button("Bestem orden og k", type="primary", key="ord_calc"):
             try:
-                res, steps, meta = calculate_determine_order_k_with_steps(t1, C1, t2, C2)
-                st.success(f"Order = {res['order']}, k = {res['k']:.6g}, residual = {res['residual']:.3e}")
-                with st.expander("Vis trin"):
-                    for s in steps:
-                        st.markdown(s)
+                res, _steps, _meta = calculate_determine_order_k_with_steps(
+                    C0_ord, t1_ord, C1_ord, t2_ord, C2_ord
+                )
+                best_order = res["order"]
+                best_k = res["k"]
+                best_spread = res["spread"]
+
+                order_labels = {0: "0. orden", 1: "1. orden", 2: "2. orden"}
+                k_units = {0: "M/s", 1: "s⁻¹", 2: "M⁻¹s⁻¹"}
+                il_formulas = {
+                    0: r"[A] = [A]_0 - k \cdot t \quad \Rightarrow \quad k = \frac{[A]_0 - [A]}{t}",
+                    1: r"[A] = [A]_0 \cdot e^{-kt} \quad \Rightarrow \quad k = \frac{\ln([A]_0/[A])}{t}",
+                    2: r"\frac{1}{[A]} = \frac{1}{[A]_0} + kt \quad \Rightarrow \quad k = \frac{1/[A] - 1/[A]_0}{t}",
+                }
+
+                st.markdown("---")
+                st.success(
+                    f"**{order_labels[best_order]}** giver mest konsistent k  "
+                    f"(spredning = {best_spread*100:.2f}%)"
+                )
+
+                col_r1, col_r2, col_r3 = st.columns(3)
+                col_r1.metric("Reaktionsorden", order_labels[best_order])
+                col_r2.metric("k (gennemsnit)", f"{best_k:.4g} {k_units[best_order]}")
+                col_r3.metric("k-spredning", f"{best_spread*100:.2f}%")
+
+                st.markdown("### Trin-for-trin")
+                st.markdown(f"**Startkoncentration:** [A]₀ = {C0_ord} M ved t = 0")
+                st.markdown(
+                    f"**Målepunkt 1:** t₁ = {t1_ord} s → [A]₁ = {C1_ord} M  \n"
+                    f"**Målepunkt 2:** t₂ = {t2_ord} s → [A]₂ = {C2_ord} M"
+                )
+
+                for (order, k_avg, spread, k1_v, k2_v) in res["all_orders"]:
+                    is_best = (order == best_order)
+                    marker = "✅" if is_best else "  "
+                    with st.expander(f"{marker} {order_labels[order]}", expanded=is_best):
+                        st.latex(il_formulas[order])
+                        st.markdown(f"**Fra målepunkt 1** (t = {t1_ord} s, [A] = {C1_ord} M):")
+                        st.latex(
+                            rf"k_1 = {k1_v:.5g}\,\text{{{k_units[order]}}}"
+                        )
+                        st.markdown(f"**Fra målepunkt 2** (t = {t2_ord} s, [A] = {C2_ord} M):")
+                        st.latex(
+                            rf"k_2 = {k2_v:.5g}\,\text{{{k_units[order]}}}"
+                        )
+                        if not math.isnan(k_avg):
+                            st.markdown(
+                                f"**Gennemsnit:** k = {k_avg:.5g} {k_units[order]}  \n"
+                                f"**Relativ spredning:** |k₁ − k₂| / k̄ = {spread*100:.2f}%"
+                            )
+                        else:
+                            st.warning("Negativ k-værdi – denne orden er ikke forenelig med dataene.")
+
             except Exception as e:
                 st.error(str(e))
 
