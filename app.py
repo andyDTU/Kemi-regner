@@ -97,6 +97,7 @@ NAVIGATION_OPTIONS = [
     "⚗️ Ligevægt",
     "☢️ Nuklear kemi",
     "💧 Opløselighed & Beer-Lambert",
+    "🧬 Organisk kemi",
     "📋 Formelsamling",
     "🔬 Molekyle database",
 ]
@@ -119,6 +120,7 @@ PAGE_LABEL_TO_QUERY = {
     "⚗️ Ligevægt": "ligevaegt",
     "☢️ Nuklear kemi": "nuklear",
     "💧 Opløselighed & Beer-Lambert": "oploselig",
+    "🧬 Organisk kemi": "organisk",
     "📋 Formelsamling": "formelsamling",
     "🔬 Molekyle database": "molecule-db",
 }
@@ -175,6 +177,8 @@ SEARCH_INDEX = [
     {"title": "Molarmasse fra densitet", "keywords": ["densitet", "molarmasse fra densitet", "m fra densitet", "rho", "ρ", "g/l", "molar masse densitet", "identificer gas", "ukendt gas", "nitrogen oxid", "kvælstofoxid"], "page": "gases", "tab": "🔬 M fra densitet", "description": "M = ρRT/P – find molarmassen fra densitet, tryk og temperatur"},
     {"title": "Empirisk formel", "keywords": ["empirisk formel", "empirisk", "procentsammensætning", "procent sammensætning", "masseandel", "elementaranalyse", "forbrændingsanalyse", "%c", "%h", "%o", "hvad er formlen", "find formel fra procent", "molekylær formel", "molecular formula"], "page": "atoms-molar", "tab": "🔬 Empirisk formel", "description": "Find empirisk/molekylær formel fra procentvis sammensætning – klassisk elementaranalyse"},
     {"title": "Formel ladning", "keywords": ["formel ladning", "formal charge", "fc", "lewis struktur rangering", "sandsynlig struktur", "lone pair", "bindende elektroner", "valenselektroner", "rang struktur", "oktett", "resonans formal", "sammenlign strukturer", "v minus l minus b"], "page": "atoms-molar", "tab": "⚗️ Formel ladning", "description": "Beregn FC = V − L − ½B for hvert atom og rangér Lewis-strukturer efter sandsynlighed"},
+    {"title": "Funktionelle grupper", "keywords": ["funktionel gruppe", "organisk", "keton", "aldehyd", "alkohol", "ester", "carboxylsyre", "amin", "alken", "alkyn", "alkan", "CH3CO", "CHO", "COOH", "COO", "identify group", "find gruppe", "kondenseret formel", "organisk formel"], "page": "organisk", "tab": None, "description": "Identificér funktionelle grupper fra kondenseret formel eller IUPAC-navn"},
+    {"title": "Organisk reaktion", "keywords": ["organisk reaktion", "hydrering", "halogenering", "oxidation alkohol", "reduktion keton", "esterifikation", "hydrolyse ester", "markovnikov", "additionsreaktion", "eliminering", "saponifikation", "hvad dannes", "reaktionsprodukt", "alken reaktion", "br2 alken"], "page": "organisk", "tab": None, "description": "Forudsig produkt af organiske reaktioner: hydrering, halogenering, oxidation, esterifikation m.fl."},
     {"title": "Salthydrolyse / pH af salt", "keywords": ["salthydrolyse", "hydrolyse", "ph af salt", "natriumacetat", "ammoniumchlorid", "konjugeret base", "konjugeret syre", "kh", "salt opløsning ph", "basisk salt", "sur salt", "ch3coona", "nh4cl"], "page": "acids-bases", "tab": "⚗️ Salthydrolyse", "description": "pH af saltopløsninger via hydrolyse – Kh = Kw/Ka eller Kw/Kb"},
     {"title": "Ioniseringsgrad α", "keywords": ["ioniseringsgrad", "ionisering", "alpha", "α", "procentvis ioniseret", "5%regel", "5 procent regel", "svag syre ioniseret", "andel ioniseret", "degree of ionization"], "page": "acids-bases", "tab": "Svag syre/base", "description": "Beregn ioniseringsgrad α og procentvis ionisering for svag syre/base"},
     {"title": "Van't Hoff-plot", "keywords": ["van't hoff", "vant hoff", "lnk vs 1/t", "delta h fra k", "delta s fra k", "k ved to temperaturer", "hældning lnk", "reaktionsentalpi fra k", "temperaturafhængig k", "van hoff plot"], "page": "thermochemistry", "tab": None, "description": "Find ΔH° og ΔS° fra K-værdier ved to temperaturer – hældning og skæringspunkt i lnK vs. 1/T"},
@@ -379,6 +383,8 @@ def main():
         render_nuclear_decay_page()
     elif page == "💧 Opløselighed & Beer-Lambert":
         render_oploselighedsregler_page()
+    elif page == "🧬 Organisk kemi":
+        show_organic_chemistry_page()
     elif page == "📋 Formelsamling":
         render_formelsamling_page()
     elif page == "🔬 Molekyle database":
@@ -7899,6 +7905,428 @@ def _render_substance_card(s: Substance) -> None:
 
     if s.synonyms:
         st.caption("Synonymer: " + ", ".join(s.synonyms))
+
+
+def show_organic_chemistry_page():
+    """Organisk kemi: funktionelle grupper og reaktionsforudsigelse."""
+    import re
+
+    st.title("🧬 Organisk kemi")
+    st.markdown("---")
+
+    org_tab = st.radio(
+        "Vælg:",
+        ["🔍 Funktionelle grupper", "⚗️ Reaktionsforudsigelse", "📚 Reference"],
+        horizontal=True,
+        key="org_tab",
+    )
+    st.markdown("---")
+
+    # ── Funktionelle grupper ──────────────────────────────────────────────────
+    if org_tab == "🔍 Funktionelle grupper":
+        st.markdown("### 🔍 Identificér funktionelle grupper")
+        st.markdown(
+            "Indtast en **kondenseret formel** (fx `CH3COCH2CHO`) eller et **IUPAC-navn** "
+            "(fx `3-methylpentan-2-on`). Calculatoren finder alle funktionelle grupper."
+        )
+
+        inp = st.text_input(
+            "Formel eller navn:",
+            placeholder="fx CH3COCH2CHO, CH3COOCH2CH3, propan-1-ol",
+            key="org_fg_input",
+        )
+
+        if inp.strip():
+            raw = inp.strip()
+
+            # ── Detector helpers ─────────────────────────────────────────────
+            _GROUP_COLORS = {
+                "Carboxylsyre": "🔴",
+                "Ester":        "🟠",
+                "Aldehyd":      "🟡",
+                "Keton":        "🟣",
+                "Alkohol":      "🔵",
+                "Amin":         "🟢",
+                "Amid":         "⚫",
+                "Alken":        "🟤",
+                "Alkyn":        "⬜",
+                "Aromat":       "🌸",
+                "Alkan":        "⚪",
+                "Halogenid":    "🧊",
+            }
+
+            def _detect_groups(s: str):
+                groups = []
+                upper = s.upper().replace(" ", "")
+                lower = s.lower()
+
+                # ── Condensed formula patterns (order: most specific first) ──
+                work = upper
+
+                # Carboxylsyre: COOH
+                if re.search(r"COOH", work):
+                    groups.append(("Carboxylsyre", "-COOH", "Karbonylgruppe + hydroxyl på samme C"))
+                    work = re.sub(r"COOH", "####", work)
+
+                # Ester: COO (not followed by H, already consumed COOH above)
+                if re.search(r"COO", work):
+                    groups.append(("Ester", "-COO-", "Karbonyl bundet til ether-oxygen"))
+                    work = re.sub(r"COO", "###", work)
+
+                # Amid: CONH / CONHCH / CON
+                if re.search(r"CO\s*NH|CON", work):
+                    groups.append(("Amid", "-CONH-", "Karbonyl bundet til nitrogen"))
+                    work = re.sub(r"CONH?2?|CON", "###", work)
+
+                # Aldehyd: CHO (terminal – COOH already removed)
+                if re.search(r"CHO", work):
+                    groups.append(("Aldehyd", "-CHO", "Karbonyl-H: C=O ved terminalt C"))
+                    work = re.sub(r"CHO", "###", work)
+
+                # Keton: CO flanked by C or ) or (
+                if re.search(r"[C\)]CO[C\(]|[C\)]CO$|^CO[C\(]", work):
+                    groups.append(("Keton", ">C=O", "Karbonyl inde i kæden"))
+                    work = re.sub(r"CO", "##", work, count=1)
+
+                # Alkohol: OH (remaining – not part of consumed groups)
+                if re.search(r"OH", work):
+                    groups.append(("Alkohol", "-OH", "Hydroxylgruppe bundet til sp³-carbon"))
+                    work = re.sub(r"OH", "##", work)
+
+                # Amin: NH2, NH, N (not in amid)
+                if re.search(r"NH2|NH(?!#)|(?<=[C\d])N(?=[C\d(])", work):
+                    groups.append(("Amin", "-NH₂/-NH-", "Nitrogengruppe"))
+
+                # Halogenid: F, CL (not in already found), BR, I
+                halo_map = {"CL": "Cl", "BR": "Br", "F": "F", "I": "I"}
+                for pat, sym in halo_map.items():
+                    if re.search(rf"(?<=[C\d]){pat}|{pat}(?=[C\d#])", work):
+                        groups.append(("Halogenid", f"-{sym}", f"Halogensubstituent ({sym})"))
+                        break
+
+                # ── IUPAC name patterns ───────────────────────────────────────
+                # (supplement condensed-formula detection)
+                iupac_hits = set(g[0] for g in groups)
+
+                def _iupac(pattern, name, smarts, note):
+                    if name not in iupac_hits and re.search(pattern, lower):
+                        groups.append((name, smarts, note))
+                        iupac_hits.add(name)
+
+                _iupac(r"syre$|ic acid$|oic acid$|carboxylic", "Carboxylsyre", "-COOH", "Slutning -syre/-ic acid")
+                _iupac(r"oat$|anoat|yl .*at$|yl.*ate$", "Ester", "-COO-", "Slutning -oat/-ate")
+                _iupac(r"amid$|amide$", "Amid", "-CONH-", "Slutning -amid/-amide")
+                _iupac(r"al$|aldehyd", "Aldehyd", "-CHO", "Slutning -al/-aldehyd")
+                _iupac(r"on$|one$|anon|ketone|keton(?!s)", "Keton", ">C=O", "Slutning -on/-one/-anon")
+                _iupac(r"ol$|alkohol|diol|triol", "Alkohol", "-OH", "Slutning -ol/-alkohol")
+                _iupac(r"amin$|amine$|amino", "Amin", "-NH₂", "Slutning -amin/-amine")
+                _iupac(r"en$|ene$|alken", "Alken", "C=C", "Slutning -en/-ene")
+                _iupac(r"yn$|yne$|alkyn", "Alkyn", "C≡C", "Slutning -yn/-yne")
+                _iupac(r"benzen|toluen|phenyl|aromat|anilin", "Aromat", "Ph/Ar", "Benzenring")
+                _iupac(r"chlor|brom|fluor|iod|chlorid|bromid|fluorid|iodid", "Halogenid", "-X", "Halogenbetegnelse")
+
+                # If nothing found and looks like formula, try alkane
+                if not groups and re.fullmatch(r"[CH0-9\(\)]+", upper):
+                    groups.append(("Alkan", "C-C", "Ingen funktionel gruppe – mættet kulbrint"))
+
+                return groups
+
+            found = _detect_groups(raw)
+
+            if found:
+                st.markdown(f"**Fundet {len(found)} gruppe(r) i `{raw}`:**")
+                for name, smarts, note in found:
+                    color = _GROUP_COLORS.get(name, "⚪")
+                    st.markdown(
+                        f"{color} **{name}** &nbsp;(`{smarts}`)  \n"
+                        f"&nbsp;&nbsp;&nbsp;&nbsp;*{note}*"
+                    )
+
+                if len(found) >= 2:
+                    names = [g[0] for g in found]
+                    st.success(f"✅ Forbindelsen indeholder **{' + '.join(names)}**")
+            else:
+                st.warning("Kunne ikke identificere grupper – tjek formlen eller prøv IUPAC-navn.")
+
+            with st.expander("💡 Eksempler", expanded=False):
+                st.markdown(
+                    "| Formel | Grupper |\n"
+                    "|--------|--------|\n"
+                    "| `CH3COCH2CHO` | Keton + Aldehyd |\n"
+                    "| `CH3COOCH2CH3` | Ester |\n"
+                    "| `CH2OHCH2CH2CHO` | Alkohol + Aldehyd |\n"
+                    "| `CH3COCH2COOH` | Keton + Carboxylsyre |\n"
+                    "| `CH3CH2OH` | Alkohol |\n"
+                    "| `CH3NH2` | Amin |\n"
+                    "| `pentan-2-ol` | Alkohol |\n"
+                    "| `3-methylpentan-2-on` | Keton |\n"
+                )
+
+    # ── Reaktionsforudsigelse ─────────────────────────────────────────────────
+    elif org_tab == "⚗️ Reaktionsforudsigelse":
+        st.markdown("### ⚗️ Forudsig reaktionsprodukt")
+
+        _REACTIONS = {
+            "Alken": {
+                "H₂ (katalytisk hydrering)": {
+                    "produkt": "Alkan",
+                    "type": "Additionsreaktion",
+                    "forklaring": (
+                        "H₂ adderes over C=C-dobbelthindingen (katalysator: Pt, Pd eller Ni). "
+                        "Begge C-atomer i dobbelthindingen får én H tilføjet.  \n"
+                        "**Alken + H₂ → Alkan**  \n"
+                        "_Eksempel: CH₂=CH₂ + H₂ → CH₃CH₃_"
+                    ),
+                },
+                "Br₂ (halogenering)": {
+                    "produkt": "1,2-Dibromoalkan",
+                    "type": "Elektrofil addition",
+                    "forklaring": (
+                        "Br₂ adderes over dobbelthindingen: ét Br til hvert C-atom → vicinal dibromid.  \n"
+                        "**Alken + Br₂ → 1,2-dibromoalkan**  \n"
+                        "_Eksempel: CH₂=CH₂ + Br₂ → BrCH₂CH₂Br_  \n"
+                        "Reaktionen affarver Br₂-opløsning (test for umætning)."
+                    ),
+                },
+                "HBr (Markovnikov)": {
+                    "produkt": "Bromoalkan",
+                    "type": "Elektrofil addition (Markovnikov)",
+                    "forklaring": (
+                        "H adderes til det C med **flest H** (Markovnikovs regel), Br til det C med færrest H.  \n"
+                        "**Alken + HBr → bromoalkan**  \n"
+                        "_Eksempel: CH₃CH=CH₂ + HBr → CH₃CHBrCH₃ (ikke CH₃CH₂CH₂Br)_"
+                    ),
+                },
+                "H₂O / H⁺ (hydratisering)": {
+                    "produkt": "Alkohol (Markovnikov)",
+                    "type": "Elektrofil addition",
+                    "forklaring": (
+                        "OH adderes til det C med færrest H (Markovnikov), H til det med flest H.  \n"
+                        "**Alken + H₂O → alkohol**  \n"
+                        "_Eksempel: CH₃CH=CH₂ + H₂O → CH₃CH(OH)CH₃ (sekundær alkohol)_"
+                    ),
+                },
+            },
+            "Alkyn": {
+                "H₂ (1 ækvivalent)": {
+                    "produkt": "Alken (cis)",
+                    "type": "Delvis hydrering",
+                    "forklaring": (
+                        "Med Lindlar-katalysator (Pd/CaCO₃) dannes *cis*-alken.  \n"
+                        "**Alkyn + H₂ (1 ekv.) → cis-alken**  \n"
+                        "_Eksempel: CH≡CH + H₂ → CH₂=CH₂_"
+                    ),
+                },
+                "H₂ (overskud / 2 ækvivalenter)": {
+                    "produkt": "Alkan",
+                    "type": "Fuld hydrering",
+                    "forklaring": (
+                        "Dobbelthindingen reduceres videre til alkan med overskud H₂.  \n"
+                        "**Alkyn + 2 H₂ → alkan**  \n"
+                        "_Eksempel: CH≡CH + 2 H₂ → CH₃CH₃_"
+                    ),
+                },
+                "Br₂": {
+                    "produkt": "1,1,2,2-Tetrabromoalkan",
+                    "type": "Dobbelt addition",
+                    "forklaring": (
+                        "Br₂ adderes to gange over tredobbelthindingen.  \n"
+                        "**Alkyn + 2 Br₂ → tetrabromoalkan**"
+                    ),
+                },
+            },
+            "Keton": {
+                "H₂ / NaBH₄ (reduktion)": {
+                    "produkt": "Sekundær alkohol",
+                    "type": "Reduktion",
+                    "forklaring": (
+                        "Karbonylgruppen (C=O) reduceres til -CHOH.  \n"
+                        "**Keton + H₂ → sekundær alkohol**  \n"
+                        "_Eksempel: CH₃COCH₃ + H₂ → CH₃CH(OH)CH₃ (propan-2-ol)_"
+                    ),
+                },
+                "KMnO₄ / K₂Cr₂O₇ (oxidation)": {
+                    "produkt": "Ingen reaktion (ketoner oxideres ikke)  \n*(tertiær-C ved karbonyl)*",
+                    "type": "Ingen reaktion",
+                    "forklaring": (
+                        "Ketoner mangler C-H ved karbonyl-C, derfor ingen videre oxidation under normale betingelser.  \n"
+                        "*(Undtagelse: kraftig oxidation kan spalte kæden)*"
+                    ),
+                },
+            },
+            "Aldehyd": {
+                "H₂ / NaBH₄ (reduktion)": {
+                    "produkt": "Primær alkohol",
+                    "type": "Reduktion",
+                    "forklaring": (
+                        "CHO reduceres til CH₂OH.  \n"
+                        "**Aldehyd + H₂ → primær alkohol**  \n"
+                        "_Eksempel: CH₃CHO + H₂ → CH₃CH₂OH (ethanol)_"
+                    ),
+                },
+                "KMnO₄ / K₂Cr₂O₇ (mild oxidation)": {
+                    "produkt": "Carboxylsyre",
+                    "type": "Oxidation",
+                    "forklaring": (
+                        "CHO oxideres til COOH.  \n"
+                        "**Aldehyd + [O] → carboxylsyre**  \n"
+                        "_Eksempel: CH₃CHO + [O] → CH₃COOH (eddikesyre)_"
+                    ),
+                },
+            },
+            "Primær alkohol": {
+                "KMnO₄ / K₂Cr₂O₇ (mild)": {
+                    "produkt": "Aldehyd",
+                    "type": "Oxidation",
+                    "forklaring": (
+                        "CH₂OH oxideres til CHO. Stopper ved aldehyd med mild oxidation.  \n"
+                        "**Primær alkohol + [O] (mild) → aldehyd**  \n"
+                        "_Eksempel: CH₃CH₂OH → CH₃CHO_"
+                    ),
+                },
+                "KMnO₄ / K₂Cr₂O₇ (overskud)": {
+                    "produkt": "Carboxylsyre",
+                    "type": "Fuld oxidation",
+                    "forklaring": (
+                        "CH₂OH oxideres videre til COOH med overskud oxidationsmiddel.  \n"
+                        "**Primær alkohol + [O] (overskud) → carboxylsyre**  \n"
+                        "_Eksempel: CH₃CH₂OH → CH₃COOH_"
+                    ),
+                },
+                "Carboxylsyre + H⁺/Δ (esterifikation)": {
+                    "produkt": "Ester + H₂O",
+                    "type": "Kondensationsreaktion",
+                    "forklaring": (
+                        "Fischer-esterifikation: alkohol + carboxylsyre ⇌ ester + vand.  \n"
+                        "**R-OH + R'-COOH ⇌ R'-COO-R + H₂O**  \n"
+                        "_Eksempel: CH₃CH₂OH + CH₃COOH → CH₃COOCH₂CH₃ + H₂O_"
+                    ),
+                },
+            },
+            "Sekundær alkohol": {
+                "KMnO₄ / K₂Cr₂O₇": {
+                    "produkt": "Keton",
+                    "type": "Oxidation",
+                    "forklaring": (
+                        "CHOH oxideres til C=O.  \n"
+                        "**Sekundær alkohol + [O] → keton**  \n"
+                        "_Eksempel: CH₃CH(OH)CH₃ → CH₃COCH₃ (acetone)_"
+                    ),
+                },
+            },
+            "Tertiær alkohol": {
+                "KMnO₄ / K₂Cr₂O₇": {
+                    "produkt": "Ingen reaktion",
+                    "type": "Ingen reaktion",
+                    "forklaring": (
+                        "Tertiær alkohol har intet C-H ved OH-C → kan ikke oxideres yderligere.  \n"
+                        "*(Stærk syre kan give eliminering til alken)*"
+                    ),
+                },
+            },
+            "Carboxylsyre": {
+                "Alkohol + H⁺/Δ (esterifikation)": {
+                    "produkt": "Ester + H₂O",
+                    "type": "Kondensationsreaktion",
+                    "forklaring": (
+                        "**R-COOH + HO-R' ⇌ R-COO-R' + H₂O**  \n"
+                        "_Eksempel: CH₃COOH + CH₃OH → CH₃COOCH₃ + H₂O_"
+                    ),
+                },
+                "LiAlH₄ / NaBH₄ (reduktion)": {
+                    "produkt": "Primær alkohol",
+                    "type": "Reduktion",
+                    "forklaring": (
+                        "COOH reduceres til CH₂OH (kræver stærkt reduktionsmiddel som LiAlH₄).  \n"
+                        "**Carboxylsyre + [H] → primær alkohol**"
+                    ),
+                },
+            },
+            "Ester": {
+                "H₂O / H⁺ (syrhydrolyse)": {
+                    "produkt": "Carboxylsyre + Alkohol",
+                    "type": "Hydrolyse",
+                    "forklaring": (
+                        "COO-R spaltes med vand under sure betingelser.  \n"
+                        "**Ester + H₂O → carboxylsyre + alkohol**  \n"
+                        "_Eksempel: CH₃COOCH₂CH₃ + H₂O → CH₃COOH + CH₃CH₂OH_"
+                    ),
+                },
+                "NaOH (forsæbning / saponifikation)": {
+                    "produkt": "Natriumcarboxylat (salt) + Alkohol",
+                    "type": "Basisk hydrolyse (irreversibel)",
+                    "forklaring": (
+                        "**Ester + NaOH → R-COO⁻Na⁺ + R'-OH**  \n"
+                        "Irreversibel (modsat syrhydrolyse). Bruges ved sæbefremstilling.  \n"
+                        "_Eksempel: CH₃COOCH₂CH₃ + NaOH → CH₃COO⁻Na⁺ + CH₃CH₂OH_"
+                    ),
+                },
+            },
+        }
+
+        reactant = st.selectbox("Udgangsmateriale:", list(_REACTIONS.keys()), key="org_reactant")
+        reagents = list(_REACTIONS[reactant].keys())
+        reagent = st.selectbox("Reagent / betingelse:", reagents, key="org_reagent")
+
+        rx = _REACTIONS[reactant][reagent]
+        st.markdown("---")
+        st.success(f"**{reactant} + {reagent} →** {rx['produkt']}")
+        st.markdown(f"**Reaktionstype:** {rx['type']}")
+        st.markdown("**Forklaring:**")
+        st.info(rx["forklaring"])
+
+    # ── Reference ─────────────────────────────────────────────────────────────
+    else:
+        st.markdown("### 📚 Reference: Funktionelle grupper & reaktioner")
+
+        with st.expander("🧩 Funktionelle grupper", expanded=True):
+            import pandas as pd
+            fg_data = [
+                ("Alkan",        "C-C",   "-an",       "CH₃CH₃",          "Ingen (mættet)"),
+                ("Alken",        "C=C",   "-en/-ene",  "CH₂=CH₂",         "H₂, Br₂, HX, H₂O"),
+                ("Alkyn",        "C≡C",   "-yn/-yne",  "CH≡CH",            "H₂ (×1 eller ×2), Br₂"),
+                ("Aromat",       "Ph",    "benzen-",   "C₆H₆",             "Elektrofil subst."),
+                ("Alkohol",      "-OH",   "-ol",       "CH₃OH",            "Oxidation, Esterifikation"),
+                ("Aldehyd",      "-CHO",  "-al",       "HCHO, CH₃CHO",     "Reduktion, Oxidation"),
+                ("Keton",        ">C=O",  "-on/-one",  "CH₃COCH₃",         "Reduktion"),
+                ("Carboxylsyre", "-COOH", "-syre",     "CH₃COOH",          "Esterifikation, Reduktion"),
+                ("Ester",        "-COO-", "-oat/-ate", "CH₃COOCH₂CH₃",     "Hydrolyse (H⁺ eller OH⁻)"),
+                ("Amin",         "-NH₂",  "-amin",     "CH₃NH₂",           "Amid-dannelse"),
+                ("Amid",         "-CONH-","-amid",     "CH₃CONH₂",         "Hydrolyse"),
+                ("Halogenid",    "-X",    "halo-",     "CH₃Cl, CH₃Br",     "Substitution, Eliminering"),
+            ]
+            df_fg = pd.DataFrame(fg_data, columns=["Gruppe", "SMARTS", "Navnesuffix", "Eksempel", "Vigtige reaktioner"])
+            st.dataframe(df_fg, use_container_width=True, hide_index=True)
+
+        with st.expander("⚗️ Vigtige reaktionstyper", expanded=True):
+            rx_data = [
+                ("Hydrering",         "Alken + H₂",          "Alkan",                "Pd/Pt/Ni kat., tilsættes H₂ over C=C"),
+                ("Halogenaddition",   "Alken + Br₂",         "1,2-Dibromoalkan",     "Affarver Br₂ – test for umætning"),
+                ("HX-addition",       "Alken + HBr/HCl",     "Haloalkan",            "Markovnikov: H til C med flest H"),
+                ("Hydratisering",     "Alken + H₂O",         "Alkohol",              "Markovnikov: OH til C med færrest H"),
+                ("Dehydrering",       "Alkohol + H₂SO₄/Δ",   "Alken + H₂O",         "Eliminering; Saytzev: mest substitueret alken"),
+                ("Oxidation prim.",   "R-CH₂OH + [O]",       "Aldehyd → Syre",       "Mild: aldehyd; overskud: carboxylsyre"),
+                ("Oxidation sek.",    "R-CHOH-R' + [O]",     "Keton",                "KMnO₄ eller K₂Cr₂O₇"),
+                ("Reduktion keton",   "Keton + H₂",          "Sekundær alkohol",     "NaBH₄ eller LiAlH₄"),
+                ("Reduktion aldehyd", "Aldehyd + H₂",        "Primær alkohol",       "NaBH₄ eller LiAlH₄"),
+                ("Esterifikation",    "R-COOH + R'-OH",      "Ester + H₂O",          "H⁺ kat., reversibel ligevægt"),
+                ("Hydrolyse (sur)",   "Ester + H₂O/H⁺",      "Syre + Alkohol",       "Reversibel"),
+                ("Saponifikation",    "Ester + NaOH",        "Carboxylat + Alkohol", "Irreversibel basisk hydrolyse"),
+            ]
+            df_rx = pd.DataFrame(rx_data, columns=["Reaktionstype", "Reaktanter", "Produkt", "Note"])
+            st.dataframe(df_rx, use_container_width=True, hide_index=True)
+
+        with st.expander("🧪 Oxidationstilstande (carbon)", expanded=False):
+            st.markdown(
+                "| Forbindelsestype | C-oxidationstrin | Eksempel |\n"
+                "|-----------------|-----------------|----------|\n"
+                "| Alkan | −4 til +4 (afhænger af binding) | CH₄: C = −4 |\n"
+                "| Primær alkohol | Lav | CH₃OH |\n"
+                "| Aldehyd | Middel | CH₂O, CH₃CHO |\n"
+                "| Carboxylsyre | Høj | HCOOH, CH₃COOH |\n\n"
+                "**Generel rækkefølge (stigende oxidation):**  \n"
+                "Alkan → Alkohol → Aldehyd/Keton → Carboxylsyre → CO₂"
+            )
 
 
 def show_molecule_database_page() -> None:
