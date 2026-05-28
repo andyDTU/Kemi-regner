@@ -50,7 +50,7 @@ def _safe_filename(substance_id: str) -> Path:
     return OUT_DIR / f"{substance_id}.png"
 
 
-def _fetch_png(term: str) -> bytes | None:
+def _fetch_png(term: str) -> "bytes | None":
     url = PUBCHEM_URL.format(quote(term))
     req = Request(url, headers={"User-Agent": "kemi-regner-offline/1.0"})
     try:
