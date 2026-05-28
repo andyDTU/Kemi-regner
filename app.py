@@ -8328,6 +8328,162 @@ def show_organic_chemistry_page():
                 "Alkan → Alkohol → Aldehyd/Keton → Carboxylsyre → CO₂"
             )
 
+        with st.expander("🔎 Genkend funktionelle grupper på strukturformel", expanded=True):
+            st.caption("Hver gruppe vises som strukturformel-mønster. **R** = resten af molekylet (alkylgruppe).")
+
+            _STRUCT_GROUPS = [
+                {
+                    "name": "Alkohol",
+                    "emoji": "🔵",
+                    "suffix": "-ol",
+                    "struct": (
+                        "    OH\n"
+                        "    │\n"
+                        "R ─ C ─ R'\n"
+                        "    │\n"
+                        "    H"
+                    ),
+                    "condensed": "R-OH  /  -CHOH-  /  -CH₂OH",
+                    "kend": "Hydroxylgruppe (-OH) bundet direkte til carbon (ikke karbonyl)",
+                    "eksempel": "CH₃CH₂OH (ethanol), propan-2-ol",
+                },
+                {
+                    "name": "Aldehyd",
+                    "emoji": "🟡",
+                    "suffix": "-al",
+                    "struct": (
+                        "    O\n"
+                        "    ‖\n"
+                        "R ─ C ─ H"
+                    ),
+                    "condensed": "R-CHO  /  -CHO (altid terminal)",
+                    "kend": "C=O med én H direkte på karbonyl-C. **Sidder altid for enden** af kæden",
+                    "eksempel": "HCHO (methanal), CH₃CHO (ethanal)",
+                },
+                {
+                    "name": "Keton",
+                    "emoji": "🟣",
+                    "suffix": "-on / -one",
+                    "struct": (
+                        "    O\n"
+                        "    ‖\n"
+                        "R ─ C ─ R'"
+                    ),
+                    "condensed": "R-CO-R'  /  -CO- (inde i kæden)",
+                    "kend": "C=O **inde i kæden** (karbonyl-C bundet til to C-atomer, ingen H på C=O)",
+                    "eksempel": "CH₃COCH₃ (acetone/propan-2-on)",
+                },
+                {
+                    "name": "Carboxylsyre",
+                    "emoji": "🔴",
+                    "suffix": "-syre / -ic acid",
+                    "struct": (
+                        "    O\n"
+                        "    ‖\n"
+                        "R ─ C ─ OH"
+                    ),
+                    "condensed": "R-COOH  /  -COOH (terminal)",
+                    "kend": "Karbonyl **og** hydroxyl på **samme** C. Let sur smag/lugt i eksempler",
+                    "eksempel": "CH₃COOH (eddikesyre), HCOOH (myresyre)",
+                },
+                {
+                    "name": "Ester",
+                    "emoji": "🟠",
+                    "suffix": "-oat / -ate",
+                    "struct": (
+                        "    O\n"
+                        "    ‖\n"
+                        "R ─ C ─ O ─ R'"
+                    ),
+                    "condensed": "R-COO-R'  /  -COO-",
+                    "kend": "Karbonyl efterfulgt af oxygen der er bundet til **endnu et carbon** (ikke H)",
+                    "eksempel": "CH₃COOCH₂CH₃ (ethylacetat)",
+                },
+                {
+                    "name": "Amin",
+                    "emoji": "🟢",
+                    "suffix": "-amin / -amine",
+                    "struct": (
+                        "R ─ NH₂\n"
+                        "\n"
+                        "(sekundær: R-NH-R')\n"
+                        "(tertiær: R-N(-R')R'')"
+                    ),
+                    "condensed": "R-NH₂  /  R-NH-R'  /  R₃N",
+                    "kend": "Nitrogen bundet til carbon. Primær: -NH₂, Sekundær: -NH-, Tertiær: -N<",
+                    "eksempel": "CH₃NH₂ (methylamin), anilin (C₆H₅NH₂)",
+                },
+                {
+                    "name": "Amid",
+                    "emoji": "⚫",
+                    "suffix": "-amid / -amide",
+                    "struct": (
+                        "    O\n"
+                        "    ‖\n"
+                        "R ─ C ─ NH₂"
+                    ),
+                    "condensed": "R-CONH₂  /  -CONHR-",
+                    "kend": "Karbonyl direkte bundet til nitrogen. Kombination af keton-look + NH",
+                    "eksempel": "CH₃CONH₂ (acetamid), peptidBindinger er amider",
+                },
+                {
+                    "name": "Alken",
+                    "emoji": "🟤",
+                    "suffix": "-en / -ene",
+                    "struct": (
+                        "    H   H\n"
+                        "    │   │\n"
+                        "R ─ C = C ─ R'"
+                    ),
+                    "condensed": "R-CH=CH-R'  /  R₂C=CH₂",
+                    "kend": "Dobbeltbinding mellem to C (plan geometri, 120°). **Ingen** karbonyl",
+                    "eksempel": "CH₂=CH₂ (ethen), 3-methyl-1-penten",
+                },
+                {
+                    "name": "Alkyn",
+                    "emoji": "⬜",
+                    "suffix": "-yn / -yne",
+                    "struct": (
+                        "R ─ C ≡ C ─ R'"
+                    ),
+                    "condensed": "R-C≡C-R'  /  RC≡CH (terminal)",
+                    "kend": "Tredobbeltbinding (lineær, 180°). To parallelle π-bindinger",
+                    "eksempel": "HC≡CH (acetylen/etyn), propyn",
+                },
+                {
+                    "name": "Halogenid",
+                    "emoji": "🧊",
+                    "suffix": "halo- / chloro- / bromo-",
+                    "struct": (
+                        "R ─ C ─ X\n"
+                        "    │\n"
+                        "   (X = F, Cl, Br, I)"
+                    ),
+                    "condensed": "R-Cl  /  R-Br  /  R-F  /  R-I",
+                    "kend": "Halogenatom (F, Cl, Br, I) direkte bundet til carbon",
+                    "eksempel": "CH₃Cl (chlormethan), CH₂BrCH₂Br (1,2-dibromoethan)",
+                },
+            ]
+
+            # Render 2 cards per row
+            for i in range(0, len(_STRUCT_GROUPS), 2):
+                row_groups = _STRUCT_GROUPS[i:i+2]
+                cols = st.columns(len(row_groups))
+                for col, grp in zip(cols, row_groups):
+                    with col:
+                        st.markdown(
+                            f"#### {grp['emoji']} {grp['name']}"
+                            f"&nbsp;&nbsp;<small style='color:#888'>({grp['suffix']})</small>",
+                            unsafe_allow_html=True,
+                        )
+                        st.code(grp["struct"], language=None)
+                        st.markdown(
+                            f"**Kondenseret:** `{grp['condensed']}`  \n"
+                            f"**Genkend:** {grp['kend']}  \n"
+                            f"**Eksempel:** *{grp['eksempel']}*"
+                        )
+                st.markdown("---")
+
 
 def show_molecule_database_page() -> None:
     """Render the Molekyle database page."""
