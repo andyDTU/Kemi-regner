@@ -3,7 +3,7 @@ Run this script ONCE before an exam (with internet access) to download
 all structure images locally.  After that, the app works fully offline.
 
 Usage:
-    python scripts/download_structure_images.py
+    python3 scripts/download_structure_images.py
 """
 
 import os
@@ -14,12 +14,19 @@ from urllib.parse import quote
 from urllib.request import urlopen, Request
 from urllib.error import URLError, HTTPError
 
+# If running outside the virtual environment, re-exec with the venv's Python
+# so all packages (periodictable etc.) are available without manual activation.
+_REPO_ROOT = Path(__file__).parent.parent
+_VENV_PYTHON = _REPO_ROOT / ".venv" / "bin" / "python3"
+if _VENV_PYTHON.exists() and Path(sys.executable).resolve() != _VENV_PYTHON.resolve():
+    os.execv(str(_VENV_PYTHON), [str(_VENV_PYTHON)] + sys.argv)
+
 # Add repo root to path so we can import molecule_db
-sys.path.insert(0, str(Path(__file__).parent.parent))
+sys.path.insert(0, str(_REPO_ROOT))
 
-from core.molecule_db import ALL_SUBSTANCES
+from core.molecule_db import SUBSTANCES
 
-OUT_DIR = Path(__file__).parent.parent / "data" / "structure_images"
+OUT_DIR = _REPO_ROOT / "data" / "structure_images"
 OUT_DIR.mkdir(parents=True, exist_ok=True)
 
 PUBCHEM_URL = "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/{}/PNG?image_size=large"
@@ -43,7 +50,7 @@ def _fetch_png(term: str) -> bytes | None:
 
 
 def main() -> None:
-    substances = ALL_SUBSTANCES
+    substances = SUBSTANCES
     total = len(substances)
     found = 0
     skipped = 0
