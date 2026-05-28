@@ -1366,6 +1366,25 @@ def show_molar_mass_page():
                     )
 
             with st.expander("Detaljeret strukturdata", expanded=False):
+                # VSEPR geometry for central atom
+                try:
+                    from core.vsepr import GEOMETRY_TABLE
+                    _central = last_structure.atoms[0]
+                    # BP = number of distinct neighbouring atoms (each bond counts once in VSEPR)
+                    _central_bonds = [b for b in last_structure.bonds if _central.index in (b.atom1, b.atom2)]
+                    _bp = len(_central_bonds)
+                    _lp = _central.lone_pairs
+                    _sn = _bp + _lp
+                    _geom = GEOMETRY_TABLE.get((_sn, _lp))
+                    if _geom:
+                        col_g1, col_g2, col_g3, col_g4 = st.columns(4)
+                        col_g1.metric("Geometri", _geom.name_da)
+                        col_g2.metric("Bindingsvinkler", _geom.bond_angles)
+                        col_g3.metric("Plan", "✅ Ja" if _geom.is_planar else "❌ Nej")
+                        col_g4.metric("SN / BP / LP", f"{_sn} / {_bp} / {_lp}")
+                        st.caption(_geom.description)
+                except Exception:
+                    pass
                 st.code(render_lewis_structure_text(last_structure), language="text")
 
             with st.expander("Trinvis beregning", expanded=False):
