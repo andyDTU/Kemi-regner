@@ -3629,33 +3629,165 @@ def show_buffers_tab():
                 st.error(f"❌ **Fejl**: {str(e)}")
     
     elif mode == "Mixing solutions":
-        st.markdown("#### Buffer pH from Mixing")
-        col1, col2 = st.columns(2)
-        
-        with col1:
-            acid_conc = st.number_input("Weak acid concentration (M):", value=0.1, step=0.01, min_value=1e-7, key="buf_acid_conc")
-            acid_vol = st.number_input("Acid volume (L):", value=1.0, step=0.1, min_value=0.001, key="buf_acid_vol")
-        
-        with col2:
-            base_conc = st.number_input("Conjugate base concentration (M):", value=0.1, step=0.01, min_value=1e-7, key="buf_base_conc")
-            base_vol = st.number_input("Base volume (L):", value=1.0, step=0.1, min_value=0.001, key="buf_base_vol")
-            ka = st.number_input("Ka value:", value=1.8e-5, step=1e-6, min_value=1e-12, format="%.2e", key="buf_mix_ka")
-        
-        if st.button("Calculate pH", type="primary", key="buffer_mixing_calc_ph"):
-            try:
-                with st.spinner("Calculating..."):
-                    ph, steps, metadata = calculate_buffer_mixing_ph(
-                        acid_conc, acid_vol, base_conc, base_vol, ka
+        st.markdown("#### Buffer pH fra blanding")
+
+        mix_type = st.radio(
+            "Blandingstype:",
+            [
+                "Svag syre + konjugeret base",
+                "Svag syre + stærk base (NaOH/KOH)",
+                "Svag base + stærk syre (HCl/HNO₃)",
+            ],
+            horizontal=False,
+            key="buf_mix_type",
+        )
+        st.markdown("---")
+
+        import math as _math
+
+        if mix_type == "Svag syre + konjugeret base":
+            st.info("💡 Bland HA og A⁻ direkte – Henderson-Hasselbalch bruges.")
+            col1, col2 = st.columns(2)
+            with col1:
+                acid_conc = st.number_input("Svag syre [HA] (M):", value=0.1, step=0.01, min_value=1e-7, key="buf_acid_conc")
+                acid_vol  = st.number_input("Volumen syre (L):", value=1.0, step=0.1, min_value=0.001, key="buf_acid_vol")
+            with col2:
+                base_conc = st.number_input("Konjugeret base [A⁻] (M):", value=0.1, step=0.01, min_value=1e-7, key="buf_base_conc")
+                base_vol  = st.number_input("Volumen base (L):", value=1.0, step=0.1, min_value=0.001, key="buf_base_vol")
+                ka        = st.number_input("Ka:", value=1.8e-5, step=1e-6, min_value=1e-15, format="%.2e", key="buf_mix_ka")
+
+            if st.button("Beregn pH", type="primary", key="buf_mix_classic"):
+                try:
+                    ph, steps, _ = calculate_buffer_mixing_ph(acid_conc, acid_vol, base_conc, base_vol, ka)
+                    st.success(f"✅ **pH = {ph:.3f}**")
+                    with st.expander("🔍 Vis trin", expanded=False):
+                        for step in steps:
+                            st.markdown(step)
+                except Exception as e:
+                    st.error(f"❌ **Fejl**: {str(e)}")
+
+        elif mix_type == "Svag syre + stærk base (NaOH/KOH)":
+            st.info(
+                "💡 **Hvornår?** Du blander en svag syre (HA) med en stærk base (NaOH).  \n"
+                "Basen neutraliserer en del af syren: HA + OH⁻ → A⁻ + H₂O.  \n"
+                "Resultatet er en bufferblanding af resterende HA og dannet A⁻."
+            )
+            col1, col2 = st.columns(2)
+            with col1:
+                c_ha  = st.number_input("Svag syre [HA] (M):", value=0.100, step=0.01, min_value=1e-7, key="bms_c_ha")
+                v_ha  = st.number_input("Volumen HA (L):", value=1.0, step=0.1, min_value=0.001, key="bms_v_ha")
+            with col2:
+                c_oh  = st.number_input("Stærk base [NaOH] (M):", value=0.050, step=0.01, min_value=1e-7, key="bms_c_oh")
+                v_oh  = st.number_input("Volumen NaOH (L):", value=1.0, step=0.1, min_value=0.001, key="bms_v_oh")
+                ka2   = st.number_input("Ka for svag syre:", value=1.8e-5, step=1e-6, min_value=1e-15, format="%.2e", key="bms_ka")
+
+            if st.button("Beregn pH", type="primary", key="buf_mix_sa_sb"):
+                n_ha  = c_ha * v_ha
+                n_oh  = c_oh * v_oh
+                pka   = -_math.log10(ka2)
+                v_tot = v_ha + v_oh
+
+                if n_oh >= n_ha:
+                    st.error(
+                        f"⚠️ Overskud af base (n_NaOH = {n_oh:.4f} mol ≥ n_HA = {n_ha:.4f} mol). "
+                        "Der dannes ingen buffer – al syren er neutraliseret."
                     )
-                
-                st.success(f"✅ **pH = {ph:.3f}**")
-                
-                with st.expander("🔍 Vis trin", expanded=False):
-                    for step in steps:
-                        st.markdown(step)
-            
-            except Exception as e:
-                st.error(f"❌ **Fejl**: {str(e)}")
+                else:
+                    n_a   = n_oh           # moles A⁻ dannet
+                    n_ha_rest = n_ha - n_oh  # moles HA tilbage
+                    ratio = n_a / n_ha_rest
+                    ph    = pka + _math.log10(ratio)
+                    c_a_eq  = n_a / v_tot
+                    c_ha_eq = n_ha_rest / v_tot
+
+                    st.success(f"✅ **pH = {ph:.3f}**")
+                    st.markdown(
+                        f"**pKa** = {pka:.3f}  \n"
+                        f"**n(HA)** = {c_ha} × {v_ha} = {n_ha:.4f} mol  \n"
+                        f"**n(NaOH)** = {c_oh} × {v_oh} = {n_oh:.4f} mol"
+                    )
+                    with st.expander("🔍 Trin-for-trin", expanded=True):
+                        st.markdown(f"""
+**Reaktion:** HA + OH⁻ → A⁻ + H₂O
+
+| | HA | OH⁻ | A⁻ |
+|--|--|--|--|
+| Før (mol) | {n_ha:.4f} | {n_oh:.4f} | 0 |
+| Ændring | −{n_oh:.4f} | −{n_oh:.4f} | +{n_oh:.4f} |
+| Efter (mol) | **{n_ha_rest:.4f}** | 0 | **{n_a:.4f}** |
+
+**Henderson-Hasselbalch:**
+pH = pKa + log([A⁻]/[HA])
+pH = {pka:.3f} + log({n_a:.4f}/{n_ha_rest:.4f})
+pH = {pka:.3f} + log({ratio:.4f})
+pH = {pka:.3f} + ({_math.log10(ratio):.3f})
+**pH = {ph:.3f}**
+
+Koncentrationer i blandingen (V_total = {v_tot:.3f} L):
+[HA] = {c_ha_eq:.4f} M, [A⁻] = {c_a_eq:.4f} M
+""")
+
+        else:  # Svag base + stærk syre
+            st.info(
+                "💡 **Hvornår?** Du blander en konjugeret base (A⁻) med en stærk syre (HCl).  \n"
+                "Syren neutraliserer en del af basen: A⁻ + H⁺ → HA.  \n"
+                "Resultatet er en bufferblanding af resterende A⁻ og dannet HA."
+            )
+            col1, col2 = st.columns(2)
+            with col1:
+                c_a2  = st.number_input("Svag base [A⁻] (M):", value=0.100, step=0.01, min_value=1e-7, key="bmb_c_a")
+                v_a2  = st.number_input("Volumen A⁻ (L):", value=1.0, step=0.1, min_value=0.001, key="bmb_v_a")
+            with col2:
+                c_h2  = st.number_input("Stærk syre [HCl] (M):", value=0.050, step=0.01, min_value=1e-7, key="bmb_c_h")
+                v_h2  = st.number_input("Volumen HCl (L):", value=1.0, step=0.1, min_value=0.001, key="bmb_v_h")
+                ka3   = st.number_input("Ka for den svage syre HA:", value=1.8e-5, step=1e-6, min_value=1e-15, format="%.2e", key="bmb_ka")
+
+            if st.button("Beregn pH", type="primary", key="buf_mix_wb_sa"):
+                n_a2  = c_a2 * v_a2
+                n_h2  = c_h2 * v_h2
+                pka3  = -_math.log10(ka3)
+                v_tot2 = v_a2 + v_h2
+
+                if n_h2 >= n_a2:
+                    st.error(
+                        f"⚠️ Overskud af syre (n_HCl = {n_h2:.4f} mol ≥ n_A⁻ = {n_a2:.4f} mol). "
+                        "Der dannes ingen buffer – al basen er neutraliseret."
+                    )
+                else:
+                    n_ha2      = n_h2            # moles HA dannet
+                    n_a2_rest  = n_a2 - n_h2     # moles A⁻ tilbage
+                    ratio2     = n_a2_rest / n_ha2
+                    ph2        = pka3 + _math.log10(ratio2)
+                    c_a_eq2    = n_a2_rest / v_tot2
+                    c_ha_eq2   = n_ha2 / v_tot2
+
+                    st.success(f"✅ **pH = {ph2:.3f}**")
+                    st.markdown(
+                        f"**pKa** = {pka3:.3f}  \n"
+                        f"**n(A⁻)** = {c_a2} × {v_a2} = {n_a2:.4f} mol  \n"
+                        f"**n(HCl)** = {c_h2} × {v_h2} = {n_h2:.4f} mol"
+                    )
+                    with st.expander("🔍 Trin-for-trin", expanded=True):
+                        st.markdown(f"""
+**Reaktion:** A⁻ + H⁺ → HA
+
+| | A⁻ | H⁺ | HA |
+|--|--|--|--|
+| Før (mol) | {n_a2:.4f} | {n_h2:.4f} | 0 |
+| Ændring | −{n_h2:.4f} | −{n_h2:.4f} | +{n_h2:.4f} |
+| Efter (mol) | **{n_a2_rest:.4f}** | 0 | **{n_ha2:.4f}** |
+
+**Henderson-Hasselbalch:**
+pH = pKa + log([A⁻]/[HA])
+pH = {pka3:.3f} + log({n_a2_rest:.4f}/{n_ha2:.4f})
+pH = {pka3:.3f} + log({ratio2:.4f})
+pH = {pka3:.3f} + ({_math.log10(ratio2):.3f})
+**pH = {ph2:.3f}**
+
+Koncentrationer i blandingen (V_total = {v_tot2:.3f} L):
+[A⁻] = {c_a_eq2:.4f} M, [HA] = {c_ha_eq2:.4f} M
+""")
+
     
     elif mode == "Target pH":
         st.markdown("#### Target Buffer pH")
