@@ -174,6 +174,7 @@ SEARCH_INDEX = [
     {"title": "Ideel gaslov – find ubekendt", "keywords": ["pv=nrt", "gaslov", "find tryk", "find volumen", "find temperature", "find mol gas", "beregn gas"], "page": "gases", "tab": "Ideel gaslov", "description": "PV = nRT – beregn P, V, n eller T"},
     {"title": "Molarmasse fra densitet", "keywords": ["densitet", "molarmasse fra densitet", "m fra densitet", "rho", "ρ", "g/l", "molar masse densitet", "identificer gas", "ukendt gas", "nitrogen oxid", "kvælstofoxid"], "page": "gases", "tab": "🔬 M fra densitet", "description": "M = ρRT/P – find molarmassen fra densitet, tryk og temperatur"},
     {"title": "Empirisk formel", "keywords": ["empirisk formel", "empirisk", "procentsammensætning", "procent sammensætning", "masseandel", "elementaranalyse", "forbrændingsanalyse", "%c", "%h", "%o", "hvad er formlen", "find formel fra procent", "molekylær formel", "molecular formula"], "page": "atoms-molar", "tab": "🔬 Empirisk formel", "description": "Find empirisk/molekylær formel fra procentvis sammensætning – klassisk elementaranalyse"},
+    {"title": "Formel ladning", "keywords": ["formel ladning", "formal charge", "fc", "lewis struktur rangering", "sandsynlig struktur", "lone pair", "bindende elektroner", "valenselektroner", "rang struktur", "oktett", "resonans formal", "sammenlign strukturer", "v minus l minus b"], "page": "atoms-molar", "tab": "⚗️ Formel ladning", "description": "Beregn FC = V − L − ½B for hvert atom og rangér Lewis-strukturer efter sandsynlighed"},
     {"title": "Salthydrolyse / pH af salt", "keywords": ["salthydrolyse", "hydrolyse", "ph af salt", "natriumacetat", "ammoniumchlorid", "konjugeret base", "konjugeret syre", "kh", "salt opløsning ph", "basisk salt", "sur salt", "ch3coona", "nh4cl"], "page": "acids-bases", "tab": "⚗️ Salthydrolyse", "description": "pH af saltopløsninger via hydrolyse – Kh = Kw/Ka eller Kw/Kb"},
     {"title": "Ioniseringsgrad α", "keywords": ["ioniseringsgrad", "ionisering", "alpha", "α", "procentvis ioniseret", "5%regel", "5 procent regel", "svag syre ioniseret", "andel ioniseret", "degree of ionization"], "page": "acids-bases", "tab": "Svag syre/base", "description": "Beregn ioniseringsgrad α og procentvis ionisering for svag syre/base"},
     {"title": "Van't Hoff-plot", "keywords": ["van't hoff", "vant hoff", "lnk vs 1/t", "delta h fra k", "delta s fra k", "k ved to temperaturer", "hældning lnk", "reaktionsentalpi fra k", "temperaturafhængig k", "van hoff plot"], "page": "thermochemistry", "tab": None, "description": "Find ΔH° og ΔS° fra K-værdier ved to temperaturer – hældning og skæringspunkt i lnK vs. 1/T"},
@@ -534,6 +535,7 @@ def show_fundamentals_page():
         _nav_card("Intermolekylære kræfter", "geometri", "IMF – hydrogen-, dipol-, Londonbinding", "imf", tab="🔗 Intermolekylære kræfter (IMF)")
         _nav_card("Lewis struktur", "atoms-molar", "Tegn Lewis-struktur og find formal ladning", "lewis", tab="🧷 Lewis-struktur")
         _nav_card("Elektronkonfiguration", "atoms-molar", "Aufbau, orbital-notation og ions", "ec", tab="⚛️ Elektronkonfiguration og atomradius")
+        _nav_card("⚗️ Formel ladning", "atoms-molar", "FC = V−L−½B – beregn og rangér Lewis-strukturer", "fc", tab="⚗️ Formel ladning")
     with c8:
         st.markdown("**🌡️ Avancerede emner**")
         _nav_card("📈 Van't Hoff-plot", "thermochemistry", "ΔH° og ΔS° fra K ved to temperaturer", "vhp")
@@ -631,6 +633,12 @@ _EXAM_TASKS = [
     ("En forbindelse indeholder 40,0% C, 6,7% H og 53,3% O. Hvad er den empiriske formel?",
      "Nøgleord: procentvis sammensætning → divider med atomvægt → find mindste heltalforhold",
      "Empirisk formel", "atoms-molar", "🔬 Empirisk formel"),
+    ("To Lewis-strukturer er tegnet for samme molekyle. Rangér dem efter formel ladning.",
+     "Nøgleord: FC = V − L − ½B; Σ|FC| mindst = mest sandsynlig; neg. FC på el.neg. atom",
+     "Formel ladning", "atoms-molar", "⚗️ Formel ladning"),
+    ("Hvilken Lewis-struktur for H₃BO₃ har den laveste Σ|FC|?",
+     "Nøgleord: beregn FC for hvert atom i hver struktur og sammenlign Σ|FC|",
+     "Formel ladning (struktursammenligning)", "atoms-molar", "⚗️ Formel ladning"),
     # ── Kolligative egenskaber ───────────────────────────────────────────────
     ("10 g glukose (M = 180 g/mol) opløses i 100 g vand. Find frysepunktssænkning (Kf = 1,86).",
      "Nøgleord: opløst stof + masse opløsningsmiddel + Kf → ΔTf = Kf·m (molalitet)",
@@ -745,6 +753,7 @@ def show_exam_guide_page():
         ],
         "⚖️ Atoms & Molarmasse": [
             "Molarmasse", "Empirisk formel",
+            "Formel ladning", "Formel ladning (struktursammenligning)",
         ],
         "🌡️ Kolligative egenskaber": [
             "Frysepunktssænkning", "Kogepunktsstigning", "Osmotisk tryk",
@@ -988,6 +997,7 @@ def show_molar_mass_page():
         "🧭 Interaktivt periodisk system",
         "🧷 Lewis-struktur",
         "🔋 Ionization Energy",
+        "⚗️ Formel ladning",
     ]
 
     subpage_to_query = {
@@ -997,6 +1007,7 @@ def show_molar_mass_page():
         "🧭 Interaktivt periodisk system": "periodic",
         "🧷 Lewis-struktur": "lewis",
         "🔋 Ionization Energy": "ionization",
+        "⚗️ Formel ladning": "formel-ladning",
     }
     query_to_subpage = {value: key for key, value in subpage_to_query.items()}
 
@@ -1356,6 +1367,215 @@ def show_molar_mass_page():
 
     if active_subpage == "🔬 Empirisk formel":
         _show_empirisk_formel_tab()
+
+    if active_subpage == "⚗️ Formel ladning":
+        _show_formel_ladning_tab()
+
+
+def _show_formel_ladning_tab():
+    """Beregn formel ladning (FC) og rangér Lewis-strukturer."""
+
+    _VALENCE = {
+        "H": 1, "B": 3, "C": 4, "N": 5, "O": 6, "F": 7,
+        "Na": 1, "Mg": 2, "Al": 3, "Si": 4, "P": 5, "S": 6, "Cl": 7,
+        "K": 1, "Ca": 2, "Br": 7, "I": 7, "He": 2, "Ne": 8, "Ar": 8, "Xe": 8,
+    }
+
+    def _fc(el, bonds, lp):
+        return _VALENCE.get(el, 0) - (lp * 2) - bonds
+
+    def _fc_badge(fc):
+        if fc == 0:
+            return "🟢 **0**"
+        if abs(fc) == 1:
+            return f"🟡 **{fc:+d}**"
+        return f"🔴 **{fc:+d}**"
+
+    ELEMENTS = sorted(_VALENCE.keys())
+
+    st.markdown("### ⚗️ Formel ladning")
+    with st.expander("ℹ️ Formel og regler", expanded=False):
+        st.markdown(
+            "**FC = V − L − ½·B**\n\n"
+            "| Symbol | Forklaring |\n"
+            "|--------|------------|\n"
+            "| V | Valenselektroner (neutralt atom) |\n"
+            "| L | Ikke-bindende elektroner = lone pairs × 2 |\n"
+            "| B | Bindende elektroner = antal bindinger × 2 |\n\n"
+            "**Rangering af strukturer (mest → mindst sandsynlig):**\n"
+            "1. Alle FC = 0 er bedst\n"
+            "2. Minimér Σ|FC| (sum af absolutte formelle ladninger)\n"
+            "3. Negativ FC bør sidde på det mest elektronegative atom\n"
+            "4. Undgå naboatomer med samme fortegn på FC\n\n"
+            "🟢 FC = 0 &nbsp; 🟡 |FC| = 1 &nbsp; 🔴 |FC| ≥ 2"
+        )
+
+    mode = st.radio(
+        "Tilstand:",
+        ["🔬 Enkelt struktur", "📊 Sammenlign strukturer (A–D)"],
+        horizontal=True,
+        key="fc_mode",
+    )
+    st.markdown("---")
+
+    # ── Enkelt struktur ───────────────────────────────────────────────────────
+    if mode == "🔬 Enkelt struktur":
+        if "fc_atoms" not in st.session_state:
+            st.session_state["fc_atoms"] = []
+
+        st.caption("Tilføj hvert atom i din struktur:")
+        c1, c2, c3, c4 = st.columns([2, 2, 2, 1])
+        el = c1.selectbox("Grundstof:", ELEMENTS, key="fc_el")
+        bonds = c2.number_input(
+            "Bindinger:", min_value=0, max_value=8, value=1, step=1, key="fc_bonds",
+            help="Enkelt binding = 1, dobbelt = 2, tripel = 3",
+        )
+        lp = c3.number_input(
+            "Lone pairs:", min_value=0, max_value=6, value=0, step=1, key="fc_lp",
+            help="Antal frie elektronpar",
+        )
+        c4.markdown("<br>", unsafe_allow_html=True)
+        if c4.button("➕ Tilføj", key="fc_add", use_container_width=True):
+            st.session_state["fc_atoms"].append({"el": el, "bonds": bonds, "lp": lp})
+            st.rerun()
+
+        atoms = st.session_state["fc_atoms"]
+        if atoms:
+            st.markdown("#### Resultat")
+            hdr = st.columns([1.5, 0.8, 1, 1, 0.8, 1, 0.6])
+            for col, h in zip(hdr, ["Atom", "V", "Bindinger", "Lone pairs", "L", "FC", ""]):
+                col.markdown(f"**{h}**")
+
+            total_fc = 0
+            for i, a in enumerate(atoms):
+                fc = _fc(a["el"], a["bonds"], a["lp"])
+                total_fc += fc
+                V = _VALENCE.get(a["el"], "?")
+                L = a["lp"] * 2
+                row = st.columns([1.5, 0.8, 1, 1, 0.8, 1, 0.6])
+                row[0].markdown(f"**{a['el']}**")
+                row[1].markdown(str(V))
+                row[2].markdown(str(a["bonds"]))
+                row[3].markdown(str(a["lp"]))
+                row[4].markdown(str(L))
+                row[5].markdown(_fc_badge(fc))
+                if row[6].button("✕", key=f"fc_del_{i}", use_container_width=True):
+                    st.session_state["fc_atoms"].pop(i)
+                    st.rerun()
+
+            st.markdown("---")
+            sum_abs = sum(abs(_fc(a["el"], a["bonds"], a["lp"])) for a in atoms)
+
+            res_col, clr_col = st.columns([5, 1])
+            if total_fc == 0:
+                res_col.success(f"Total ladning: **{total_fc:+d}** (neutral) &nbsp;|&nbsp; Σ|FC| = {sum_abs}")
+            else:
+                res_col.warning(f"Total ladning: **{total_fc:+d}** &nbsp;|&nbsp; Σ|FC| = {sum_abs}")
+            if clr_col.button("🗑 Ryd", key="fc_clr", use_container_width=True):
+                st.session_state["fc_atoms"] = []
+                st.rerun()
+
+            if sum_abs == 0:
+                st.success("✅ Σ|FC| = 0 — alle atomer har formel ladning 0. Mest sandsynlige Lewis-struktur.")
+            elif sum_abs <= 2:
+                st.info(f"ℹ️ Σ|FC| = {sum_abs} — lav formal ladning, rimelig sandsynlig struktur.")
+            else:
+                st.warning(f"⚠️ Σ|FC| = {sum_abs} — høj samlet ladning, usandsynlig struktur.")
+
+            with st.expander("📐 Vis beregning", expanded=False):
+                for a in atoms:
+                    fc = _fc(a["el"], a["bonds"], a["lp"])
+                    V = _VALENCE.get(a["el"], "?")
+                    L = a["lp"] * 2
+                    B = a["bonds"] * 2
+                    st.markdown(
+                        f"**{a['el']}:** FC = {V} − {L} − {B}÷2 = {V} − {L} − {a['bonds']} = **{fc:+d}**"
+                    )
+        else:
+            st.info("Tilføj atomer ovenfor for at beregne formelle ladninger.")
+
+    # ── Sammenlign strukturer ─────────────────────────────────────────────────
+    else:
+        _SK = ["A", "B", "C", "D"]
+        for k in _SK:
+            if f"fc_s_{k}" not in st.session_state:
+                st.session_state[f"fc_s_{k}"] = []
+
+        st.markdown("#### Definer strukturer")
+        active = st.radio("Redigér struktur:", _SK, horizontal=True, key="fc_active")
+        sk = f"fc_s_{active}"
+
+        c1, c2, c3, c4 = st.columns([2, 2, 2, 1])
+        el2 = c1.selectbox("Grundstof:", ELEMENTS, key="fc_el2")
+        bonds2 = c2.number_input(
+            "Bindinger:", min_value=0, max_value=8, value=1, step=1, key="fc_bonds2",
+        )
+        lp2 = c3.number_input("Lone pairs:", min_value=0, max_value=6, value=0, step=1, key="fc_lp2")
+        c4.markdown("<br>", unsafe_allow_html=True)
+        if c4.button("➕ Tilføj", key="fc_add2", use_container_width=True):
+            st.session_state[sk].append({"el": el2, "bonds": bonds2, "lp": lp2})
+            st.rerun()
+
+        atoms_cur = st.session_state[sk]
+        if atoms_cur:
+            hdr2 = st.columns([1.5, 1, 1, 1, 0.6])
+            for col, h in zip(hdr2, ["Atom", "Bindinger", "Lone pairs", "FC", ""]):
+                col.markdown(f"**{h}**")
+            for i, a in enumerate(atoms_cur):
+                fc = _fc(a["el"], a["bonds"], a["lp"])
+                row = st.columns([1.5, 1, 1, 1, 0.6])
+                row[0].markdown(f"**{a['el']}**")
+                row[1].markdown(str(a["bonds"]))
+                row[2].markdown(str(a["lp"]))
+                row[3].markdown(_fc_badge(fc))
+                if row[4].button("✕", key=f"fc_del2_{active}_{i}", use_container_width=True):
+                    st.session_state[sk].pop(i)
+                    st.rerun()
+            if st.button(f"🗑 Ryd struktur {active}", key=f"fc_clr2_{active}"):
+                st.session_state[sk] = []
+                st.rerun()
+        else:
+            st.info(f"Ingen atomer i struktur {active} endnu. Tilføj ovenfor.")
+
+        # ── Oversigt + rangering ──────────────────────────────────────────────
+        filled = [(k, st.session_state[f"fc_s_{k}"]) for k in _SK if st.session_state[f"fc_s_{k}"]]
+        if filled:
+            st.markdown("---")
+            st.markdown("#### Oversigt")
+            for k, atms in filled:
+                fcs = [_fc(a["el"], a["bonds"], a["lp"]) for a in atms]
+                s_abs = sum(abs(f) for f in fcs)
+                tot = sum(fcs)
+                parts = ",  ".join(f"{a['el']}({f:+d})" for a, f in zip(atms, fcs))
+                st.markdown(f"**Struktur {k}:** {parts} &nbsp; total = {tot:+d}, Σ|FC| = {s_abs}")
+
+        if len(filled) >= 2:
+            st.markdown("---")
+            st.markdown("#### Rangering (mest → mindst sandsynlig)")
+
+            ranked = []
+            for k, atms in filled:
+                fcs = [_fc(a["el"], a["bonds"], a["lp"]) for a in atms]
+                s_abs = sum(abs(f) for f in fcs)
+                n_nz = sum(1 for f in fcs if f != 0)
+                ranked.append((s_abs, n_nz, k, atms, fcs))
+            ranked.sort(key=lambda x: (x[0], x[1]))
+
+            medals = ["🥇", "🥈", "🥉", "4️⃣"]
+            prev_score = None
+            for rank, (s_abs, n_nz, k, atms, fcs) in enumerate(ranked):
+                medal = medals[rank] if rank < 4 else f"{rank+1}."
+                parts = "  |  ".join(f"{a['el']}: {_fc_badge(f)}" for a, f in zip(atms, fcs))
+                if s_abs == 0:
+                    note = "alle FC = 0 → **bedste struktur**"
+                elif prev_score == s_abs:
+                    note = f"Σ|FC| = {s_abs} → delt plads"
+                else:
+                    note = f"Σ|FC| = {s_abs}"
+                prev_score = s_abs
+                st.markdown(f"{medal} **Struktur {k}** — {note}  \n{parts}")
+        elif filled:
+            st.info("Tilføj atomer til mindst 2 strukturer for at sammenligne og rangere.")
 
 
 def _show_empirisk_formel_tab():
