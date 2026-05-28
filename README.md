@@ -1,6 +1,6 @@
 # 🧪 Kemilommeregner
 
-En interaktiv kemiregner til gymnasiet og HF, bygget med Python og Streamlit.  
+En interaktiv kemiregner til gymnasiet og DTU, bygget med Python og Streamlit.  
 Giver trin-for-trin løsninger på de mest almindelige eksamensopgaver.
 
 ---
@@ -117,6 +117,8 @@ Skriv i søgefeltet øverst i sidepanelet. Du kan søge på opgave-sprog:
 - `er reaktionen spontan` → Gibbs fri energi
 - `ICE-tabel` → Ligevægt
 - `begrænsende reaktant` → Stofmængder
+- `enhedscelle` → Faststofkemi
+- `LiFePO4` → Molekyle database
 
 **3. Forsiden**  
 Klik på **🏠 Fundamentals** for at se alle beregnere som opgavekort.
@@ -127,19 +129,21 @@ Klik på **🏠 Fundamentals** for at se alle beregnere som opgavekort.
 
 | Emne | Indeholder bl.a. |
 |------|-----------------|
-| 🧪 Syrer & Baser | pH (stærk/svag syre/base), buffer, titrering |
-| ⚖️ Atoms & Molarmasse | Molarmasse, procentsammensætning, elektronkonfiguration |
-| 🧮 Stofmængder | Afstem reaktioner, begrænsende reaktant, fortynding, redox |
-| 📊 Gasser | Ideel gaslov, Daltons lov, van der Waals, Graham |
-| 🔥 Termokemi | ΔH°, Gibbs (ΔG), kalorimetri, opvarmningskurver, Hess |
-| ⚗️ Ligevægt | ICE-tabel, Kc/Kp, reaktionskvotient Q, Le Chatelier |
+| 🧪 Syrer & Baser | pH (stærk/svag syre/base), buffer (Ka- og Kb-system), titrering, salthydrolyse, bufferkapacitet, Debye-Hückel |
+| ⚖️ Atoms & Molarmasse | Molarmasse, empirisk formel, procentsammensætning, elektronkonfiguration, Lewis-struktur, formel ladning |
+| 🧮 Stofmængder | Afstem reaktioner, begrænsende reaktant, fortynding, redox, stofmænge fra ligning |
+| 📊 Gasser | Ideel gaslov, Daltons lov, van der Waals, Graham, molarmasse fra gasdensitet |
+| 🔥 Termokemi | ΔH°, Gibbs (ΔG), find ΔH°/ΔG°/ΔS°, kalorimetri, opvarmningskurver, Hess, Van't Hoff, Kirchhoff, Born-Haber |
+| ⚗️ Ligevægt | ICE-tabel, Kc/Kp, reaktionskvotient Q, Le Chatelier, Ksp og fælding |
 | 🔋 Elektrokemi | Cellespænding E°, Nernst, ΔG og K, Faradays lov |
-| ⚡ Kinetik | Integreret hastighedslov, halvliv, Arrhenius |
+| ⚡ Kinetik | Integreret hastighedslov, halvliv, reaktionsorden & k, initial rates, Arrhenius |
 | 🌡️ Kolligative egenskaber | Kogepunktselevering, frysepunktssænkning, osmotisk tryk, find molarmasse |
 | 🌫️ Damptryk | Raoults lov |
-| 🔷 Geometri & Bindinger | VSEPR, Lewis-struktur, IMF, bindingsentalpier |
+| 🔷 Geometri & Bindinger | VSEPR (geometri + planaritet), Lewis-struktur, IMF, bindingsentalpier |
+| 🔩 Faststofkemi | Enhedscellevolumen, densitet, gitterparameter for SC/BCC/FCC |
 | ☢️ Nuklear kemi | α/β/γ-henfald, halvliv |
 | 🧬 Organisk kemi | Funktionelle grupper, reaktionsprediktor, strukturreference |
+| 🔬 Molekyle database | 600+ stoffer med egenskaber, bindingstype, IMF og strukturbilleder |
 
 ---
 
