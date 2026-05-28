@@ -752,6 +752,7 @@ def show_exam_guide_page():
         ],
     }
     name_to_task = {t[2]: t for t in _EXAM_TASKS}
+    btn_counter = 0
 
     for group_label, task_names in groups.items():
         tasks_in_group = [name_to_task[n] for n in task_names if n in name_to_task]
@@ -766,19 +767,19 @@ def show_exam_guide_page():
 
         with st.expander(group_label, expanded=True):
             for opgave, tip, beregner, page, tab in tasks_in_group:
-                task_idx = next(i for i, t in enumerate(_EXAM_TASKS) if t[2] == beregner)
                 col_text, col_btn = st.columns([5, 1])
                 with col_text:
                     st.markdown(f"**{opgave}**")
                     st.caption(f"→ {tip}")
                 with col_btn:
-                    if st.button("Åbn →", key=f"exam_nav_{task_idx}", use_container_width=True):
+                    if st.button("Åbn →", key=f"exam_nav_{btn_counter}", use_container_width=True):
                         page_label = PAGE_QUERY_TO_LABEL.get(page, "🏠 Fundamentals")
                         st.session_state["_pending_page"] = page_label
                         st.query_params["page"] = page
                         if tab:
                             st.session_state[f"nav_{page.replace('-', '_')}"] = tab
                         st.rerun()
+                btn_counter += 1
                 st.markdown("---")
 
     st.caption("Tip: Søg i sidepanelet for endnu hurtigere navigation.")
