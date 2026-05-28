@@ -3637,6 +3637,7 @@ def show_buffers_tab():
                 "Svag syre + konjugeret base",
                 "Svag syre + stærk base (NaOH/KOH)",
                 "Svag base + stærk syre (HCl/HNO₃)",
+                "Tilsæt syre/base til eksisterende buffer",
             ],
             horizontal=False,
             key="buf_mix_type",
@@ -3727,7 +3728,7 @@ Koncentrationer i blandingen (V_total = {v_tot:.3f} L):
 [HA] = {c_ha_eq:.4f} M, [A⁻] = {c_a_eq:.4f} M
 """)
 
-        else:  # Svag base + stærk syre
+        elif mix_type == "Svag base + stærk syre (HCl/HNO₃)":
             st.info(
                 "💡 **Hvornår?** Du blander en konjugeret base (A⁻) med en stærk syre (HCl).  \n"
                 "Syren neutraliserer en del af basen: A⁻ + H⁺ → HA.  \n"
@@ -3788,7 +3789,128 @@ Koncentrationer i blandingen (V_total = {v_tot2:.3f} L):
 [A⁻] = {c_a_eq2:.4f} M, [HA] = {c_ha_eq2:.4f} M
 """)
 
-    
+        else:  # Tilsæt syre/base til eksisterende buffer
+            st.info(
+                "💡 **Hvornår?** Du har en eksisterende buffer (HA + A⁻) og tilsætter en stærk syre eller stærk base.  \n"
+                "Typisk eksamenssituation: to basisopløsninger blandes til en buffer, og derefter tilsættes syre/base.  \n"
+                "Brug Henderson-Hasselbalch på de justerede molmængder."
+            )
+            st.markdown("**Trin 1 – Eksisterende buffer**")
+            col1, col2 = st.columns(2)
+            with col1:
+                c_ha_buf = st.number_input("Svag syre [HA] (M):", value=0.100, step=0.01, min_value=1e-10, key="bab_c_ha")
+                v_ha_buf = st.number_input("Volumen HA-opløsning (L):", value=1.0, step=0.1, min_value=0.001, key="bab_v_ha")
+            with col2:
+                c_a_buf  = st.number_input("Konjugeret base [A⁻] (M):", value=0.100, step=0.01, min_value=1e-10, key="bab_c_a")
+                v_a_buf  = st.number_input("Volumen A⁻-opløsning (L):", value=1.0, step=0.1, min_value=0.001, key="bab_v_a")
+                ka_buf   = st.number_input("Ka for svag syre:", value=1.8e-5, step=1e-6, min_value=1e-15, format="%.2e", key="bab_ka")
+
+            st.markdown("**Trin 2 – Tilsæt syre eller base**")
+            add_type = st.radio(
+                "Tilsæt:",
+                ["Stærk syre (HCl/HNO₃)", "Stærk base (NaOH/KOH)"],
+                horizontal=True,
+                key="bab_add_type",
+            )
+            col3, col4 = st.columns(2)
+            with col3:
+                c_add = st.number_input(
+                    "Koncentration tilsat opløsning (M):",
+                    value=0.050, step=0.01, min_value=1e-10, key="bab_c_add"
+                )
+            with col4:
+                v_add = st.number_input(
+                    "Volumen tilsat opløsning (L):",
+                    value=0.500, step=0.1, min_value=0.001, key="bab_v_add"
+                )
+
+            if st.button("Beregn ny pH", type="primary", key="buf_mix_add"):
+                n_ha_buf = c_ha_buf * v_ha_buf
+                n_a_buf  = c_a_buf  * v_a_buf
+                n_add    = c_add    * v_add
+                pka_buf  = -_math.log10(ka_buf)
+                v_tot_buf = v_ha_buf + v_a_buf + v_add
+
+                if add_type == "Stærk syre (HCl/HNO₃)":
+                    # H⁺ + A⁻ → HA
+                    if n_add >= n_a_buf:
+                        st.error(
+                            f"⚠️ Overskud af syre (n_HCl = {n_add:.4f} mol ≥ n_A⁻ = {n_a_buf:.4f} mol). "
+                            "Bufferen er overskredet – der dannes ingen buffer."
+                        )
+                    else:
+                        n_ha_new = n_ha_buf + n_add
+                        n_a_new  = n_a_buf  - n_add
+                        ratio_buf = n_a_new / n_ha_new
+                        ph_buf    = pka_buf + _math.log10(ratio_buf)
+                        st.success(f"✅ **Ny pH = {ph_buf:.3f}**")
+                        with st.expander("🔍 Trin-for-trin", expanded=True):
+                            st.markdown(f"""
+**Start – buffer:**
+- n(HA) = {c_ha_buf} M × {v_ha_buf} L = **{n_ha_buf:.4f} mol**
+- n(A⁻) = {c_a_buf} M × {v_a_buf} L = **{n_a_buf:.4f} mol**
+- pH_start = {pka_buf:.3f} + log({n_a_buf:.4f}/{n_ha_buf:.4f}) = **{pka_buf + _math.log10(n_a_buf/n_ha_buf):.3f}**
+
+**Tilsæt stærk syre:**
+- n(HCl) = {c_add} M × {v_add} L = **{n_add:.4f} mol**
+
+**Reaktion:** H⁺ + A⁻ → HA
+
+| | A⁻ | H⁺ | HA |
+|--|--|--|--|
+| Før (mol) | {n_a_buf:.4f} | {n_add:.4f} | {n_ha_buf:.4f} |
+| Ændring | −{n_add:.4f} | −{n_add:.4f} | +{n_add:.4f} |
+| Efter (mol) | **{n_a_new:.4f}** | 0 | **{n_ha_new:.4f}** |
+
+**Henderson-Hasselbalch:**
+pH = pKa + log([A⁻]/[HA])
+pH = {pka_buf:.3f} + log({n_a_new:.4f}/{n_ha_new:.4f})
+pH = {pka_buf:.3f} + ({_math.log10(ratio_buf):.3f})
+**pH = {ph_buf:.3f}**
+
+V_total = {v_tot_buf:.3f} L → [HA] = {n_ha_new/v_tot_buf:.4f} M, [A⁻] = {n_a_new/v_tot_buf:.4f} M
+""")
+                else:
+                    # OH⁻ + HA → A⁻ + H₂O
+                    if n_add >= n_ha_buf:
+                        st.error(
+                            f"⚠️ Overskud af base (n_NaOH = {n_add:.4f} mol ≥ n_HA = {n_ha_buf:.4f} mol). "
+                            "Bufferen er overskredet – al syren er neutraliseret."
+                        )
+                    else:
+                        n_ha_new = n_ha_buf - n_add
+                        n_a_new  = n_a_buf  + n_add
+                        ratio_buf = n_a_new / n_ha_new
+                        ph_buf    = pka_buf + _math.log10(ratio_buf)
+                        st.success(f"✅ **Ny pH = {ph_buf:.3f}**")
+                        with st.expander("🔍 Trin-for-trin", expanded=True):
+                            st.markdown(f"""
+**Start – buffer:**
+- n(HA) = {c_ha_buf} M × {v_ha_buf} L = **{n_ha_buf:.4f} mol**
+- n(A⁻) = {c_a_buf} M × {v_a_buf} L = **{n_a_buf:.4f} mol**
+- pH_start = {pka_buf:.3f} + log({n_a_buf:.4f}/{n_ha_buf:.4f}) = **{pka_buf + _math.log10(n_a_buf/n_ha_buf):.3f}**
+
+**Tilsæt stærk base:**
+- n(NaOH) = {c_add} M × {v_add} L = **{n_add:.4f} mol**
+
+**Reaktion:** OH⁻ + HA → A⁻ + H₂O
+
+| | HA | OH⁻ | A⁻ |
+|--|--|--|--|
+| Før (mol) | {n_ha_buf:.4f} | {n_add:.4f} | {n_a_buf:.4f} |
+| Ændring | −{n_add:.4f} | −{n_add:.4f} | +{n_add:.4f} |
+| Efter (mol) | **{n_ha_new:.4f}** | 0 | **{n_a_new:.4f}** |
+
+**Henderson-Hasselbalch:**
+pH = pKa + log([A⁻]/[HA])
+pH = {pka_buf:.3f} + log({n_a_new:.4f}/{n_ha_new:.4f})
+pH = {pka_buf:.3f} + ({_math.log10(ratio_buf):.3f})
+**pH = {ph_buf:.3f}**
+
+V_total = {v_tot_buf:.3f} L → [HA] = {n_ha_new/v_tot_buf:.4f} M, [A⁻] = {n_a_new/v_tot_buf:.4f} M
+""")
+
+
     elif mode == "Target pH":
         st.markdown("#### Target Buffer pH")
         target_ph = st.number_input("Target pH:", value=5.0, step=0.1, min_value=0.0, max_value=14.0, key="buf_target_ph")
