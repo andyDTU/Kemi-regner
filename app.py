@@ -676,6 +676,8 @@ def show_exam_guide_page():
                     st.caption(f"→ {tip}")
                 with col_btn:
                     if st.button("Åbn →", key=f"exam_nav_{task_idx}", use_container_width=True):
+                        page_label = PAGE_QUERY_TO_LABEL.get(page, "🏠 Fundamentals")
+                        st.session_state["_pending_page"] = page_label
                         st.query_params["page"] = page
                         if tab:
                             st.session_state[f"nav_{page.replace('-', '_')}"] = tab
