@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections import Counter
 from dataclasses import dataclass
 import itertools
 import math
@@ -12,6 +13,89 @@ from typing import Dict, List, Optional, Tuple
 from core.formula import parse_chemical_formula
 from core.periodic_table import get_element_by_symbol
 
+
+# ---------------------------------------------------------------------------
+# Predefined topologies for multi-center / chain molecules that cannot be
+# auto-inferred from sum formula alone.
+# Key: (normalised_formula, charge)  e.g. ("C2O4", -2)
+# Value: (atom_symbols_in_order, list_of_(a,b) bond pairs)
+# ---------------------------------------------------------------------------
+_PREDEFINED_TOPOLOGIES: Dict[Tuple[str, int], Tuple[List[str], List[Tuple[int, int]]]] = {
+    # Oxalate C2O4^2-  /  oxalic acid C2H2O4
+    #   O    O
+    #   ‖    ‖
+    #   C0 - C1
+    #   |    |
+    #   O    O
+    ("C2O4", -2): (
+        ["C", "C", "O", "O", "O", "O"],
+        [(0, 1), (0, 2), (0, 3), (1, 4), (1, 5)],
+    ),
+    ("C2H2O4", 0): (
+        ["C", "C", "O", "O", "O", "O", "H", "H"],
+        # HO-C(=O)-C(=O)-OH  → O2 and O4 carry the H
+        [(0, 1), (0, 2), (0, 3), (1, 4), (1, 5), (2, 6), (4, 7)],
+    ),
+    # Hydrogen peroxide  H2O2
+    ("H2O2", 0): (
+        ["O", "O", "H", "H"],
+        [(0, 1), (0, 2), (1, 3)],
+    ),
+    # Dinitrogen tetroxide  N2O4
+    ("N2O4", 0): (
+        ["N", "N", "O", "O", "O", "O"],
+        [(0, 1), (0, 2), (0, 3), (1, 4), (1, 5)],
+    ),
+    # Hydrazine N2H4 (also handled by star, but explicit is cleaner)
+    ("N2H4", 0): (
+        ["N", "N", "H", "H", "H", "H"],
+        [(0, 1), (0, 2), (0, 3), (1, 4), (1, 5)],
+    ),
+    # Dinitrogen N2
+    ("N2", 0): (
+        ["N", "N"],
+        [(0, 1)],
+    ),
+    # Ethane C2H6
+    ("C2H6", 0): (
+        ["C", "C", "H", "H", "H", "H", "H", "H"],
+        [(0, 1), (0, 2), (0, 3), (0, 4), (1, 5), (1, 6), (1, 7)],
+    ),
+    # Acetaldehyde CH3CHO
+    ("C2H4O", 0): (
+        ["C", "C", "O", "H", "H", "H", "H"],
+        # CH3-CHO: C0(H,H,H)-C1(=O,H)
+        [(0, 1), (1, 2), (1, 6), (0, 3), (0, 4), (0, 5)],
+    ),
+    # Ethylene glycol C2H6O2
+    ("C2H6O2", 0): (
+        ["C", "C", "O", "O", "H", "H", "H", "H", "H", "H"],
+        [(0, 1), (0, 2), (0, 4), (0, 5), (1, 3), (1, 6), (1, 7), (2, 8), (3, 9)],
+    ),
+    # Acetic acid (also reachable as CH3COOH)
+    ("C2H4O2", 0): (
+        ["C", "C", "O", "O", "H", "H", "H", "H"],
+        # CH3-C(=O)-OH: C0(H,H,H)-C1(=O2,O3H)
+        [(0, 1), (1, 2), (1, 3), (0, 4), (0, 5), (0, 6), (3, 7)],
+    ),
+    # Thiosulfate S2O3^2-
+    ("S2O3", -2): (
+        ["S", "S", "O", "O", "O"],
+        # Central S0, terminal S1 and three O
+        [(0, 1), (0, 2), (0, 3), (0, 4)],
+    ),
+    # Peroxodisulfate S2O8^2-
+    ("S2O8", -2): (
+        ["S", "S", "O", "O", "O", "O", "O", "O", "O", "O"],
+        [(0, 1), (0, 2), (0, 3), (0, 4), (0, 5), (1, 6), (1, 7), (1, 8), (1, 9)],
+    ),
+    # Dichromate Cr2O7^2-
+    ("Cr2O7", -2): (
+        ["Cr", "Cr", "O", "O", "O", "O", "O", "O", "O"],
+        # Cr0-O2(bridge)-Cr1, each Cr has 3 more terminal O
+        [(0, 2), (1, 2), (0, 3), (0, 4), (0, 5), (1, 6), (1, 7), (1, 8)],
+    ),
+}
 
 HALOGENS = {"F", "Cl", "Br", "I", "At", "Ts"}
 ELECTRONEGATIVITY = {
@@ -472,6 +556,113 @@ def _build_star(parsed: ParsedSpecies) -> LewisStructure:
     )
 
 
+def _build_from_topology(
+    parsed: ParsedSpecies,
+    atom_symbols: List[str],
+    connectivity: List[Tuple[int, int]],
+) -> LewisStructure:
+    """Build a Lewis structure from an explicit atom list and bond connectivity."""
+    atoms = [AtomState(index=i, symbol=s) for i, s in enumerate(atom_symbols)]
+    bonds = [BondState(a=a, b=b, order=1) for a, b in connectivity]
+    total = calculate_total_valence_electrons(parsed)
+    remaining = total - 2 * len(bonds)
+    warnings: List[str] = []
+
+    if remaining < 0:
+        warnings.append("For få valenselektroner til basisbindinger – tjek formel/ladning.")
+        remaining = 0
+
+    # Identify terminal vs internal atoms by degree
+    degree: Counter = Counter()
+    for a, b in connectivity:
+        degree[a] += 1
+        degree[b] += 1
+
+    terminal_indices = [i for i in range(len(atoms)) if degree[i] == 1]
+    internal_indices = [i for i in range(len(atoms)) if degree[i] > 1]
+
+    # Fill terminals first (H doesn't need extra pairs)
+    for idx in terminal_indices:
+        atom = atoms[idx]
+        need = _target_electrons(atom.symbol) - _electrons_around(atom, bonds)
+        use = min(max(0, need), remaining)
+        if use % 2 != 0:
+            use -= 1
+        atom.lone_pairs += use // 2
+        remaining -= use
+
+    # Distribute remainder to internal atoms
+    for idx in internal_indices:
+        atom = atoms[idx]
+        need = _target_electrons(atom.symbol) - _electrons_around(atom, bonds)
+        use = min(max(0, need), remaining)
+        if use % 2 != 0:
+            use -= 1
+        atom.lone_pairs += use // 2
+        remaining -= use
+
+    # Promote lone pairs to multiple bonds to satisfy octets, iterating over
+    # each internal (non-H) atom as the "central" atom in turn.
+    for central_index in internal_indices:
+        central = atoms[central_index]
+        if central.symbol == "H":
+            continue
+        central_target = _target_electrons(central.symbol)
+        neighbors = [b.b if b.a == central_index else b.a
+                     for b in bonds if central_index in (b.a, b.b)]
+
+        deficit = central_target - _electrons_around(central, bonds)
+        iterations = 0
+        while deficit > 0 and iterations < 20:
+            iterations += 1
+            best_move: Optional[int] = None
+            best_score: Optional[tuple] = None
+            for tidx in neighbors:
+                term = atoms[tidx]
+                bond = _find_bond(central_index, tidx, bonds)
+                if term.symbol == "H" or term.lone_pairs <= 0 or bond.order >= 3:
+                    continue
+                term.lone_pairs -= 1
+                bond.order += 1
+                _compute_formal_charges(atoms, bonds)
+                score = _formal_charge_preference_score(atoms, bonds)
+                bond.order -= 1
+                term.lone_pairs += 1
+                _compute_formal_charges(atoms, bonds)
+                if best_score is None or score < best_score:
+                    best_score = score
+                    best_move = tidx
+            if best_move is None:
+                break
+            b = _find_bond(central_index, best_move, bonds)
+            atoms[best_move].lone_pairs -= 1
+            b.order += 1
+            _compute_formal_charges(atoms, bonds)
+            deficit = central_target - _electrons_around(central, bonds)
+
+    _compute_formal_charges(atoms, bonds)
+
+    charge_sum = sum(atom.formal_charge for atom in atoms)
+    if charge_sum != parsed.charge:
+        warnings.append(
+            f"Formelle ladninger summerer til {charge_sum:+d}, forventet {parsed.charge:+d}."
+        )
+
+    # Simple resonance estimate for symmetric internal atoms
+    resonance_forms = 1
+    if len(internal_indices) == 1:
+        resonance_forms = _estimate_resonance_forms(internal_indices[0], atoms, bonds)
+
+    return LewisStructure(
+        parsed=parsed,
+        atoms=atoms,
+        bonds=bonds,
+        total_valence_electrons=total,
+        resonance_forms=resonance_forms,
+        warnings=warnings,
+    )
+
+
 def _estimate_resonance_forms(central_index: int, atoms: List[AtomState], bonds: List[BondState]) -> int:
     # Heuristic: equivalent terminal atoms with same symbol where k double bonds can be distributed.
     terminal_groups: Dict[str, List[BondState]] = {}
@@ -624,13 +815,47 @@ def _build_atom_positions(structure: LewisStructure) -> Dict[int, Tuple[float, f
     if n_atoms == 2:
         return {atoms[0].index: (130.0, 140.0), atoms[1].index: (290.0, 140.0)}
 
-    degree = {atom.index: 0 for atom in atoms}
+    degree: Dict[int, int] = {atom.index: 0 for atom in atoms}
     for bond in bonds:
         degree[bond.a] += 1
         degree[bond.b] += 1
 
-    center_index = max(degree.keys(), key=lambda idx: degree[idx])
-    positions: Dict[int, Tuple[float, float]] = {}
+    max_degree = max(degree.values())
+    centers = [idx for idx, d in degree.items() if d == max_degree]
+
+    # ── Two-center chain layout (e.g. C2O4^2-, H2O2, N2H4) ───────────────
+    if len(centers) == 2:
+        c0, c1 = centers[0], centers[1]
+        positions: Dict[int, Tuple[float, float]] = {}
+        positions[c0] = (155.0, 150.0)
+        positions[c1] = (265.0, 150.0)
+
+        terminals_c0 = [b.b if b.a == c0 else b.a
+                        for b in bonds if c0 in (b.a, b.b) and (b.b if b.a == c0 else b.a) != c1]
+        terminals_c1 = [b.b if b.a == c1 else b.a
+                        for b in bonds if c1 in (b.a, b.b) and (b.b if b.a == c1 else b.a) != c0]
+
+        radius = 90.0
+        # Spread terminals of c0 to the LEFT, terminals of c1 to the RIGHT
+        base_angle_c0 = math.pi           # pointing left
+        base_angle_c1 = 0.0               # pointing right
+        spread = math.pi * 0.65           # ~117° total spread
+
+        for i, tidx in enumerate(terminals_c0):
+            n = len(terminals_c0)
+            angle = base_angle_c0 + spread * ((i / max(n - 1, 1)) - 0.5)
+            positions[tidx] = (155.0 + radius * math.cos(angle),
+                               150.0 + radius * math.sin(angle))
+        for i, tidx in enumerate(terminals_c1):
+            n = len(terminals_c1)
+            angle = base_angle_c1 + spread * ((i / max(n - 1, 1)) - 0.5)
+            positions[tidx] = (265.0 + radius * math.cos(angle),
+                               150.0 + radius * math.sin(angle))
+        return positions
+
+    # ── Standard star layout ──────────────────────────────────────────────
+    center_index = centers[0]
+    positions = {}
     positions[center_index] = (210.0, 150.0)
 
     others = [atom.index for atom in atoms if atom.index != center_index]
@@ -810,6 +1035,12 @@ def generate_lewis_structure(parsed: ParsedSpecies) -> LewisStructure:
     if len(expanded) < 2:
         raise LewisStructureError("Lewis-struktur kræver mindst to atomer.")
 
+    # Check predefined topology table first
+    key = (parsed.formula, parsed.charge)
+    if key in _PREDEFINED_TOPOLOGIES:
+        atom_symbols, connectivity = _PREDEFINED_TOPOLOGIES[key]
+        return _build_from_topology(parsed, atom_symbols, connectivity)
+
     if len(expanded) == 2:
         return _build_diatomic(parsed)
 
@@ -860,7 +1091,10 @@ def calculate_lewis_structure_with_steps(raw_input: str) -> Tuple[LewisStructure
     parsed = parse_species_input(raw_input)
     steps.append(f"Parsed input: formel={parsed.formula}, ladning={parsed.charge:+d}")
 
-    _validate_supported_complexity(parsed)
+    # Skip complexity check for predefined topologies
+    key = (parsed.formula, parsed.charge)
+    if key not in _PREDEFINED_TOPOLOGIES:
+        _validate_supported_complexity(parsed)
     steps.append("Input-kompleksitet valideret for entydig Lewis-struktur.")
 
     total_valence = calculate_total_valence_electrons(parsed)
