@@ -304,6 +304,32 @@ def render_search_sidebar():
                     st.rerun()
         else:
             st.sidebar.caption("Ingen resultater – prøv et andet søgeord.")
+
+    # ── Emne-genveje ─────────────────────────────────────────────────────────
+    st.sidebar.markdown("---")
+    st.sidebar.caption("📚 **Hop til emne:**")
+    _TOPIC_SHORTCUTS = [
+        ("🧪 Syrer", "acids-bases"),
+        ("🔥 Termo", "thermochemistry"),
+        ("📊 Gasser", "gases"),
+        ("⚗️ Ligevægt", "ligevaegt"),
+        ("🔋 Elektro", "electrochemistry"),
+        ("⚡ Kinetik", "kinetics"),
+        ("🧮 Stofmæng.", "stoichiometry"),
+        ("⚖️ Mol/Atom", "atoms-molar"),
+        ("🌡️ Kolligative", "koge-fryse"),
+        ("📝 Eksamen", "eksamensguide"),
+    ]
+    pairs = [_TOPIC_SHORTCUTS[i:i+2] for i in range(0, len(_TOPIC_SHORTCUTS), 2)]
+    for pair in pairs:
+        cols = st.sidebar.columns(len(pair))
+        for col, (label, page) in zip(cols, pair):
+            with col:
+                if st.button(label, key=f"topic_nav_{page}", use_container_width=True):
+                    page_label = PAGE_QUERY_TO_LABEL.get(page, "🏠 Fundamentals")
+                    st.session_state["_pending_page"] = page_label
+                    st.query_params["page"] = page
+                    st.rerun()
     st.sidebar.markdown("---")
 
 
