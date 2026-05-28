@@ -9,9 +9,6 @@ import streamlit as st
 import pandas as pd
 import math
 from pathlib import Path
-from urllib.parse import quote
-
-import requests
 
 # Import calculators
 from calculators.molar_mass import calculate_molar_mass_with_steps, format_composition_table
@@ -8028,79 +8025,6 @@ _FILTER_TO_CATEGORY = {
 }
 
 
-@st.cache_data(ttl=24 * 60 * 60, show_spinner=False)
-def _resolve_structure_image(name_da: str, name_en: str, formula: str) -> dict:
-    """Resolve a structure image URL from web sources (Wikipedia -> PubChem)."""
-    wikipedia_api = "https://en.wikipedia.org/w/api.php"
-    wikipedia_summary = "https://en.wikipedia.org/api/rest_v1/page/summary/"
-
-    search_terms = []
-    if name_en:
-        search_terms.append(name_en)
-        search_terms.append(f"{name_en} molecule")
-    if name_da:
-        search_terms.append(name_da)
-    search_terms.append(formula)
-
-    for term in search_terms:
-        try:
-            search_resp = requests.get(
-                wikipedia_api,
-                params={
-                    "action": "query",
-                    "list": "search",
-                    "srsearch": f"{term} chemistry",
-                    "format": "json",
-                    "utf8": 1,
-                    "srlimit": 1,
-                },
-                timeout=5,
-            )
-            search_resp.raise_for_status()
-            data = search_resp.json()
-            hits = data.get("query", {}).get("search", [])
-            if not hits:
-                continue
-
-            title = hits[0].get("title")
-            if not title:
-                continue
-
-            summary_resp = requests.get(
-                wikipedia_summary + quote(title),
-                timeout=5,
-            )
-            summary_resp.raise_for_status()
-            summary_data = summary_resp.json()
-            thumb_url = summary_data.get("thumbnail", {}).get("source")
-            page_url = summary_data.get("content_urls", {}).get("desktop", {}).get("page")
-
-            if thumb_url:
-                return {
-                    "url": thumb_url,
-                    "caption": f"Strukturillustration fra Wikipedia: {title}",
-                    "source": page_url or "https://en.wikipedia.org",
-                }
-        except Exception:
-            continue
-
-    for term in search_terms:
-        try:
-            pubchem_url = (
-                "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/"
-                f"{quote(term)}/PNG?image_size=large"
-            )
-            resp = requests.get(pubchem_url, timeout=5)
-            if resp.status_code == 200 and resp.headers.get("Content-Type", "").startswith("image/"):
-                return {
-                    "url": pubchem_url,
-                    "caption": f"2D-struktur fra PubChem: {term}",
-                    "source": "https://pubchem.ncbi.nlm.nih.gov",
-                }
-        except Exception:
-            continue
-
-    return {"url": "", "caption": "", "source": ""}
 
 
 def _render_substance_card(s: Substance) -> None:
@@ -8163,15 +8087,7 @@ def _render_substance_card(s: Substance) -> None:
         if _local_img.exists():
             st.image(str(_local_img), caption=f"2D-struktur: {s.name_da}", use_container_width=False)
         else:
-            image_info = _resolve_structure_image(s.name_da, s.name_en or "", s.formula)
-            if image_info["url"]:
-                try:
-                    st.image(image_info["url"], caption=image_info["caption"], use_container_width=False)
-                    st.caption(f"Kilde: {image_info['source']}")
-                except AttributeError:
-                    st.markdown(f"Strukturbillede: {image_info['caption']}")
-            else:
-                st.info("Intet struktur-billede fundet. Kør `scripts/download_structure_images.py` for offline-brug.")
+            st.info("Intet lokalt strukturbillede. Kør `python scripts/download_structure_images.py` én gang for at hente dem.")
 
     # ── Kemiske egenskaber ─────────────────────────────────────────────────
     chem_lines = []
