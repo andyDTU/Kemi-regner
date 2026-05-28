@@ -183,6 +183,9 @@ SEARCH_INDEX = [
     {"title": "Debye-Hückel aktivitetskoefficent", "keywords": ["debye huckel", "debye-hückel", "aktivitetskoefficent", "gamma", "γ±", "ionsstyrke", "ionisk styrke", "aktivitet", "log gamma", "nicht-ideale opløsning", "koncentration vs aktivitet"], "page": "acids-bases", "tab": "🧮 Debye-Hückel", "description": "log γ± = −A|z+z−|√I – aktivitetskorrektion for ionopløsninger"},
     {"title": "Born-Haber cyklus / Gitterenthalpi", "keywords": ["born haber", "born-haber", "gitterenthalpi", "lattice energy", "ionisk bindingsenergi", "sublimation", "ioniseringsenergi", "elektronaffinitet", "hess ionisk", "dannnelsesenthalpi ionisk", "salt krystal enthalpi"], "page": "thermochemistry", "tab": "🔷 Born-Haber", "description": "Beregn gitterenthalpi via Born-Haber cyklus – Hess' lov for ioniske salte"},
     {"title": "Stofmænge fra reaktionsligning", "keywords": ["stofmænge", "molforhold", "koefficient", "beregn mol fra ligning", "stoichiometrisk beregning", "omregn mol", "mole ratio", "reaktantmol til produktmol", "n fra reaktion"], "page": "stoichiometry", "tab": "🔢 Stofmænge fra ligning", "description": "n_B = n_A × (ν_B/ν_A) – koefficient-baseret stofmængeomregning fra afstemt ligning"},
+    {"title": "Halvliv – 0., 1., 2. orden", "keywords": ["halvliv", "half life", "t½", "1. orden halvliv", "2. orden halvliv", "ln2 over k", "t½ = 1/k[A]", "halveringstid reaktion"], "page": "kinetics", "tab": "📊 Halvliv", "description": "t½ for 0., 1. og 2. ordens reaktioner – se forskel og beregn"},
+    {"title": "Initial rates – reaktionsorden fra tabel", "keywords": ["initial rates", "initialhastighedsmetode", "reaktionsorden fra eksperiment", "bestem m og n", "method of initial rates", "eksperimentel orden", "rate tabel"], "page": "kinetics", "tab": "📋 Initial rates", "description": "Find reaktionsorden og k fra tabel med eksperimentelle initialhastigheder"},
+    {"title": "Ksp fælding – dannes bundfald?", "keywords": ["fældning", "bundfald", "precipitate", "q vs ksp", "ionprodukt", "overmættet", "precipitation check", "dannes der bundfald"], "page": "ligevaegt", "tab": "💧 Opløselighed (Ksp)", "description": "Q vs. Ksp – beregn om bundfald dannes ved blanding af to opløsninger"},
     {"title": "ICE-tabel / ligevægt", "keywords": ["ice tabel", "ice-tabel", "opstil ice", "opsæt ice", "ligevægtskoncentration", "beregn kc", "beregn kp"], "page": "ligevaegt", "tab": "🧊 ICE Table", "description": "ICE-tabel og ligevægtskoncentrationer"},
     {"title": "Q vs K – reaktionsretning", "keywords": ["reaktionskvotient", "q vs k", "hvilken retning", "går reaktionen frem", "går reaktionen tilbage", "forskydning"], "page": "ligevaegt", "tab": "📊 Reaktionskvotient Q", "description": "Beregn Q og sammenlign med K"},
     {"title": "Eksamensguide", "keywords": ["eksamensguide", "eksamen", "guide", "hjælp", "opgave", "hvilken beregner", "hvad skal jeg bruge"], "page": "eksamensguide", "tab": None, "description": "Oversigt over opgavetyper og hvilken beregner de kræver"},
@@ -612,6 +615,12 @@ _EXAM_TASKS = [
     ("En 1. ordens reaktion har k = 0,35 s⁻¹. Hvad er halvliv? Hvad er [A] efter 5 s?",
      "Nøgleord: reaktionsorden + k → integreret hastighedslov; halvliv t½ = ln2/k",
      "Integreret hastighedslov", "kinetics", "Integreret hastighedslov"),
+    ("En 2. ordens reaktion: k = 0,15 M⁻¹s⁻¹, [A]₀ = 0,20 M. Hvad er t½?",
+     "Nøgleord: 2. orden + k + [A]₀ → t½ = 1/(k·[A]₀) – afhænger af startkoncentration",
+     "Halvliv (2. orden)", "kinetics", "📊 Halvliv"),
+    ("Eksperiment 1: [A]=0,10, r=1,2×10⁻⁴. Eksperiment 2: [A]=0,20, r=4,8×10⁻⁴. Find orden og k.",
+     "Nøgleord: to eksperimenter + [A] + r → m = log(r₂/r₁)/log([A]₂/[A]₁)",
+     "Reaktionsorden fra initial rates", "kinetics", "📋 Initial rates"),
     ("k₁ = 1,0×10⁻³ s⁻¹ ved 25°C, Eₐ = 50 kJ/mol. Beregn k ved 35°C.",
      "Nøgleord: k ved én temp + Eₐ → Arrhenius: k₂ = k₁·exp(Eₐ/R·(1/T₁ − 1/T₂))",
      "Arrhenius", "kinetics", "Arrhenius"),
@@ -667,6 +676,9 @@ _EXAM_TASKS = [
     ("Ksp(AgCl) = 1,8×10⁻¹⁰. Hvad er opløseligheden af AgCl i mol/L?",
      "Nøgleord: Ksp + opløselighedsprodukt → ICE: AgCl ⇌ Ag⁺ + Cl⁻ → s² = Ksp",
      "Ksp – opløselighedsprodukt", "ligevaegt", "💧 Opløselighed (Ksp)"),
+    ("50 mL 0,010 M AgNO₃ blandes med 50 mL 0,020 M NaCl. Ksp(AgCl) = 1,8×10⁻¹⁰. Fældes der bundfald?",
+     "Nøgleord: Q vs Ksp → fortynding ved blanding → Q = [Ag⁺]·[Cl⁻] → Q > Ksp: bundfald",
+     "Fælding – Q vs Ksp", "ligevaegt", "💧 Opløselighed (Ksp)"),
     ("N₂ + 3H₂ ⇌ 2NH₃. Hvad sker der med ligevægten ved øget tryk? Ved øget temperatur?",
      "Nøgleord: ligevægt + ydre påvirkning → Le Chatelier: systemet modvirker forandringen",
      "Le Chateliers princip", "ligevaegt", "⚖️ Le Chateliers princip"),
@@ -722,13 +734,14 @@ def show_exam_guide_page():
         ],
         "⚗️ Ligevægt": [
             "ICE-tabel", "Reaktionskvotient (Q vs K)",
-            "Ksp – opløselighedsprodukt", "Le Chateliers princip",
+            "Ksp – opløselighedsprodukt", "Fælding – Q vs Ksp", "Le Chateliers princip",
         ],
         "🔋 Elektrokemi": [
             "Cellespænding (E°cell)", "ΔG° og K fra E°", "Nernst-ligning", "Faradays lov",
         ],
         "⚡ Kinetik": [
-            "Integreret hastighedslov", "Arrhenius",
+            "Integreret hastighedslov", "Halvliv (2. orden)",
+            "Reaktionsorden fra initial rates", "Arrhenius",
         ],
         "⚖️ Atoms & Molarmasse": [
             "Molarmasse", "Empirisk formel",
@@ -4237,18 +4250,19 @@ def show_solubility_tab():
     
     # Mode selection
     mode = st.radio(
-        "Calculation mode:",
-        ["Solubility from Ksp", "Ksp from solubility"],
+        "Beregningstype:",
+        ["Opløselighed fra Ksp", "Ksp fra opløselighed", "⚠️ Fældes der bundfald?"],
         horizontal=True,
     )
     _sol_help = {
-        "Solubility from Ksp": "💡 **Hvornår?** Du kender Ksp og vil finde opløseligheden (mol/L) ved ligevægt.",
-        "Ksp from solubility": "💡 **Hvornår?** Du kender opløseligheden (fx fra et eksperiment) og vil beregne Ksp.",
+        "Opløselighed fra Ksp": "💡 **Hvornår?** Du kender Ksp og vil finde molar opløselighed s (mol/L).",
+        "Ksp fra opløselighed": "💡 **Hvornår?** Du kender opløseligheden (fra eksperiment) og vil beregne Ksp.",
+        "⚠️ Fældes der bundfald?": "💡 **Hvornår?** To opløsninger blandes – dannes der bundfald? Beregn Q og sammenlign med Ksp.",
     }
     st.info(_sol_help[mode])
 
-    if mode == "Solubility from Ksp":
-        st.markdown("#### Calculate Solubility from Ksp")
+    if mode == "Opløselighed fra Ksp":
+        st.markdown("#### Beregn molar opløselighed fra Ksp")
         
         salt_formula = st.text_input(
             "Salt formula:",
@@ -4308,8 +4322,8 @@ def show_solubility_tab():
                 except Exception as e:
                     st.error(f"❌ **Fejl**: {str(e)}")
     
-    else:  # Ksp from solubility
-        st.markdown("#### Calculate Ksp from Solubility")
+    elif mode == "Ksp fra opløselighed":
+        st.markdown("#### Beregn Ksp fra opløselighed")
         
         salt_formula = st.text_input(
             "Salt formula:",
@@ -4346,6 +4360,72 @@ def show_solubility_tab():
                 
                 except Exception as e:
                     st.error(f"❌ **Fejl**: {str(e)}")
+
+    else:  # Fælding check
+        import math
+        st.markdown("#### ⚠️ Fældes der bundfald? (Q vs. Ksp)")
+        st.latex(r"Q = [M^{n+}]^x \cdot [X^{m-}]^y")
+        st.markdown(
+            "Bland to opløsninger og beregn ionprodukt Q. Sammenlign med Ksp:  \n"
+            "- **Q < Ksp** → ingen fældning (umættet)  \n"
+            "- **Q = Ksp** → præcis ved mætning  \n"
+            "- **Q > Ksp** → bundfald dannes (overmættet)"
+        )
+
+        col1, col2 = st.columns(2)
+        with col1:
+            st.markdown("**Opløsning 1 (kation)**")
+            kation = st.text_input("Kation (fx Ag⁺, Ca²⁺):", value="Ag⁺", key="ppt_cat")
+            c_cat = st.number_input("Koncentration kation (M):", value=0.010, min_value=0.0, format="%.4f", key="ppt_ccat")
+            V1 = st.number_input("Volumen V₁ (mL):", value=50.0, min_value=0.0, key="ppt_V1")
+            z_cat = st.number_input("Ladning kation |z|:", value=1, min_value=1, max_value=4, key="ppt_zcat")
+            nu_cat = st.number_input("Koefficient kation (x):", value=1, min_value=1, max_value=4, key="ppt_nucat")
+        with col2:
+            st.markdown("**Opløsning 2 (anion)**")
+            anion = st.text_input("Anion (fx Cl⁻, SO₄²⁻):", value="Cl⁻", key="ppt_an")
+            c_an = st.number_input("Koncentration anion (M):", value=0.020, min_value=0.0, format="%.4f", key="ppt_can")
+            V2 = st.number_input("Volumen V₂ (mL):", value=50.0, min_value=0.0, key="ppt_V2")
+            z_an = st.number_input("Ladning anion |z|:", value=1, min_value=1, max_value=4, key="ppt_zan")
+            nu_an = st.number_input("Koefficient anion (y):", value=1, min_value=1, max_value=4, key="ppt_nuan")
+
+        ksp_val = st.number_input("Ksp:", value=1.8e-10, min_value=1e-40, format="%.2e", key="ppt_ksp")
+
+        if st.button("Tjek fældning", type="primary", key="ppt_calc"):
+            V_total = V1 + V2
+            c_cat_mix = c_cat * V1 / V_total
+            c_an_mix = c_an * V2 / V_total
+            Q = (c_cat_mix ** nu_cat) * (c_an_mix ** nu_an)
+
+            st.success(f"**Q = {Q:.3e}**  |  **Ksp = {ksp_val:.3e}**")
+
+            if Q < ksp_val * 0.9999:
+                st.info(f"✅ **Q < Ksp** → Ingen fældning. Opløsningen er umættet.")
+            elif Q > ksp_val * 1.0001:
+                st.error(f"⚠️ **Q > Ksp** → **Bundfald dannes!** Opløsningen er overmættet.")
+            else:
+                st.warning("≈ Q ≈ Ksp → Præcis ved mætningspunktet.")
+
+            with st.expander("🔍 Trin-for-trin", expanded=True):
+                st.markdown(f"""
+1. **Fortynding ved blanding** (total volumen = {V1:.1f} + {V2:.1f} = {V_total:.1f} mL):
+   - [{kation}]_blandet = {c_cat:.4f} × {V1:.1f}/{V_total:.1f} = **{c_cat_mix:.4e} M**
+   - [{anion}]_blandet = {c_an:.4f} × {V2:.1f}/{V_total:.1f} = **{c_an_mix:.4e} M**
+2. **Ionprodukt Q:**
+   Q = [{kation}]^{nu_cat} × [{anion}]^{nu_an}
+   Q = {c_cat_mix:.4e}^{nu_cat} × {c_an_mix:.4e}^{nu_an} = **{Q:.3e}**
+3. **Sammenlign med Ksp = {ksp_val:.3e}:**
+   Q/Ksp = {Q/ksp_val:.2f} → {"Q > Ksp: fælder" if Q > ksp_val else "Q < Ksp: ingen fældning"}
+""")
+
+        st.markdown("---")
+        st.markdown("**Referencetabel – Ksp for udvalgte salte ved 25°C:**")
+        import pandas as pd
+        ksp_ref = {
+            "Salt": ["AgCl", "AgBr", "AgI", "BaSO₄", "CaCO₃", "CaF₂", "PbSO₄", "Mg(OH)₂", "Fe(OH)₃"],
+            "Ksp": ["1,8×10⁻¹⁰", "5,0×10⁻¹³", "8,3×10⁻¹⁷", "1,1×10⁻¹⁰", "3,3×10⁻⁹", "3,9×10⁻¹¹",
+                    "1,6×10⁻⁸", "5,6×10⁻¹²", "2,8×10⁻³⁹"],
+        }
+        st.dataframe(pd.DataFrame(ksp_ref), hide_index=True, use_container_width=True)
 
 
 def show_gas_laws_page():
@@ -5359,7 +5439,7 @@ def show_kinetics_page():
         calculate_arrhenius_two_point_Ea_with_steps,
     )
 
-    _kin_options = ["Integreret hastighedslov", "Bestem orden & k", "Arrhenius", "Hastighedsrelationer"]
+    _kin_options = ["Integreret hastighedslov", "📊 Halvliv", "Bestem orden & k", "📋 Initial rates", "Arrhenius", "Hastighedsrelationer"]
     _kin_active = _render_styled_tab_nav(_kin_options, key="kinetics_tab", nav_key="nav_kinetics")
 
     if _kin_active == "Integreret hastighedslov":
@@ -5389,8 +5469,75 @@ def show_kinetics_page():
             except Exception as e:
                 st.error(str(e))
         _quick_links([
+            ("📊 Halvliv", "kinetics", "📊 Halvliv"),
             ("Bestem orden & k", "kinetics", "Bestem orden & k"),
             ("Arrhenius", "kinetics", "Arrhenius"),
+        ])
+
+    elif _kin_active == "📊 Halvliv":
+        import math
+        st.markdown("#### 📊 Halvliv – t½ for reaktioner af 0., 1. og 2. orden")
+        st.markdown("Halvliv er den tid det tager for koncentrationen at falde til det halve.")
+
+        col1, col2 = st.columns(2)
+        with col1:
+            hl_order = st.selectbox("Reaktionsorden:", [0, 1, 2], index=1, key="hl_order")
+            hl_k = st.number_input("Hastighedskonstant k:", value=0.350, min_value=1e-12, format="%.4e", key="hl_k",
+                                   help="Enheder: M·s⁻¹ (0. orden), s⁻¹ (1. orden), M⁻¹·s⁻¹ (2. orden)")
+        with col2:
+            if hl_order in [0, 2]:
+                hl_C0 = st.number_input("[A]₀ (M):", value=0.100, min_value=1e-12, key="hl_C0")
+            else:
+                hl_C0 = None
+                st.markdown("*[A]₀ ikke nødvendig for 1. orden*")
+
+        formulas = {
+            0: (r"t_{1/2} = \frac{[A]_0}{2k}", "t½ = [A]₀ / (2k)"),
+            1: (r"t_{1/2} = \frac{\ln 2}{k}", "t½ = ln2 / k"),
+            2: (r"t_{1/2} = \frac{1}{k[A]_0}", "t½ = 1 / (k·[A]₀)"),
+        }
+        st.latex(formulas[hl_order][0])
+
+        if st.button("Beregn t½", type="primary", key="hl_calc"):
+            if hl_order == 0:
+                t_half = hl_C0 / (2 * hl_k)
+                steps = [
+                    f"**0. orden:** t½ = [A]₀ / (2k)",
+                    f"t½ = {hl_C0:.4f} / (2 × {hl_k:.4e}) = **{t_half:.4f} s**",
+                ]
+            elif hl_order == 1:
+                t_half = math.log(2) / hl_k
+                steps = [
+                    f"**1. orden:** t½ = ln2 / k",
+                    f"t½ = {math.log(2):.6f} / {hl_k:.4e} = **{t_half:.4f} s**",
+                    f"Bemærk: halvliv er **uafhængigt af [A]₀** for 1. orden.",
+                ]
+            else:
+                t_half = 1.0 / (hl_k * hl_C0)
+                steps = [
+                    f"**2. orden:** t½ = 1 / (k·[A]₀)",
+                    f"t½ = 1 / ({hl_k:.4e} × {hl_C0:.4f}) = **{t_half:.4f} s**",
+                    f"Bemærk: halvliv **afhænger af [A]₀** for 2. orden — det stiger over tid!",
+                ]
+
+            st.success(f"✅ **t½ = {t_half:.4f} s**  ({t_half/60:.3f} min)")
+            with st.expander("🔍 Trin-for-trin", expanded=True):
+                for s in steps:
+                    st.markdown(s)
+
+        st.markdown("---")
+        st.markdown("**Sammenligning af halvliv:**")
+        import pandas as pd
+        df_hl = pd.DataFrame({
+            "Orden": ["0. orden", "1. orden", "2. orden"],
+            "Formel": ["t½ = [A]₀/(2k)", "t½ = ln2/k", "t½ = 1/(k[A]₀)"],
+            "Afhænger af [A]₀?": ["Ja", "Nej", "Ja"],
+            "t½ over tid": ["Falder", "Konstant", "Stiger"],
+        })
+        st.dataframe(df_hl, hide_index=True, use_container_width=True)
+        _quick_links([
+            ("Integreret hastighedslov", "kinetics", "Integreret hastighedslov"),
+            ("Bestem orden & k", "kinetics", "Bestem orden & k"),
             ("☢️ Nuklear halvliv", "nuklear", None),
         ])
 
@@ -5412,6 +5559,137 @@ def show_kinetics_page():
                         st.markdown(s)
             except Exception as e:
                 st.error(str(e))
+
+    elif _kin_active == "📋 Initial rates":
+        import math, pandas as pd
+        st.markdown("#### 📋 Initial rates-metoden – bestem reaktionsorden fra eksperimenter")
+        st.latex(r"\text{Hastighedslov: } r = k[A]^m[B]^n")
+        st.markdown(
+            "Angiv mindst 3 eksperimenter. Metoden finder ordenen for hvert reaktant ved at sammenligne "
+            "to eksperimenter hvor kun ét reaktant ændres (**ceteris paribus**)."
+        )
+        st.info("💡 Typisk eksamen: du får en tabel med [A], [B] og initial rate – find m, n og k.")
+
+        n_reactants = st.radio("Antal reaktanter:", [1, 2], index=1, horizontal=True, key="ir_nreact")
+        n_exp = st.number_input("Antal eksperimenter:", value=3, min_value=2, max_value=6, step=1, key="ir_nexp")
+
+        headers = ["Eksperiment"] + (["[A] (M)", "[B] (M)"] if n_reactants == 2 else ["[A] (M)"]) + ["Initial rate (M/s)"]
+        defaults = {
+            2: [
+                [1, 0.10, 0.10, 1.2e-4],
+                [2, 0.20, 0.10, 4.8e-4],
+                [3, 0.10, 0.20, 2.4e-4],
+            ],
+            1: [
+                [1, 0.10, 1.2e-4],
+                [2, 0.20, 9.6e-4],
+                [3, 0.40, 7.7e-3],
+            ],
+        }[n_reactants]
+
+        rows = []
+        for i in range(int(n_exp)):
+            d = defaults[i] if i < len(defaults) else ([i+1] + [0.10]*n_reactants + [1e-5])
+            cols_row = st.columns(len(headers))
+            row = [i + 1]
+            cols_row[0].markdown(f"**Exp {i+1}**")
+            if n_reactants == 2:
+                row.append(cols_row[1].number_input("", value=float(d[1]), min_value=1e-9, format="%.4f", key=f"ir_A_{i}", label_visibility="collapsed"))
+                row.append(cols_row[2].number_input("", value=float(d[2]), min_value=1e-9, format="%.4f", key=f"ir_B_{i}", label_visibility="collapsed"))
+                row.append(cols_row[3].number_input("", value=float(d[3]), min_value=1e-20, format="%.3e", key=f"ir_r_{i}", label_visibility="collapsed"))
+            else:
+                row.append(cols_row[1].number_input("", value=float(d[1]), min_value=1e-9, format="%.4f", key=f"ir_A_{i}", label_visibility="collapsed"))
+                row.append(cols_row[2].number_input("", value=float(d[2]), min_value=1e-20, format="%.3e", key=f"ir_r_{i}", label_visibility="collapsed"))
+            rows.append(row)
+
+        if st.button("Beregn orden og k", type="primary", key="ir_calc"):
+            try:
+                data = rows
+                steps_out = []
+
+                # Find order m for A: find two rows where B is same
+                if n_reactants == 2:
+                    # Find pairs where B is same (within 1%)
+                    pair_A = None
+                    for i in range(len(data)):
+                        for j in range(i+1, len(data)):
+                            if abs(data[i][2] - data[j][2]) / data[i][2] < 0.02:
+                                if abs(data[i][1] - data[j][1]) / data[i][1] > 0.05:
+                                    pair_A = (i, j)
+                                    break
+                        if pair_A:
+                            break
+                    pair_B = None
+                    for i in range(len(data)):
+                        for j in range(i+1, len(data)):
+                            if abs(data[i][1] - data[j][1]) / data[i][1] < 0.02:
+                                if abs(data[i][2] - data[j][2]) / data[i][2] > 0.05:
+                                    pair_B = (i, j)
+                                    break
+                        if pair_B:
+                            break
+
+                    if pair_A:
+                        i, j = pair_A
+                        ratio_r = data[j][3] / data[i][3]
+                        ratio_A = data[j][1] / data[i][1]
+                        m_raw = math.log(ratio_r) / math.log(ratio_A)
+                        m = round(m_raw)
+                        steps_out.append(f"**Orden for A (m):** Exp {i+1} og {j+1} (samme [B])")
+                        steps_out.append(f"r{j+1}/r{i+1} = ([A]{j+1}/[A]{i+1})^m → {ratio_r:.4f} = {ratio_A:.4f}^m → m = ln({ratio_r:.4f})/ln({ratio_A:.4f}) = **{m_raw:.3f} ≈ {m}**")
+                    else:
+                        m = None
+                        steps_out.append("⚠️ Kunne ikke finde eksperimentpar med samme [B] – juster input.")
+
+                    if pair_B:
+                        i, j = pair_B
+                        ratio_r = data[j][3] / data[i][3]
+                        ratio_B = data[j][2] / data[i][2]
+                        n_raw = math.log(ratio_r) / math.log(ratio_B)
+                        n_ord = round(n_raw)
+                        steps_out.append(f"**Orden for B (n):** Exp {i+1} og {j+1} (samme [A])")
+                        steps_out.append(f"r{j+1}/r{i+1} = ([B]{j+1}/[B]{i+1})^n → {ratio_r:.4f} = {ratio_B:.4f}^n → n = **{n_raw:.3f} ≈ {n_ord}**")
+                    else:
+                        n_ord = None
+                        steps_out.append("⚠️ Kunne ikke finde eksperimentpar med samme [A] – juster input.")
+
+                    if m is not None and n_ord is not None:
+                        k_vals = [row[3] / (row[1]**m * row[2]**n_ord) for row in data]
+                        k_avg = sum(k_vals) / len(k_vals)
+                        steps_out.append(f"**Beregn k** for hvert eksperiment (k = r / ([A]^{m}·[B]^{n_ord})):")
+                        for idx, (row, kv) in enumerate(zip(data, k_vals)):
+                            steps_out.append(f"  Exp {idx+1}: k = {row[3]:.3e} / ({row[1]:.4f}^{m} × {row[2]:.4f}^{n_ord}) = **{kv:.4e}**")
+                        steps_out.append(f"**k (gennemsnit) = {k_avg:.4e} M^(1−m−n)·s⁻¹**")
+                        st.success(f"✅ **r = k·[A]^{m}·[B]^{n_ord}**   med  k = {k_avg:.4e}")
+                    else:
+                        st.warning("Kunne ikke bestemme begge ordener automatisk.")
+
+                else:  # single reactant
+                    all_m = []
+                    for i in range(len(data)):
+                        for j in range(i+1, len(data)):
+                            ratio_r = data[j][2] / data[i][2]
+                            ratio_A = data[j][1] / data[i][1]
+                            m_raw = math.log(ratio_r) / math.log(ratio_A)
+                            all_m.append(m_raw)
+                            steps_out.append(f"Exp {i+1}→{j+1}: m = ln(r{j+1}/r{i+1})/ln([A]{j+1}/[A]{i+1}) = {m_raw:.3f}")
+                    m = round(sum(all_m) / len(all_m))
+                    steps_out.append(f"**m ≈ {m}** (gennemsnit af {len(all_m)} par)")
+                    k_vals = [row[2] / row[1]**m for row in data]
+                    k_avg = sum(k_vals) / len(k_vals)
+                    steps_out.append(f"**k (gennemsnit) = {k_avg:.4e}**")
+                    st.success(f"✅ **r = k·[A]^{m}**   med  k = {k_avg:.4e}")
+
+                with st.expander("🔍 Trin-for-trin", expanded=True):
+                    for s in steps_out:
+                        st.markdown(s)
+            except Exception as e:
+                st.error(f"Fejl: {e}")
+        _quick_links([
+            ("📊 Halvliv", "kinetics", "📊 Halvliv"),
+            ("Integreret hastighedslov", "kinetics", "Integreret hastighedslov"),
+            ("Arrhenius", "kinetics", "Arrhenius"),
+        ])
 
     elif _kin_active == "Arrhenius":
         st.markdown("#### Arrhenius")
