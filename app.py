@@ -179,6 +179,7 @@ SEARCH_INDEX = [
     {"title": "Salthydrolyse / pH af salt", "keywords": ["salthydrolyse", "hydrolyse", "ph af salt", "natriumacetat", "ammoniumchlorid", "konjugeret base", "konjugeret syre", "kh", "salt opløsning ph", "basisk salt", "sur salt", "ch3coona", "nh4cl"], "page": "acids-bases", "tab": "⚗️ Salthydrolyse", "description": "pH af saltopløsninger via hydrolyse – Kh = Kw/Ka eller Kw/Kb"},
     {"title": "Ioniseringsgrad α", "keywords": ["ioniseringsgrad", "ionisering", "alpha", "α", "procentvis ioniseret", "5%regel", "5 procent regel", "svag syre ioniseret", "andel ioniseret", "degree of ionization"], "page": "acids-bases", "tab": "Svag syre/base", "description": "Beregn ioniseringsgrad α og procentvis ionisering for svag syre/base"},
     {"title": "Van't Hoff-plot", "keywords": ["van't hoff", "vant hoff", "lnk vs 1/t", "delta h fra k", "delta s fra k", "k ved to temperaturer", "hældning lnk", "reaktionsentalpi fra k", "temperaturafhængig k", "van hoff plot"], "page": "thermochemistry", "tab": None, "description": "Find ΔH° og ΔS° fra K-værdier ved to temperaturer – hældning og skæringspunkt i lnK vs. 1/T"},
+    {"title": "Find ΔH° fra ΔG° og ΔS°", "keywords": ["find delta h", "delta h fra delta g", "delta h fra delta s", "gibbs baglæns", "ukendt delta h", "delta g og delta s givet", "gibbs omregning", "find enthalpi fra gibbs"], "page": "thermochemistry", "tab": "🔍 Find ΔH°/ΔG°/ΔS°", "description": "ΔH° = ΔG° + T·ΔS° – find den ukendte af de tre størrelser"},
     {"title": "Kirchhoffs lov", "keywords": ["kirchhoff", "kirchhoffs lov", "delta h ved anden temperatur", "temperaturkorrektions", "delta cp", "varmekaps", "delta h 500k", "reaktionsenthalpi ved t"], "page": "thermochemistry", "tab": None, "description": "ΔH°(T₂) = ΔH°(T₁) + ΔCp×ΔT – korriger entalpien til anden temperatur"},
     {"title": "Molarmasse fra kolligative egenskaber", "keywords": ["molarmasse fra deltaT", "molarmasse fra osmose", "ukendt molarmasse", "find M fra frysepunkt", "find M fra kogepunkt", "baglæns kolligativ", "osmotisk tryk molarmasse", "protein molarmasse"], "page": "koge-fryse", "tab": None, "description": "Find molarmasse fra ΔTf, ΔTb eller osmotisk tryk – klassisk analyseopgave"},
     {"title": "Bufferkapacitet β", "keywords": ["bufferkapacitet", "buffer kapacitet", "beta buffer", "van slyke", "β buffer", "maksimal buffer", "modstandsevne syre base", "buffer robusthed"], "page": "acids-bases", "tab": "Buffer", "description": "β = 2,303×C×Ka×[H⁺]/(Ka+[H⁺])² – bufferens modstandsevne mod pH-ændring"},
@@ -7067,7 +7068,7 @@ def show_thermochemistry_page():
     from core.dhf_database import load_dhf_database, add_to_dhf_database, getDhf, normalizeSpeciesKey
     from core.hess_solver import solve_hess_problem
 
-    tab_enthalpy, tab_gibbs, tab_calorimetry, tab_heating, tab_vanthoff, tab_kirchhoff, tab_bornhaber = st.tabs([
+    tab_enthalpy, tab_gibbs, tab_calorimetry, tab_heating, tab_vanthoff, tab_kirchhoff, tab_bornhaber, tab_gibbs_inv = st.tabs([
         "Enthalpi (ΔH°)",
         "Gibbs (ΔG)",
         "Kalorimetri (q = mcΔT)",
@@ -7075,6 +7076,7 @@ def show_thermochemistry_page():
         "📈 Van't Hoff-plot",
         "🌡️ Kirchhoffs lov",
         "🔷 Born-Haber",
+        "🔍 Find ΔH°/ΔG°/ΔS°",
     ])
 
     with tab_gibbs:
@@ -7418,6 +7420,99 @@ def show_thermochemistry_page():
 
     with tab_bornhaber:
         _show_born_haber_tab()
+
+    with tab_gibbs_inv:
+        _show_gibbs_inverse_tab()
+
+
+def _show_gibbs_inverse_tab():
+    """Find ΔH°, ΔG° eller ΔS° fra de to andre via ΔG° = ΔH° − T·ΔS°."""
+    import math
+    st.markdown("### 🔍 Find ΔH°, ΔG° eller ΔS°")
+    st.markdown(
+        "Omregning af Gibbs-ligningen. Typisk eksamensopgave: ΔG° og ΔS° er givet – find ΔH°."
+    )
+    st.latex(r"\Delta G° = \Delta H° - T \cdot \Delta S°")
+    st.markdown("---")
+
+    solve_for = st.radio(
+        "Find:",
+        ["ΔH° (givet ΔG° og ΔS°)", "ΔG° (givet ΔH° og ΔS°)", "ΔS° (givet ΔH° og ΔG°)"],
+        horizontal=True,
+        key="ginv_solve_for",
+    )
+
+    col1, col2 = st.columns(2)
+
+    if solve_for == "ΔH° (givet ΔG° og ΔS°)":
+        with col1:
+            dg = st.number_input("ΔG° (kJ/mol):", value=-1080.2, step=1.0, key="ginv_dg")
+            ds = st.number_input("ΔS° (J/mol·K):", value=-180.0, step=1.0, key="ginv_ds")
+        with col2:
+            temp = st.number_input("Temperatur:", value=50.0, step=1.0, key="ginv_t")
+            t_unit = st.radio("Enhed:", ["°C", "K"], horizontal=True, key="ginv_tu")
+
+        if st.button("Beregn ΔH°", type="primary", key="ginv_btn"):
+            T_K = temp + 273.15 if t_unit == "°C" else temp
+            ds_kj = ds / 1000.0
+            dh = dg + T_K * ds_kj
+            st.success(f"✅ **ΔH° = {dh:.1f} kJ/mol**")
+            with st.expander("🔍 Trin-for-trin", expanded=True):
+                st.markdown(f"""
+**Gibbs-ligningen omformuleret:**
+$$\\Delta H° = \\Delta G° + T \\cdot \\Delta S°$$
+
+**Indsæt værdier:**
+- ΔG° = {dg} kJ/mol
+- ΔS° = {ds} J/mol·K = **{ds_kj:.4f} kJ/mol·K** _(omregnet til kJ)_
+- T = {temp} {t_unit} = **{T_K:.2f} K**
+
+$$\\Delta H° = {dg} + {T_K:.2f} \\times ({ds_kj:.4f})$$
+$$\\Delta H° = {dg} + ({T_K * ds_kj:.3f})$$
+$$\\boxed{{\\Delta H° = {dh:.1f}\\,\\text{{kJ/mol}}}}$$
+""")
+
+    elif solve_for == "ΔG° (givet ΔH° og ΔS°)":
+        with col1:
+            dh2 = st.number_input("ΔH° (kJ/mol):", value=-1138.0, step=1.0, key="ginv_dh2")
+            ds2 = st.number_input("ΔS° (J/mol·K):", value=-180.0, step=1.0, key="ginv_ds2")
+        with col2:
+            temp2 = st.number_input("Temperatur:", value=50.0, step=1.0, key="ginv_t2")
+            t_unit2 = st.radio("Enhed:", ["°C", "K"], horizontal=True, key="ginv_tu2")
+
+        if st.button("Beregn ΔG°", type="primary", key="ginv_btn2"):
+            T_K2 = temp2 + 273.15 if t_unit2 == "°C" else temp2
+            ds2_kj = ds2 / 1000.0
+            dg2 = dh2 - T_K2 * ds2_kj
+            spontan = "✅ Spontan (ΔG° < 0)" if dg2 < 0 else ("⚠️ Ikke spontan (ΔG° > 0)" if dg2 > 0 else "⚖️ Ved ligevægt (ΔG° = 0)")
+            st.success(f"✅ **ΔG° = {dg2:.1f} kJ/mol** — {spontan}")
+            with st.expander("🔍 Trin-for-trin", expanded=True):
+                st.markdown(f"""
+$$\\Delta G° = \\Delta H° - T \\cdot \\Delta S°$$
+$$\\Delta G° = {dh2} - {T_K2:.2f} \\times ({ds2_kj:.4f})$$
+$$\\Delta G° = {dh2} - ({T_K2 * ds2_kj:.3f})$$
+$$\\boxed{{\\Delta G° = {dg2:.1f}\\,\\text{{kJ/mol}}}}$$
+""")
+
+    else:  # Find ΔS°
+        with col1:
+            dh3 = st.number_input("ΔH° (kJ/mol):", value=-1138.0, step=1.0, key="ginv_dh3")
+            dg3 = st.number_input("ΔG° (kJ/mol):", value=-1080.2, step=1.0, key="ginv_dg3")
+        with col2:
+            temp3 = st.number_input("Temperatur:", value=50.0, step=1.0, key="ginv_t3")
+            t_unit3 = st.radio("Enhed:", ["°C", "K"], horizontal=True, key="ginv_tu3")
+
+        if st.button("Beregn ΔS°", type="primary", key="ginv_btn3"):
+            T_K3 = temp3 + 273.15 if t_unit3 == "°C" else temp3
+            ds3_kj = (dh3 - dg3) / T_K3
+            ds3_j = ds3_kj * 1000.0
+            with st.expander("🔍 Trin-for-trin", expanded=True):
+                st.markdown(f"""
+$$\\Delta S° = \\frac{{\\Delta H° - \\Delta G°}}{{T}} = \\frac{{{dh3} - ({dg3})}}{{{T_K3:.2f}}}$$
+$$\\Delta S° = \\frac{{{dh3 - dg3:.3f}}}{{{T_K3:.2f}}} = {ds3_kj:.5f}\\,\\text{{kJ/mol·K}}$$
+$$\\boxed{{\\Delta S° = {ds3_j:.2f}\\,\\text{{J/mol·K}}}}$$
+""")
+            st.success(f"✅ **ΔS° = {ds3_j:.2f} J/mol·K**")
 
 
 def _show_vanthoff_tab():
