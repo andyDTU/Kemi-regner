@@ -619,10 +619,70 @@ _EXAM_TASKS = [
     ("Hvad er molarmassen af Ca(NO₃)₂?",
      "Nøgleord: kemisk formel → summer atomvægte × antal",
      "Molarmasse", "atoms-molar", "⚖️ Molar Mass"),
+    ("En forbindelse indeholder 40,0% C, 6,7% H og 53,3% O. Hvad er den empiriske formel?",
+     "Nøgleord: procentvis sammensætning → divider med atomvægt → find mindste heltalforhold",
+     "Empirisk formel", "atoms-molar", "🔬 Empirisk formel"),
     # ── Kolligative egenskaber ───────────────────────────────────────────────
     ("10 g glukose (M = 180 g/mol) opløses i 100 g vand. Find frysepunktssænkning (Kf = 1,86).",
      "Nøgleord: opløst stof + masse opløsningsmiddel + Kf → ΔTf = Kf·m (molalitet)",
      "Frysepunktssænkning", "koge-fryse", None),
+    ("12 g urea (M = 60,1 g/mol) opløses i 250 g vand. Beregn kogepunktsstigningen (Kb = 0,512 °C·kg/mol).",
+     "Nøgleord: opløst stof + masse opløsningsmiddel + Kb → ΔTb = Kb·m",
+     "Kogepunktsstigning", "koge-fryse", None),
+    ("En proteinopløsning har osmotisk tryk π = 0,245 atm ved 25°C. Hvad er molariteten?",
+     "Nøgleord: osmotisk tryk + T → π = MRT → M = π/(RT)",
+     "Osmotisk tryk", "koge-fryse", None),
+    ("5,0 g ukendt stof opløst i 100 g vand giver ΔTf = 0,93°C (Kf = 1,86). Find molarmassen.",
+     "Nøgleord: ΔTf givet → m = ΔTf/Kf → mol = m·kg opløsningsmiddel → M = g/mol",
+     "M fra kolligative egenskaber", "koge-fryse", None),
+    # ── Syrer & Baser – avanceret ────────────────────────────────────────────
+    ("0,10 M CH₃COONa (Ka = 1,8×10⁻⁵). Beregn pH af saltopløsningen.",
+     "Nøgleord: salt af svag syre + stærk base → Kh = Kw/Ka → [OH⁻] = √(Kh·C) → pH",
+     "Salthydrolyse", "acids-bases", "⚗️ Salthydrolyse"),
+    ("En 0,10 M eddikesyre (Ka = 1,8×10⁻⁵). Hvad er ioniseringsgraden α?",
+     "Nøgleord: svag syre + Ka → α = [H⁺]/C₀; 5%-regel: ok hvis α < 0,05",
+     "Ioniseringsgrad α", "acids-bases", "Svag syre/base"),
+    ("Acetatbuffer: C = 0,10 M, pH = pKa = 4,74. Beregn bufferkapaciteten β.",
+     "Nøgleord: buffer ved pH = pKa → maksimal β; Van Slyke: β = 2,303·C·Ka·[H⁺]/(Ka+[H⁺])²",
+     "Bufferkapacitet β", "acids-bases", "Buffer"),
+    ("En 0,050 M NaCl-opløsning – beregn aktivitetskoefficienten γ± (Debye-Hückel, 25°C).",
+     "Nøgleord: ionsstyrke I = ½Σcᵢzᵢ² → log γ± = −A|z+z−|√I (A = 0,509)",
+     "Debye-Hückel", "acids-bases", "🧮 Debye-Hückel"),
+    # ── Gasser – avanceret ───────────────────────────────────────────────────
+    ("En ukendt gas har densitet 1,96 g/L ved 25°C og 1,00 atm. Identificer gassen.",
+     "Nøgleord: gasdensitet + T + P → M = ρRT/P (ideel gaslov baglæns)",
+     "M fra gasdensitet", "gases", "🔬 M fra densitet"),
+    # ── Stofmænge fra ligning ────────────────────────────────────────────────
+    ("N₂ + 3H₂ → 2NH₃. Hvis 6,0 mol H₂ reagerer, hvor mange mol NH₃ dannes?",
+     "Nøgleord: afstemt ligning + mol af ét stof → n_B = n_A × (ν_B/ν_A)",
+     "Stofmænge fra ligning", "stoichiometry", "🔢 Stofmænge fra ligning"),
+    # ── Elektrokemi – avanceret ──────────────────────────────────────────────
+    ("Zn/Cu-celle: [Zn²⁺] = 0,10 M, [Cu²⁺] = 1,0 M, E° = 1,10 V, n = 2. Beregn E.",
+     "Nøgleord: ikke-standard koncentrationer → Nernst: E = E° − (RT/nF)·lnQ",
+     "Nernst-ligning", "electrochemistry", "Nernst"),
+    ("2,0 A i 30 min. Hvor mange gram Cu aflejres fra CuSO₄? (M = 63,5 g/mol, n = 2)",
+     "Nøgleord: strøm + tid + n + M → Faraday: m = I·t·M / (n·F)",
+     "Faradays lov", "electrochemistry", "⚡ Faradays lov"),
+    # ── Ligevægt – avanceret ─────────────────────────────────────────────────
+    ("Ksp(AgCl) = 1,8×10⁻¹⁰. Hvad er opløseligheden af AgCl i mol/L?",
+     "Nøgleord: Ksp + opløselighedsprodukt → ICE: AgCl ⇌ Ag⁺ + Cl⁻ → s² = Ksp",
+     "Ksp – opløselighedsprodukt", "ligevaegt", "💧 Opløselighed (Ksp)"),
+    ("N₂ + 3H₂ ⇌ 2NH₃. Hvad sker der med ligevægten ved øget tryk? Ved øget temperatur?",
+     "Nøgleord: ligevægt + ydre påvirkning → Le Chatelier: systemet modvirker forandringen",
+     "Le Chateliers princip", "ligevaegt", "⚖️ Le Chateliers princip"),
+    # ── Termokemi – avanceret ────────────────────────────────────────────────
+    ("Beregn samlede energi for 50 g is fra −10°C til 25°C (smelteenthalpi = 6,01 kJ/mol).",
+     "Nøgleord: faseovergang + opvarmning → q_is + ΔHfus + q_vand via opvarmningskurve",
+     "Opvarmningskurve", "thermochemistry", None),
+    ("K = 0,010 ved 300 K og K = 0,050 ved 400 K. Find ΔH° og ΔS°.",
+     "Nøgleord: K ved to temperaturer → Van't Hoff: ln(K₂/K₁) = −ΔH°/R·(1/T₂−1/T₁)",
+     "Van't Hoff-plot", "thermochemistry", None),
+    ("ΔH°(298 K) = −92,4 kJ/mol, ΔCp = −45,3 J/(mol·K). Beregn ΔH° ved 500 K.",
+     "Nøgleord: ΔH° ved én temperatur + ΔCp → Kirchhoff: ΔH°(T₂) = ΔH°(T₁) + ΔCp·ΔT",
+     "Kirchhoffs lov", "thermochemistry", None),
+    ("NaCl: ΔHf° = −411, ΔHsub = 107, IE = 496, ½D(Cl₂) = 121, EA = −349 kJ/mol. Find ΔHlatt.",
+     "Nøgleord: Born-Haber → Hess: ΔHlatt = ΔHf° − (ΔHsub + IE + ½D + EA)",
+     "Born-Haber", "thermochemistry", None),
 ]
 
 
@@ -644,15 +704,39 @@ def show_exam_guide_page():
 
     # Grupper efter emne
     groups = {
-        "🧪 Syrer & Baser":             ["Stærk syre", "Stærk base", "Svag syre", "Buffer (Henderson-Hasselbalch)", "Titrering"],
-        "🔥 Termokemi":                  ["Gibbs fri energi (ΔG)", "Reaktionsenthalpi (ΔH°)", "Kalorimetri (q = mcΔT)"],
-        "🧮 Stofmængder & Reaktioner":   ["Balancer reaktion", "Begrænsende reaktant", "Fortynding", "Redoxafstemning"],
-        "📊 Gasser":                     ["Ideel gaslov (PV = nRT)", "Daltons lov (partialtryk)"],
-        "⚗️ Ligevægt":                   ["ICE-tabel", "Reaktionskvotient (Q vs K)"],
-        "🔋 Elektrokemi":                ["Cellespænding (E°cell)", "ΔG° og K fra E°"],
-        "⚡ Kinetik":                    ["Integreret hastighedslov", "Arrhenius"],
-        "⚖️ Atoms & Molarmasse":         ["Molarmasse"],
-        "🌡️ Kolligative egenskaber":     ["Frysepunktssænkning"],
+        "🧪 Syrer & Baser": [
+            "Stærk syre", "Stærk base", "Svag syre", "Ioniseringsgrad α",
+            "Buffer (Henderson-Hasselbalch)", "Bufferkapacitet β", "Titrering",
+            "Salthydrolyse", "Debye-Hückel",
+        ],
+        "🔥 Termokemi": [
+            "Gibbs fri energi (ΔG)", "Reaktionsenthalpi (ΔH°)", "Kalorimetri (q = mcΔT)",
+            "Opvarmningskurve", "Van't Hoff-plot", "Kirchhoffs lov", "Born-Haber",
+        ],
+        "🧮 Stofmængder & Reaktioner": [
+            "Balancer reaktion", "Begrænsende reaktant", "Stofmænge fra ligning",
+            "Fortynding", "Redoxafstemning", "Empirisk formel",
+        ],
+        "📊 Gasser": [
+            "Ideel gaslov (PV = nRT)", "Daltons lov (partialtryk)", "M fra gasdensitet",
+        ],
+        "⚗️ Ligevægt": [
+            "ICE-tabel", "Reaktionskvotient (Q vs K)",
+            "Ksp – opløselighedsprodukt", "Le Chateliers princip",
+        ],
+        "🔋 Elektrokemi": [
+            "Cellespænding (E°cell)", "ΔG° og K fra E°", "Nernst-ligning", "Faradays lov",
+        ],
+        "⚡ Kinetik": [
+            "Integreret hastighedslov", "Arrhenius",
+        ],
+        "⚖️ Atoms & Molarmasse": [
+            "Molarmasse", "Empirisk formel",
+        ],
+        "🌡️ Kolligative egenskaber": [
+            "Frysepunktssænkning", "Kogepunktsstigning", "Osmotisk tryk",
+            "M fra kolligative egenskaber",
+        ],
     }
     name_to_task = {t[2]: t for t in _EXAM_TASKS}
 
