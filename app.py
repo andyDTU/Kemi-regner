@@ -7072,15 +7072,15 @@ def show_thermochemistry_page():
     from core.dhf_database import load_dhf_database, add_to_dhf_database, getDhf, normalizeSpeciesKey
     from core.hess_solver import solve_hess_problem
 
-    tab_enthalpy, tab_gibbs, tab_calorimetry, tab_heating, tab_vanthoff, tab_kirchhoff, tab_bornhaber, tab_gibbs_inv = st.tabs([
+    tab_enthalpy, tab_gibbs, tab_gibbs_inv, tab_calorimetry, tab_heating, tab_vanthoff, tab_kirchhoff, tab_bornhaber = st.tabs([
         "Enthalpi (ΔH°)",
         "Gibbs (ΔG)",
+        "🔍 Find ΔH°/ΔG°/ΔS°",
         "Kalorimetri (q = mcΔT)",
         "Opvarmningskurve",
         "📈 Van't Hoff-plot",
         "🌡️ Kirchhoffs lov",
         "🔷 Born-Haber",
-        "🔍 Find ΔH°/ΔG°/ΔS°",
     ])
 
     with tab_gibbs:
