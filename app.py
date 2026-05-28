@@ -1991,6 +1991,11 @@ def _render_gibbs_calculator(include_page_header: bool = False):
     if "thermo_gibbs_temp_unit" not in st.session_state:
         st.session_state["thermo_gibbs_temp_unit"] = "K"
 
+    # Apply pending reset from "Load example" – must happen before widget is instantiated
+    if st.session_state.pop("_thermo_gibbs_temp_reset", False):
+        st.session_state["thermo_gibbs_temperature"] = 298.15
+        st.session_state["thermo_gibbs_temp_unit"] = "K"
+
     if "thermo_gibbs_reaction_input" not in st.session_state:
         st.session_state["thermo_gibbs_reaction_input"] = "N2(g) + 3 H2(g) -> 2 NH3(g)"
 
@@ -2058,8 +2063,7 @@ def _render_gibbs_calculator(include_page_header: bool = False):
     with c3:
         if st.button("Load example", key="thermo_gibbs_load_example"):
             st.session_state["thermo_gibbs_rows"] = _default_gibbs_reaction_rows()
-            st.session_state["thermo_gibbs_temperature"] = 298.15
-            st.session_state["thermo_gibbs_temp_unit"] = "K"
+            st.session_state["_thermo_gibbs_temp_reset"] = True
             st.rerun()
     with c4:
         if st.button("Reset", key="thermo_gibbs_reset"):
