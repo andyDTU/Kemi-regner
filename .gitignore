@@ -128,8 +128,8 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-# Streamlit
-.streamlit/
+# Streamlit (ignore secrets, allow config)
+.streamlit/secrets.toml
 
 # IDE
 .vscode/
