@@ -58,6 +58,7 @@ from calculators.oxidation_states import render_oxidation_states_tab
 from calculators.graham import render_graham_tab
 from calculators.nuclear_decay import render_nuclear_decay_page
 from calculators.formelsamling import render_formelsamling_page
+from calculators.faststofkemi import render_faststofkemi_page
 from calculators.oploselighedsregler import render_oploselighedsregler_page
 from core.reaction import balance_equation
 from core.molecule_db import (
@@ -97,6 +98,7 @@ NAVIGATION_OPTIONS = [
     "🧬 Organisk kemi",
     "📋 Formelsamling",
     "🔬 Molekyle database",
+    "🔩 Faststofkemi",
 ]
 
 PAGE_LABEL_TO_QUERY = {
@@ -120,6 +122,7 @@ PAGE_LABEL_TO_QUERY = {
     "🧬 Organisk kemi": "organisk",
     "📋 Formelsamling": "formelsamling",
     "🔬 Molekyle database": "molecule-db",
+    "🔩 Faststofkemi": "faststofkemi",
 }
 
 PAGE_QUERY_TO_LABEL = {value: key for key, value in PAGE_LABEL_TO_QUERY.items()}
@@ -192,6 +195,9 @@ SEARCH_INDEX = [
     {"title": "ICE-tabel / ligevægt", "keywords": ["ice tabel", "ice-tabel", "opstil ice", "opsæt ice", "ligevægtskoncentration", "beregn kc", "beregn kp"], "page": "ligevaegt", "tab": "🧊 ICE Table", "description": "ICE-tabel og ligevægtskoncentrationer"},
     {"title": "Q vs K – reaktionsretning", "keywords": ["reaktionskvotient", "q vs k", "hvilken retning", "går reaktionen frem", "går reaktionen tilbage", "forskydning"], "page": "ligevaegt", "tab": "📊 Reaktionskvotient Q", "description": "Beregn Q og sammenlign med K"},
     {"title": "Eksamensguide", "keywords": ["eksamensguide", "eksamen", "guide", "hjælp", "opgave", "hvilken beregner", "hvad skal jeg bruge"], "page": "eksamensguide", "tab": None, "description": "Oversigt over opgavetyper og hvilken beregner de kræver"},
+    {"title": "Enhedscellevolumen", "keywords": ["enhedscelle", "unit cell", "krystal", "crystal", "bcc", "fcc", "kubisk", "densitet krystal", "volumen enhedscelle", "faststof", "gitter", "lattice", "atomradius krystal", "krystalstruktur", "z atomer"], "page": "faststofkemi", "tab": None, "description": "V = ZM/(Nₐρ) – volumen af kubisk enhedscelle fra densitet og molarmasse"},
+    {"title": "Densitet af krystal", "keywords": ["densitet kubisk", "densitet bcc fcc", "rho krystal", "beregn densitet krystal", "gitterparameter densitet", "kantlængde densitet"], "page": "faststofkemi", "tab": None, "description": "ρ = ZM/(Nₐa³) – densitet fra kantlængde og molarmasse"},
+    {"title": "Gitterparameter / kantlængde", "keywords": ["gitterparameter", "lattice parameter", "kantlængde", "edge length", "atomradius til a", "a fra r", "r til kantlængde"], "page": "faststofkemi", "tab": None, "description": "a fra atomradius for SC, BCC og FCC"},
 ]
 
 
@@ -387,6 +393,8 @@ def main():
         render_formelsamling_page()
     elif page == "🔬 Molekyle database":
         show_molecule_database_page()
+    elif page == "🔩 Faststofkemi":
+        render_faststofkemi_page()
 
 def show_geometri_page():
     """Display the Geometry & Bonds page (VSEPR, IMF, Bond Enthalpy)."""
@@ -548,6 +556,16 @@ def show_fundamentals_page():
         _nav_card("🧮 Debye-Hückel", "acids-bases", "Aktivitetskoefficenter – log γ± = −A|z+z−|√I", "dh2", tab="🧮 Debye-Hückel")
 
     st.markdown("---")
+
+    # ── Row 3 ────────────────────────────────────────────────────────────────
+    c9, c10, c11, c12 = st.columns(4)
+    with c9:
+        st.markdown("**🔩 Faststofkemi**")
+        _nav_card("Enhedscellevolumen", "faststofkemi", "V = ZM/(Nₐρ) – find volumen fra densitet", "fss_v")
+        _nav_card("Densitet af krystal", "faststofkemi", "ρ = ZM/(Nₐa³) – find densitet fra kantlængde", "fss_r")
+        _nav_card("Gitterparameter fra r", "faststofkemi", "a fra atomradius for SC, BCC og FCC", "fss_a")
+
+    st.markdown("---")
     st.caption("💡 Tip: Søg i sidepanelet øverst for at finde en specifik beregner hurtigt.")
 
 
@@ -707,6 +725,16 @@ _EXAM_TASKS = [
     ("NaCl: ΔHf° = −411, ΔHsub = 107, IE = 496, ½D(Cl₂) = 121, EA = −349 kJ/mol. Find ΔHlatt.",
      "Nøgleord: Born-Haber → Hess: ΔHlatt = ΔHf° − (ΔHsub + IE + ½D + EA)",
      "Born-Haber", "thermochemistry", None),
+    # ── Faststofkemi ─────────────────────────────────────────────────────────
+    ("Rent jern krystalliserer i BCC. ρ = 7874 kg/m³, M = 55,85 g/mol. Find enhedscellevolumen.",
+     "Nøgleord: kubisk gitter + densitet + molarmasse → V = ZM/(Nₐρ); BCC har Z = 2",
+     "Enhedscellevolumen", "faststofkemi", None),
+    ("FCC kobber: a = 361 pm, M = 63,55 g/mol. Beregn densiteten.",
+     "Nøgleord: kantlængde + molarmasse + FCC → ρ = ZM/(Nₐa³); FCC har Z = 4",
+     "Densitet fra gitterparameter", "faststofkemi", None),
+    ("BCC jern har atomradius r = 126 pm. Find kantlængde a og enhedscellevolumen.",
+     "Nøgleord: atomradius + BCC → a = 4r/√3 → V = a³",
+     "Gitterparameter fra atomradius", "faststofkemi", None),
 ]
 
 
@@ -763,6 +791,9 @@ def show_exam_guide_page():
             "Frysepunktssænkning", "Kogepunktsstigning", "Osmotisk tryk",
             "M fra kolligative egenskaber",
         ],
+        "🔩 Faststofkemi": [
+            "Enhedscellevolumen", "Densitet fra gitterparameter", "Gitterparameter fra atomradius",
+        ],
     }
     # ── Hop til emne ─────────────────────────────────────────────────────────
     _EXAM_SHORTCUTS = [
@@ -776,6 +807,7 @@ def show_exam_guide_page():
         ("⚡ Kinetik",     "⚡ Kinetik"),
         ("⚖️ Atoms",       "⚖️ Atoms & Molarmasse"),
         ("🌡️ Kolligative", "🌡️ Kolligative egenskaber"),
+        ("🔩 Faststof",    "🔩 Faststofkemi"),
     ]
     active_group = st.session_state.get("_exam_group_filter", None)
     st.caption("📚 Hop til emne:")
