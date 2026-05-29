@@ -1190,7 +1190,7 @@ def show_molar_mass_page():
         st.markdown("### Elektronkonfiguration & Bindingskarakter")
         ec_mode = st.radio(
             "Tilstand:",
-            ["⚛️ Enkelt atom / ion", "🔗 Bindingskarakter (ionisk/kovalent)"],
+            ["⚛️ Enkelt atom / ion", "🔍 Konfiguration → Element", "🔗 Bindingskarakter (ionisk/kovalent)"],
             horizontal=True,
             key="ec_mode",
         )
@@ -1198,6 +1198,9 @@ def show_molar_mass_page():
 
         if ec_mode == "🔗 Bindingskarakter (ionisk/kovalent)":
             _show_bindingskarakter_section()
+
+        if ec_mode == "🔍 Konfiguration → Element":
+            _show_reverse_ec_tab()
 
         if ec_mode == "⚛️ Enkelt atom / ion":
             st.markdown("Angiv symbol eller atomnummer med valgfri ladning.")
@@ -1447,6 +1450,123 @@ def show_molar_mass_page():
 
     if active_subpage == "⚗️ Formel ladning":
         _show_formel_ladning_tab()
+
+
+def _show_reverse_ec_tab():
+    """Find element fra elektronkonfiguration (omvendt søgning)."""
+    import re as _re
+
+    st.markdown("### 🔍 Konfiguration → Element")
+    st.markdown("Skriv en elektronkonfiguration og find grundstof, gruppe og periode.")
+
+    config_input = st.text_input(
+        "Elektronkonfiguration",
+        placeholder="fx 1s2 2s2 2p6 3s2 3p6 3d10 4s2 4p5  eller  [Ar] 3d10 4s2 4p5",
+        key="rev_ec_input",
+    )
+
+    if st.button("Find element", type="primary", key="rev_ec_btn"):
+        if not config_input.strip():
+            st.error("Angiv en elektronkonfiguration.")
+            return
+
+        # ── Normaliser superscript cifre ──────────────────────────────
+        sup_map = str.maketrans("⁰¹²³⁴⁵⁶⁷⁸⁹", "0123456789")
+        cfg = config_input.translate(sup_map).strip()
+
+        # ── Løs ædelgasnotation ───────────────────────────────────────
+        noble_Z = {"He": 2, "Ne": 10, "Ar": 18, "Kr": 36, "Xe": 54, "Rn": 86}
+        core_e = 0
+        m = _re.match(r"\[([A-Z][a-z]?)\](.*)", cfg)
+        if m:
+            core_sym = m.group(1)
+            if core_sym not in noble_Z:
+                st.error(f"Ukendt ædelgas i notation: [{core_sym}]")
+                return
+            core_e = noble_Z[core_sym]
+            cfg = m.group(2)
+
+        # ── Tæl elektroner fra orbitaler ──────────────────────────────
+        # Matcher fx "1s2", "3d10", "4p5"
+        orbitals = _re.findall(r"(\d)([spdf])(\d+)", cfg)
+        if not orbitals:
+            st.error("Kunne ikke tolke konfigurationen. Brug format: 1s2 2s2 2p6 …")
+            return
+
+        outer_electrons = sum(int(count) for _, _, count in orbitals)
+        total_e = core_e + outer_electrons
+
+        if total_e < 1 or total_e > 118:
+            st.error(f"Ugyldigt antal elektroner: {total_e}. Understøtter Z=1–118.")
+            return
+
+        # ── Slå element op via periodictable ─────────────────────────
+        try:
+            import periodictable as _pt
+            elem = _pt.elements[total_e]
+            symbol = elem.symbol
+            name_en = elem.name.capitalize()
+        except Exception:
+            st.error("periodictable-biblioteket ikke tilgængeligt.")
+            return
+
+        # ── Find periode (højeste n) ──────────────────────────────────
+        all_n = [int(n) for n, _, _ in orbitals]
+        # Tilføj ædelgas-kerneperiode
+        noble_period = {2: 1, 10: 2, 18: 3, 36: 4, 54: 5, 86: 6}
+        if core_e in noble_period:
+            all_n.append(noble_period[core_e])
+        period = max(all_n)
+
+        # ── Find gruppe fra yderste s/p ───────────────────────────────
+        # Byg dict: (n, subshell) → electrons (brug kun det yderste)
+        orb_dict: dict = {}
+        for n_str, sub, cnt in orbitals:
+            orb_dict[(int(n_str), sub)] = int(cnt)
+
+        max_n = max(n for n, s in orb_dict if s in ("s", "p"))
+        ns = orb_dict.get((max_n, "s"), 0)
+        np_ = orb_dict.get((max_n, "p"), 0)
+        nd = orb_dict.get((max_n - 1, "d"), 0) if max_n > 1 else 0
+
+        if np_ > 0:
+            group = 12 + np_        # p-blok: gruppe 13–18
+            block = "p"
+        elif nd > 0 and nd < 10:
+            group = nd + 2          # d-blok: gruppe 3–12
+            block = "d"
+        elif nd == 10 and ns == 2 and np_ == 0:
+            group = 12
+            block = "d"
+        elif ns == 2:
+            group = 2
+            block = "s"
+        else:
+            group = 1
+            block = "s"
+
+        # Dansk gruppenavn (hovedgruppe 1-8, transitionsmetaller)
+        if block in ("s", "p"):
+            hg = group - 10 if group > 12 else group
+            gruppe_str = f"**{hg}. hovedgruppe** (gruppe {group})"
+        else:
+            gruppe_str = f"**Gruppe {group}** (overgangsmetaller, {block}-blok)"
+
+        # ── Output ────────────────────────────────────────────────────
+        st.markdown("---")
+        st.success(f"**{name_en} ({symbol}), Z = {total_e}**")
+
+        col1, col2, col3 = st.columns(3)
+        col1.metric("Grundstof", f"{symbol} ({name_en})")
+        col2.metric("Periode", str(period))
+        col3.metric("Gruppe", str(group))
+
+        st.markdown(f"**Placering i periodesystemet:** {gruppe_str}, **{period}. periode**")
+        st.markdown(f"**Blok:** {block.upper()}-blok  |  **Total elektroner:** {total_e}")
+
+        if core_e > 0:
+            core_sym_used = [k for k, v in noble_Z.items() if v == core_e][0]
+            st.caption(f"Ædelgaskerne [{core_sym_used}] = {core_e} elektroner + {outer_electrons} ydre elektroner")
 
 
 def _show_bindingskarakter_section():
