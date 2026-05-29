@@ -135,6 +135,7 @@ SEARCH_INDEX = [
     {"title": "pH af svag base", "keywords": ["ph", "svag base", "kb", "ammoniak", "nh3", "svag", "base", "amin"], "page": "acids-bases", "tab": "Svag syre/base", "description": "Bruges til NH₃, aminer og andre baser med Kb-værdi"},
     {"title": "Buffer pH (Henderson-Hasselbalch)", "keywords": ["buffer", "ph", "henderson", "hasselbalch", "bufferløsning", "acetat", "konjugeret"], "page": "acids-bases", "tab": "Buffer", "description": "Blanding af svag syre og dens konjugerede base"},
     {"title": "Titrering", "keywords": ["titrering", "ækvivalenspunkt", "neutralisation", "titration", "halvækvivalenspunkt"], "page": "acids-bases", "tab": "Titrering", "description": "Beregn pH ved titrering af syre med base"},
+    {"title": "Flerprotonisk syre + NaOH", "keywords": ["flerprotonisk", "polyprotisk", "triprotisk", "diprotisk", "fosforsyre", "phosphoric acid", "H3PO4", "H2SO4", "H2CO3", "flerprotonisk syre", "syre og naoh", "neutralisering syre base", "stærk base svag syre masse", "ph af blanding", "ph fosforsyre naoh"], "page": "acids-bases", "tab": "🧬 Flerprotonisk syre", "description": "pH når flerprotonisk syre (H₃PO₄, H₂SO₄ m.fl.) blandes med NaOH – stoichiometri + buffer/ækvivalenspunkt automatisk"},
     {"title": "Molarmasse", "keywords": ["molarmasse", "molar masse", "g/mol", "molekylvægt", "h2o", "nacl", "formel", "sammensætning"], "page": "atoms-molar", "tab": None, "description": "Find molarmassen for en kemisk forbindelse"},
     {"title": "Elektronkonfiguration", "keywords": ["elektron", "konfiguration", "orbital", "atom", "ion", "aufbau", "periodisk", "elektroner"], "page": "atoms-molar", "tab": None, "description": "Find elektronkonfiguration for atomer og ioner"},
     {"title": "Balancer kemisk reaktion", "keywords": ["balancer", "reaktion", "ligning", "balance", "koefficient", "afstemning"], "page": "stoichiometry", "tab": "⚖️ Balancer reaktion", "description": "Balancer en kemisk reaktionsligning"},
@@ -3167,7 +3168,7 @@ def show_acids_bases_page():
     st.title("🧪 Acids & Bases Calculator")
     st.markdown("---")
 
-    _ab_options = ["Stærk syre/base", "Svag syre/base", "⚗️ Salthydrolyse", "Buffer", "Titrering", "🧮 Debye-Hückel", "📋 pH-beregner"]
+    _ab_options = ["Stærk syre/base", "Svag syre/base", "⚗️ Salthydrolyse", "Buffer", "Titrering", "🧬 Flerprotonisk syre", "🧮 Debye-Hückel", "📋 pH-beregner"]
     _ab_active = _render_styled_tab_nav(_ab_options, key="acids_bases_tab", nav_key="nav_acids_bases")
 
     if _ab_active == "Stærk syre/base":
@@ -3204,6 +3205,12 @@ def show_acids_bases_page():
             ("Svag syre/base", "acids-bases", "Svag syre/base"),
             ("Buffer", "acids-bases", "Buffer"),
         ])
+    elif _ab_active == "🧬 Flerprotonisk syre":
+        _show_flerprotonisk_tab()
+        _quick_links([
+            ("Buffer", "acids-bases", "Buffer"),
+            ("Svag syre/base", "acids-bases", "Svag syre/base"),
+        ])
     elif _ab_active == "🧮 Debye-Hückel":
         _show_debye_huckel_tab()
         _quick_links([
@@ -3213,6 +3220,236 @@ def show_acids_bases_page():
         ])
     elif _ab_active == "📋 pH-beregner":
         show_pH_calculator_page()
+
+
+def _show_flerprotonisk_tab():
+    """pH af flerprotonisk syre + stærk base (NaOH). Håndterer H₂A og H₃A."""
+    import math
+    KW = 1.0e-14
+
+    st.markdown("### 🧬 Flerprotonisk syre + stærk base")
+    st.markdown(
+        "Beregn pH når en flerprotonisk syre (fx H₃PO₄, H₂SO₄, H₂CO₃) blandes med NaOH. "
+        "Beregneren finder automatisk om resultatet er en buffer, et ækvivalenspunkt eller overskud af base."
+    )
+
+    # ── Inputs ────────────────────────────────────────────────────────────
+    col_a, col_b = st.columns(2)
+
+    with col_a:
+        st.markdown("**Syre**")
+        n_protons = st.selectbox("Antal protoner (n)", [2, 3], index=1, key="fp_np",
+                                 help="2 for diprotisk (H₂A), 3 for triprotisk (H₃A)")
+        acid_input_mode = st.radio("Angiv som", ["Masse (g)", "Stofmængde (mol)"],
+                                   key="fp_acid_mode", horizontal=True)
+        if acid_input_mode == "Masse (g)":
+            acid_mass = st.number_input("Masse af syre (g)", value=19.6, min_value=0.0,
+                                        format="%.4g", key="fp_acid_mass")
+            acid_M = st.number_input("Molarmasse af syre (g/mol)", value=98.00,
+                                     min_value=1.0, format="%.4f", key="fp_acid_Mm")
+            n_acid = acid_mass / acid_M
+        else:
+            n_acid = st.number_input("Stofmængde af syre (mol)", value=0.200,
+                                     min_value=0.0, format="%.6g", key="fp_acid_mol")
+            acid_M = None
+
+        st.markdown("**Ka-værdier**")
+        Ka1 = st.number_input("Ka₁", value=7.5e-3, min_value=1e-20, format="%.3e", key="fp_Ka1")
+        Ka2 = st.number_input("Ka₂", value=6.2e-8, min_value=1e-20, format="%.3e", key="fp_Ka2")
+        Ka3 = None
+        if n_protons == 3:
+            Ka3 = st.number_input("Ka₃", value=4.8e-13, min_value=1e-20, format="%.3e", key="fp_Ka3")
+
+    with col_b:
+        st.markdown("**Stærk base (NaOH)**")
+        base_input_mode = st.radio("Angiv som", ["Masse (g)", "Stofmængde (mol)"],
+                                   key="fp_base_mode", horizontal=True)
+        if base_input_mode == "Masse (g)":
+            base_mass = st.number_input("Masse af NaOH (g)", value=10.0, min_value=0.0,
+                                        format="%.4g", key="fp_base_mass")
+            base_M = st.number_input("Molarmasse af NaOH (g/mol)", value=40.00,
+                                     min_value=1.0, format="%.4f", key="fp_base_Mm")
+            n_base = base_mass / base_M
+        else:
+            n_base = st.number_input("Stofmængde af NaOH (mol)", value=0.250,
+                                     min_value=0.0, format="%.6g", key="fp_base_mol")
+
+        st.markdown("**Opløsning**")
+        vol_mL = st.number_input("Volumen (mL)", value=200.0, min_value=0.1,
+                                  format="%.4g", key="fp_vol")
+        V = vol_mL / 1000.0  # L
+
+    if st.button("Beregn pH", type="primary", key="fp_calc"):
+        # ── Stoichiometri ──────────────────────────────────────────────
+        steps = []
+        if acid_input_mode == "Masse (g)":
+            steps.append(f"**Syre:** {acid_mass:.4g} g ÷ {acid_M:.4f} g/mol = **{n_acid:.4g} mol**")
+        else:
+            steps.append(f"**Syre:** {n_acid:.4g} mol (direkte)")
+        if base_input_mode == "Masse (g)":
+            steps.append(f"**NaOH:** {base_mass:.4g} g ÷ {base_M:.4f} g/mol = **{n_base:.4g} mol**")
+        else:
+            steps.append(f"**NaOH:** {n_base:.4g} mol (direkte)")
+        steps.append(f"**Volumen:** {vol_mL:.4g} mL = {V:.4g} L")
+
+        # Ratio: mol base per mol acid
+        r = n_base / n_acid if n_acid > 0 else float("inf")
+        steps.append(f"**Ratio r = n(NaOH)/n(syre) = {n_base:.4g}/{n_acid:.4g} = {r:.4f}**")
+
+        # ── Neutraliseringstrin ────────────────────────────────────────
+        EPS = 1e-10  # tolerance for "exactly at equiv pt"
+
+        # Species moles after neutralization
+        # H₃A: species [H3A, H2A-, HA2-, A3-] (or [H2A, HA-, A2-] for diprotic)
+        def _zone_triprotic(r, n_acid, Ka1, Ka2, Ka3, V):
+            """Returns (pH, zone_desc, species_str)."""
+            pKa1 = -math.log10(Ka1)
+            pKa2 = -math.log10(Ka2)
+            pKa3 = -math.log10(Ka3)
+
+            if r < EPS:
+                # Pure H₃A
+                C = n_acid / V
+                H = math.sqrt(Ka1 * C)
+                return -math.log10(H), "Ren syre (ingen base tilsat)", f"[H₃A] = {C:.4f} M"
+
+            elif r < 1 - EPS:
+                # Buffer H₃A / H₂A⁻
+                n_H3A = n_acid - n_base
+                n_H2A = n_base
+                C_H3A = n_H3A / V
+                C_H2A = n_H2A / V
+                pH = pKa1 + math.log10(C_H2A / C_H3A)
+                return pH, f"Buffer H₃A / H₂A⁻ (Ka₁, pKa₁={pKa1:.3f})", \
+                       f"[H₃A] = {C_H3A:.4f} M, [H₂A⁻] = {C_H2A:.4f} M"
+
+            elif abs(r - 1) < EPS:
+                # Eq pt 1: amphiprotic H₂A⁻
+                pH = (pKa1 + pKa2) / 2
+                return pH, "Ækvivalenspunkt 1 – amphiprotisk H₂A⁻", \
+                       f"pH ≈ (pKa₁ + pKa₂)/2 = ({pKa1:.3f}+{pKa2:.3f})/2"
+
+            elif r < 2 - EPS:
+                # Buffer H₂A⁻ / HA²⁻
+                excess_base = n_base - n_acid
+                n_H2A = n_acid - excess_base
+                n_HA2 = excess_base
+                C_H2A = n_H2A / V
+                C_HA2 = n_HA2 / V
+                pH = pKa2 + math.log10(C_HA2 / C_H2A)
+                return pH, f"Buffer H₂A⁻ / HA²⁻ (Ka₂, pKa₂={pKa2:.3f})", \
+                       f"[H₂A⁻] = {C_H2A:.4f} M, [HA²⁻] = {C_HA2:.4f} M"
+
+            elif abs(r - 2) < EPS:
+                # Eq pt 2: amphiprotic HA²⁻
+                pH = (pKa2 + pKa3) / 2
+                return pH, "Ækvivalenspunkt 2 – amphiprotisk HA²⁻", \
+                       f"pH ≈ (pKa₂ + pKa₃)/2 = ({pKa2:.3f}+{pKa3:.3f})/2"
+
+            elif r < 3 - EPS:
+                # Buffer HA²⁻ / A³⁻
+                base_past2 = n_base - 2 * n_acid
+                n_HA2 = n_acid - base_past2
+                n_A3 = base_past2
+                C_HA2 = n_HA2 / V
+                C_A3 = n_A3 / V
+                pH = pKa3 + math.log10(C_A3 / C_HA2)
+                return pH, f"Buffer HA²⁻ / A³⁻ (Ka₃, pKa₃={pKa3:.3f})", \
+                       f"[HA²⁻] = {C_HA2:.4f} M, [A³⁻] = {C_A3:.4f} M"
+
+            elif abs(r - 3) < EPS:
+                # Eq pt 3: pure A³⁻
+                C_A3 = n_acid / V
+                Kb = KW / Ka3
+                OH = math.sqrt(Kb * C_A3)
+                pOH = -math.log10(OH)
+                return 14 - pOH, "Ækvivalenspunkt 3 – ren A³⁻ (hydrolyse)", \
+                       f"[A³⁻] = {C_A3:.4f} M, Kb = Kw/Ka₃ = {Kb:.3e}"
+
+            else:
+                # Excess NaOH
+                n_excess = n_base - 3 * n_acid
+                C_OH = n_excess / V
+                pOH = -math.log10(C_OH)
+                return 14 - pOH, "Overskud af stærk base", \
+                       f"n(NaOH overskud) = {n_excess:.4g} mol, [OH⁻] = {C_OH:.4f} M"
+
+        def _zone_diprotic(r, n_acid, Ka1, Ka2, V):
+            pKa1 = -math.log10(Ka1)
+            pKa2 = -math.log10(Ka2)
+
+            if r < EPS:
+                C = n_acid / V
+                H = math.sqrt(Ka1 * C)
+                return -math.log10(H), "Ren syre", f"[H₂A] = {C:.4f} M"
+
+            elif r < 1 - EPS:
+                n_H2A = n_acid - n_base
+                n_HA = n_base
+                pH = pKa1 + math.log10((n_HA / V) / (n_H2A / V))
+                return pH, f"Buffer H₂A / HA⁻ (Ka₁, pKa₁={pKa1:.3f})", \
+                       f"[H₂A] = {n_H2A/V:.4f} M, [HA⁻] = {n_HA/V:.4f} M"
+
+            elif abs(r - 1) < EPS:
+                pH = (pKa1 + pKa2) / 2
+                return pH, "Ækvivalenspunkt 1 – amphiprotisk HA⁻", \
+                       f"pH ≈ (pKa₁ + pKa₂)/2 = ({pKa1:.3f}+{pKa2:.3f})/2"
+
+            elif r < 2 - EPS:
+                excess = n_base - n_acid
+                n_HA = n_acid - excess
+                n_A2 = excess
+                pH = pKa2 + math.log10((n_A2 / V) / (n_HA / V))
+                return pH, f"Buffer HA⁻ / A²⁻ (Ka₂, pKa₂={pKa2:.3f})", \
+                       f"[HA⁻] = {n_HA/V:.4f} M, [A²⁻] = {n_A2/V:.4f} M"
+
+            elif abs(r - 2) < EPS:
+                C_A2 = n_acid / V
+                Kb = KW / Ka2
+                OH = math.sqrt(Kb * C_A2)
+                return 14 + math.log10(OH), "Ækvivalenspunkt 2 – ren A²⁻ (hydrolyse)", \
+                       f"[A²⁻] = {C_A2:.4f} M, Kb = Kw/Ka₂ = {Kb:.3e}"
+
+            else:
+                n_excess = n_base - 2 * n_acid
+                C_OH = n_excess / V
+                return 14 + math.log10(C_OH), "Overskud af stærk base", \
+                       f"[OH⁻] = {C_OH:.4f} M"
+
+        # ── Beregn ────────────────────────────────────────────────────
+        try:
+            if n_protons == 3:
+                pH, zone, species = _zone_triprotic(r, n_acid, Ka1, Ka2, Ka3, V)
+            else:
+                pH, zone, species = _zone_diprotic(r, n_acid, Ka1, Ka2, V)
+        except Exception as e:
+            st.error(f"Beregningsfejl: {e}")
+            return
+
+        # ── Output ────────────────────────────────────────────────────
+        st.markdown("---")
+        st.markdown("### Trin-for-trin")
+        for s in steps:
+            st.markdown(s)
+
+        st.markdown(f"**Zone:** {zone}")
+        st.markdown(f"**Arter efter neutralisering:** {species}")
+
+        pKa1_v = -math.log10(Ka1)
+        pKa2_v = -math.log10(Ka2)
+        if n_protons == 3 and Ka3:
+            pKa3_v = -math.log10(Ka3)
+            st.markdown(f"pKa₁ = {pKa1_v:.3f}, pKa₂ = {pKa2_v:.3f}, pKa₃ = {pKa3_v:.3f}")
+        else:
+            st.markdown(f"pKa₁ = {pKa1_v:.3f}, pKa₂ = {pKa2_v:.3f}")
+
+        st.metric("pH", f"{pH:.2f}")
+        if pH < 7:
+            st.info(f"Opløsningen er **sur** (pH = {pH:.2f} < 7)")
+        elif pH > 7:
+            st.info(f"Opløsningen er **basisk** (pH = {pH:.2f} > 7)")
+        else:
+            st.info("Opløsningen er **neutral** (pH = 7.00)")
 
 
 def _show_salthydrolyse_tab():
