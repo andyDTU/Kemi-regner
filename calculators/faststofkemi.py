@@ -59,11 +59,19 @@ def _render_unit_cell_volume_tab():
             index=1,
             key="fss_vol_crystal",
         )
-        rho = st.number_input(
-            "Densitet ρ (kg/m³)",
-            value=7874.0,
-            min_value=1.0,
-            step=10.0,
+        rho_unit = st.selectbox(
+            "Densitetsenhed",
+            ["g/cm³", "kg/m³", "g/mL"],
+            index=0,
+            key="fss_vol_rho_unit",
+        )
+        # Default values in selected unit
+        default_rho = {"g/cm³": 7.874, "kg/m³": 7874.0, "g/mL": 7.874}[rho_unit]
+        rho_input = st.number_input(
+            f"Densitet ρ ({rho_unit})",
+            value=default_rho,
+            min_value=1e-6,
+            format="%.4g",
             key="fss_vol_rho",
         )
     with col2:
@@ -79,8 +87,11 @@ def _render_unit_cell_volume_tab():
     if st.button("Beregn volumen", type="primary", key="fss_vol_calc"):
         ct = CRYSTAL_TYPES[crystal]
         Z = ct["z"]
+        # Konvertér til kg/m³ for beregning
+        to_kg_m3 = {"g/cm³": 1000.0, "kg/m³": 1.0, "g/mL": 1000.0}[rho_unit]
+        rho_kg = rho_input * to_kg_m3
         M_kg = M_gmol / 1000  # kg/mol
-        V = (Z * M_kg) / (AVOGADRO * rho)
+        V = (Z * M_kg) / (AVOGADRO * rho_kg)
         a = V ** (1 / 3)
         r = ct["r_from_a"](a)
 
@@ -89,18 +100,18 @@ def _render_unit_cell_volume_tab():
 
         st.markdown(f"**Givet:**")
         st.markdown(f"- Krystalstruktur: **{crystal}** → Z = {Z}")
-        st.markdown(f"- Densitet: ρ = {rho} kg/m³")
+        st.markdown(f"- Densitet: ρ = {rho_input} {rho_unit} = {rho_kg:.2f} kg/m³")
         st.markdown(f"- Molarmasse: M = {M_gmol} g/mol = {M_kg} kg/mol")
 
         st.markdown("**Trin 1 – Indsæt i formlen:**")
         st.latex(
             r"V = \frac{Z \cdot M}{N_A \cdot \rho} = "
             rf"\frac{{{Z} \times {M_kg:.5f}\,\text{{kg/mol}}}}"
-            rf"{{{AVOGADRO:.4e} \times {rho}\,\text{{kg/m}}^3}}"
+            rf"{{{AVOGADRO:.4e} \times {rho_kg:.2f}\,\text{{kg/m}}^3}}"
         )
 
         numerator = Z * M_kg
-        denominator = AVOGADRO * rho
+        denominator = AVOGADRO * rho_kg
         st.latex(
             rf"V = \frac{{{numerator:.5e}}}{{{denominator:.4e}}} = {V:.4e}\,\text{{m}}^3"
         )
@@ -165,15 +176,17 @@ def _render_density_tab():
 
         st.markdown("**Trin 2 – Densitet:**")
         st.latex(
-            rf"\rho = \frac{{{Z} \times {M_kg:.5f}}}{{{AVOGADRO:.4e} \times {V:.4e}}} = {rho:.1f}\,\text{{kg/m}}^3"
+            rf"\rho = \frac{{{Z} \times {M_kg:.5f}}}{{{AVOGADRO:.4e} \times {V:.4e}}} = {rho:.2f}\,\text{{kg/m}}^3"
         )
 
+        rho_gcm3 = rho / 1000.0
         r = ct["r_from_a"](a_m)
         st.markdown("---")
-        col_r1, col_r2, col_r3 = st.columns(3)
-        col_r1.metric("Densitet ρ", f"{rho:.1f} kg/m³")
-        col_r2.metric("Atomradius r", f"{r*1e12:.1f} pm")
-        col_r3.metric("Koordinationstal", str(ct["coord_num"]))
+        col_r1, col_r2, col_r3, col_r4 = st.columns(4)
+        col_r1.metric("Densitet ρ", f"{rho:.2f} kg/m³")
+        col_r2.metric("Densitet ρ", f"{rho_gcm3:.4f} g/cm³")
+        col_r3.metric("Atomradius r", f"{r*1e12:.1f} pm")
+        col_r4.metric("Koordinationstal", str(ct["coord_num"]))
 
 
 def _render_lattice_param_tab():
