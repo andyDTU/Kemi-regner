@@ -9204,8 +9204,14 @@ def _render_substance_card(s: Substance) -> None:
             _n_cached = len(list(_img_dir.glob("*.png"))) if _img_dir.exists() else 0
             if _n_cached == 0:
                 st.info("📥 Ingen strukturbilleder hentet endnu. Kør `python3 scripts/download_structure_images.py` én gang.")
+                with st.expander("🔍 Fejlfinding – vis forventet sti"):
+                    st.code(str(_img_dir))
+                    st.caption("Mappen ovenfor er der billederne skal ligge. Kontrollér at download-scriptet gemte filer her.")
             else:
                 st.caption(f"Intet billede for dette stof ({_n_cached} billeder tilgængelige).")
+                with st.expander("🔍 Fejlfinding"):
+                    st.code(str(_local_img))
+                    st.caption(f"Filen ovenfor findes ikke. {_n_cached} andre billeder er fundet i mappen.")
 
     # ── Kemiske egenskaber ─────────────────────────────────────────────────
     chem_lines = []
