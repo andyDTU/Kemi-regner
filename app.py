@@ -7787,38 +7787,47 @@ def show_thermochemistry_page():
                         }
                     )
 
-            override_rows = []
             default_overrides = st.session_state.get("thermo_dhf_overrides", {})
+
+            # Build per-species lookup info
+            species_lookup = []
             for species_item in species_items:
                 species_key = species_item["species_key"]
                 lookup = getDhf(species_item["lookup_raw"], overrides={}, db=db)
-                existing = default_overrides.get(species_key)
-                override_rows.append(
-                    {
-                        "Species": species_key,
-                        "In database": bool(lookup["found"] and lookup["source"] != "override"),
-                        "Override ΔHf° (kJ/mol)": "" if existing is None else existing,
-                    }
-                )
+                in_db = bool(lookup["found"] and lookup["source"] != "override")
+                species_lookup.append({
+                    "key": species_key,
+                    "lookup_raw": species_item["lookup_raw"],
+                    "in_db": in_db,
+                    "db_value": lookup.get("value") if in_db else None,
+                })
 
-            override_df = pd.DataFrame(override_rows)
-            edited_overrides = st.data_editor(
-                override_df,
-                use_container_width=True,
-                key="thermo_dhf_override_editor",
-                disabled=["Species", "In database"],
-                hide_index=True,
-            )
+            # Show species table with direct number_input for overrides
+            header_cols = st.columns([2, 1, 2])
+            header_cols[0].markdown("**Stof**")
+            header_cols[1].markdown("**I database**")
+            header_cols[2].markdown("**Override ΔHf° (kJ/mol)**")
 
             overrides = {}
-            for _, row in edited_overrides.iterrows():
-                raw_value = row["Override ΔHf° (kJ/mol)"]
-                if raw_value == "" or pd.isna(raw_value):
-                    continue
-                try:
-                    overrides[normalizeSpeciesKey(row["Species"])] = float(raw_value)
-                except Exception:
-                    st.error(f"Ugyldig override-værdi for {row['Species']}: {raw_value}")
+            for sl in species_lookup:
+                row_cols = st.columns([2, 1, 2])
+                row_cols[0].markdown(sl["key"])
+                row_cols[1].markdown("✅" if sl["in_db"] else "❌")
+                # Pre-fill with existing override if present
+                existing_val = default_overrides.get(sl["key"])
+                # Use text_input so it's always editable and supports empty/negative
+                raw = row_cols[2].text_input(
+                    f"override_{sl['key']}",
+                    value="" if existing_val is None else str(existing_val),
+                    placeholder="fx -285.83",
+                    label_visibility="collapsed",
+                    key=f"dhf_override_{sl['key']}",
+                )
+                if raw.strip():
+                    try:
+                        overrides[normalizeSpeciesKey(sl["key"])] = float(raw.strip().replace(",", "."))
+                    except Exception:
+                        st.error(f"Ugyldig override for {sl['key']}: '{raw}' — brug tal, fx -285.83")
 
             st.session_state["thermo_dhf_overrides"] = overrides
 
