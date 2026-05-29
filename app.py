@@ -155,7 +155,8 @@ SEARCH_INDEX = [
     {"title": "Beregn Kc", "keywords": ["kc", "beregn kc", "ligevægtskonstant kc", "koncentration ligevægt", "find kc", "kc fra koncentration", "ligevægt koncentration"], "page": "ligevaegt", "tab": "🔢 Beregn Kc", "description": "Kc = Π[prod]^ν / Π[reak]^ν – beregn fra ligevægtskoncentrationer"},
     {"title": "Beregn Kp", "keywords": ["kp", "beregn kp", "ligevægtskonstant kp", "partialtryk ligevægt", "find kp", "kp fra partialtryk", "gasligevægt"], "page": "ligevaegt", "tab": "🔢 Beregn Kp", "description": "Kp = Π(P_prod)^ν / Π(P_reak)^ν – beregn fra partialtryk"},
     {"title": "Cellespænding (E°)", "keywords": ["elektrokemi", "celle", "spænding", "e°", "emf", "oxidation", "reduktion", "batteri", "galvanisk"], "page": "electrochemistry", "tab": None, "description": "Beregn standardcellespænding og spontanitet"},
-    {"title": "Nernst ligning", "keywords": ["nernst", "cellespænding", "ikke-standard", "koncentration", "e"], "page": "electrochemistry", "tab": None, "description": "Beregn cellespænding under ikke-standardbetingelser"},
+    {"title": "Nernst ligning", "keywords": ["nernst", "cellespænding", "ikke-standard", "koncentration", "e"], "page": "electrochemistry", "tab": "Nernst", "description": "Beregn cellespænding under ikke-standardbetingelser"},
+    {"title": "Koncentrationscelle", "keywords": ["koncentrationscelle", "concentration cell", "identiske elektroder", "samme elektrode", "Cu Cu", "Ni Ni", "Zn Zn", "EMF koncentration", "e° nul", "e° lig nul"], "page": "electrochemistry", "tab": "⚡ Koncentrationscelle", "description": "E_cell = (0.05916/n)·log(C_høj/C_lav) — spænding fra koncentrationsforskel, E°=0"},
     {"title": "Reaktionshastighed & kinetik", "keywords": ["kinetik", "hastighed", "rate", "orden", "halvliv", "half-life", "k", "arrhenius", "aktiveringsenergy"], "page": "kinetics", "tab": None, "description": "Beregn reaktionshastigheder og halveringstider"},
     {"title": "Damptryk (Raoults lov)", "keywords": ["damptryk", "vapor pressure", "raoult", "fordampning", "molfraktion"], "page": "damptryk", "tab": None, "description": "Beregn damptryk med Raoults lov"},
     {"title": "Kogepunktselevering / Frysepunktssænkning", "keywords": ["kogepunkt", "frysepunkt", "kolligative", "molalitet", "kb", "kf", "δtb", "δtf", "elevering", "sænkning"], "page": "koge-fryse", "tab": None, "description": "Beregn kogepunktselevering og frysepunktssænkning"},
@@ -7047,7 +7048,7 @@ def show_electrochemistry_page():
         match_candidate_potential_value,
     )
 
-    _ec_options = ["Byg en celle", "Nernst", "ΔG og K", "Redoks termodynamik", "⚡ Faradays lov"]
+    _ec_options = ["Byg en celle", "Nernst", "⚡ Koncentrationscelle", "ΔG og K", "Redoks termodynamik", "⚡ Faradays lov"]
     _ec_active = _render_styled_tab_nav(_ec_options, key="electro_tab", nav_key="nav_electrochemistry")
 
     if _ec_active == "Byg en celle":
@@ -7072,15 +7073,24 @@ def show_electrochemistry_page():
         ])
 
     elif _ec_active == "Nernst":
+        import math as _math
         st.markdown("#### Nernst-beregner")
-        E0 = st.number_input("E°cell (V)", value=1.10, key="nernst_E0")
-        n = st.number_input("n (electrons)", value=2, min_value=1, key="nernst_n")
-        T = st.number_input("T (K)", value=298.15, min_value=0.0, key="nernst_T")
-        st.markdown("Quick Daniell helper: Q = [Zn2+]/[Cu2+]")
-        Zn2 = st.number_input("[Zn2+] (M)", value=0.10, min_value=1e-12, format="%.4f", key="nernst_Zn2")
-        Cu2 = st.number_input("[Cu2+] (M)", value=1.00, min_value=1e-12, format="%.4f", key="nernst_Cu2")
-        Q = calculate_daniell_Q(Zn2, Cu2)
-        st.info(f"Q = {Q:.6g}")
+        st.latex(r"E = E^\circ - \frac{RT}{nF}\ln Q")
+        col1, col2 = st.columns(2)
+        E0 = col1.number_input("E°cell (V)", value=1.10, format="%.4f", key="nernst_E0")
+        n  = col1.number_input("n (antal elektroner)", value=2, min_value=1, key="nernst_n")
+        T  = col1.number_input("T (K)", value=298.15, min_value=0.0, format="%.2f", key="nernst_T")
+        Q_input_mode = col2.radio("Angiv Q som", ["Direkte tal", "Koncentrationsbrøk (a/b)"], key="nernst_qmode")
+        if Q_input_mode == "Direkte tal":
+            Q = col2.number_input("Reaktionskvotient Q", value=0.010, min_value=1e-30,
+                                  format="%.6g", key="nernst_Q_direct")
+        else:
+            qa = col2.number_input("Tæller (produkter)", value=0.010, min_value=1e-30,
+                                   format="%.6g", key="nernst_Qa")
+            qb = col2.number_input("Nævner (reaktanter)", value=1.00, min_value=1e-30,
+                                   format="%.6g", key="nernst_Qb")
+            Q = qa / qb
+            col2.info(f"Q = {qa:.4g} / {qb:.4g} = {Q:.6g}")
         if st.button("Beregn E", type="primary", key="nernst_btn"):
             try:
                 E, steps, _ = calculate_nernst_with_steps(E0, int(n), T, Q)
@@ -7090,6 +7100,47 @@ def show_electrochemistry_page():
                         st.markdown(s)
             except Exception as e:
                 st.error(str(e))
+
+    elif _ec_active == "⚡ Koncentrationscelle":
+        import math as _math
+        st.markdown("#### ⚡ Koncentrationscelle")
+        st.markdown(
+            "En koncentrationscelle har **identiske elektroder** — E° = 0. "
+            "Spændingen stammer udelukkende fra koncentrationsforskellen."
+        )
+        st.latex(r"E_{\text{cell}} = \frac{0{,}05916}{n}\,\log\!\frac{C_{\text{høj}}}{C_{\text{lav}}}")
+        col1, col2 = st.columns(2)
+        C_high = col1.number_input("Høj koncentration C_høj (M)", value=1.0,
+                                    min_value=1e-20, format="%.6g", key="cc_Chigh")
+        C_low  = col1.number_input("Lav koncentration C_lav (M)", value=0.002,
+                                    min_value=1e-20, format="%.6g", key="cc_Clow")
+        n_cc   = col2.number_input("n (antal elektroner)", value=2, min_value=1, key="cc_n")
+        T_cc   = col2.number_input("T (K)", value=298.15, min_value=0.0, format="%.2f", key="cc_T")
+        if st.button("Beregn E_cell", type="primary", key="cc_btn"):
+            if C_low >= C_high:
+                st.error("C_høj skal være større end C_lav for en spontan proces.")
+            else:
+                R, F = 8.31446, 96485.0
+                RT_nF = R * T_cc / (n_cc * F)
+                Q = C_low / C_high
+                E = -RT_nF * _math.log(Q)          # = RT_nF * ln(C_high/C_low)
+                E_approx = (0.05916 / n_cc) * _math.log10(C_high / C_low)
+                st.markdown("---")
+                st.markdown("### Trin-for-trin")
+                st.markdown(f"**E° = 0 V** (identiske elektroder)")
+                st.markdown(f"**Anode** (lav konc.): M → M^n⁺ ({C_low:.4g} M) + ne⁻")
+                st.markdown(f"**Katode** (høj konc.): M^n⁺ ({C_high:.4g} M) + ne⁻ → M")
+                st.markdown(f"**Q** = C_lav / C_høj = {C_low:.4g} / {C_high:.4g} = {Q:.6g}")
+                st.latex(
+                    rf"E = \frac{{RT}}{{nF}}\ln\frac{{C_{{høj}}}}{{C_{{lav}}}} "
+                    rf"= \frac{{8.314 \times {T_cc:.2f}}}{{{n_cc} \times 96485}}"
+                    rf"\times \ln\!\frac{{{C_high:.4g}}}{{{C_low:.4g}}}"
+                )
+                st.latex(rf"E_{{cell}} = {E:.4f}\,\text{{V}} \approx {E_approx:.4f}\,\text{{V}}")
+                st.metric("E_cell", f"{E:.4f} V")
+                st.caption(
+                    f"Approksimation ved 25°C: E = (0,05916/{n_cc}) × log({C_high:.4g}/{C_low:.4g}) = {E_approx:.4f} V"
+                )
 
     elif _ec_active == "ΔG og K":
         st.markdown("#### ΔG° og K")
