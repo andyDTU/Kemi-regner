@@ -5325,6 +5325,8 @@ def _show_beregn_k_tab(mode: str):
         )
         val_label = f"Partialtryk ({unit})"
         default_val = 100.0 if unit in ("bar", "kPa") else (1.0 if unit == "atm" else 1e5)
+        # Normaliseringsfaktor: P° i den valgte enhed (Kp er dimensionsløs)
+        P0 = {"bar": 1.0, "atm": 1.0, "kPa": 100.0, "Pa": 1e5}[unit]
 
     st.info("💡 Eksempel: N₂ + 3 H₂ ⇌ 2 NH₃  →  N₂ (reak, ν=1), H₂ (reak, ν=3), NH₃ (prod, ν=2)")
 
@@ -5365,12 +5367,14 @@ def _show_beregn_k_tab(mode: str):
         products.append((name, int(nu), val))
 
     if st.button(f"Beregn {symbol}", type="primary", key=f"{mode}_calc"):
+        # For Kp: normaliser med P° så Kp er dimensionsløs (P° = 1 bar = 100 kPa = 1e5 Pa)
+        p0 = P0 if not is_kc else 1.0
         numer = 1.0
         denom = 1.0
         for _, nu, val in products:
-            numer *= val ** nu
+            numer *= (val / p0) ** nu
         for _, nu, val in reactants:
-            denom *= val ** nu
+            denom *= (val / p0) ** nu
         K = numer / denom
 
         # Δn for unit note
@@ -5400,16 +5404,19 @@ def _show_beregn_k_tab(mode: str):
         ksym = "c" if is_kc else "p"
         st.latex(rf"K_{{{ksym}}} = \frac{{{num_latex}}}{{{den_latex}}}")
 
-        # Substitution
-        num_sub = " \\cdot ".join(
-            f"({val:.4g})^{{{nu}}}" if nu > 1 else f"({val:.4g})" for _, nu, val in products)
-        den_sub = " \\cdot ".join(
-            f"({val:.4g})^{{{nu}}}" if nu > 1 else f"({val:.4g})" for _, nu, val in reactants)
+        # Substitution (vis normaliserede værdier for Kp)
+        def _fmt(val, nu, p0):
+            v = val / p0
+            return f"({v:.4g})^{{{nu}}}" if nu > 1 else f"({v:.4g})"
+        num_sub = " \\cdot ".join(_fmt(val, nu, p0) for _, nu, val in products)
+        den_sub = " \\cdot ".join(_fmt(val, nu, p0) for _, nu, val in reactants)
+        if not is_kc and p0 != 1.0:
+            st.markdown(f"*(Tryk divideres med P° = {p0:.4g} {unit} inden beregning)*")
         st.latex(rf"= \frac{{{num_sub}}}{{{den_sub}}} = \frac{{{numer:.4g}}}{{{denom:.4g}}}")
         st.latex(rf"K_{{{ksym}}} = {K:.4g}")
 
         if not is_kc:
-            st.caption(f"Δn = {delta_n:+d} → enhed: {unit_power}")
+            st.caption(f"Δn = {delta_n:+d} — Kp er dimensionsløs (P/P° brugt)")
 
         col_r1, col_r2 = st.columns(2)
         col_r1.metric(symbol, f"{K:.4g}")
