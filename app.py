@@ -5303,84 +5303,139 @@ def show_ice_table_tab():
 
 
 def _show_beregn_k_tab(mode: str):
-    """Shared logic for Beregn Kc and Beregn Kp tabs."""
+    """Beregn Kc eller Kp – direkte ligevægtsværdier eller via ICE-tabel."""
+    import math as _math
     is_kc = (mode == "Kc")
     symbol = "Kc" if is_kc else "Kp"
+    val_name = "koncentration" if is_kc else "partialtryk"
 
     st.subheader(f"Beregn {symbol} fra ligevægtsdata")
+
+    # ── Enhed (kun Kp) ────────────────────────────────────────────────────
     if is_kc:
-        st.latex(r"K_c = \frac{\prod [\text{prod}]^{\nu}}{\prod [\text{reak}]^{\nu}}")
-        st.markdown("Angiv alle stoffer **ved ligevægt** med støkiometriske koefficienter og koncentrationer.")
         unit = "M"
-        val_label = "Ligevægtskonc. (M)"
-        default_val = 0.10
+        P0 = 1.0
+        val_label_eq  = "Ligevægtskonc. (M)"
+        val_label_ini = "Startkonc. (M)"
+        default_val   = 0.10
     else:
-        st.latex(r"K_p = \frac{\prod P_{\text{prod}}^{\nu}}{\prod P_{\text{reak}}^{\nu}}")
-        st.markdown("Angiv alle stoffer **ved ligevægt** med støkiometriske koefficienter og partialtryk.")
-        unit = st.selectbox(
-            "Trykkenhed",
-            ["bar", "atm", "kPa", "Pa"],
-            index=0,
-            key="Kp_unit",
-        )
-        val_label = f"Partialtryk ({unit})"
-        default_val = 100.0 if unit in ("bar", "kPa") else (1.0 if unit == "atm" else 1e5)
-        # Normaliseringsfaktor: P° i den valgte enhed (Kp er dimensionsløs)
+        unit = st.selectbox("Trykkenhed", ["bar", "atm", "kPa", "Pa"],
+                            index=0, key="Kp_unit")
+        val_label_eq  = f"Ligevægtstryk ({unit})"
+        val_label_ini = f"Starttryk ({unit})"
+        default_val   = 100.0 if unit in ("bar", "kPa") else (1.0 if unit == "atm" else 1e5)
         P0 = {"bar": 1.0, "atm": 1.0, "kPa": 100.0, "Pa": 1e5}[unit]
 
-    st.info("💡 Eksempel: N₂ + 3 H₂ ⇌ 2 NH₃  →  N₂ (reak, ν=1), H₂ (reak, ν=3), NH₃ (prod, ν=2)")
+    # ── Inputmode ─────────────────────────────────────────────────────────
+    input_mode = st.radio(
+        "Hvad er givet i opgaven?",
+        ["Ligevægtsværdier direkte", "Startværdier + ét ligevægtstryk (ICE)"],
+        key=f"{mode}_imode", horizontal=True,
+    )
+    use_ice = (input_mode != "Ligevægtsværdier direkte")
 
+    st.info("💡 Eksempel: N₂ + 3 H₂ ⇌ 2 NH₃ — N₂ (reak, ν=1), H₂ (reak, ν=3), NH₃ (prod, ν=2)")
+
+    # ── Støkiometri ───────────────────────────────────────────────────────
     col_nr, col_np = st.columns(2)
-    n_react = col_nr.number_input("Antal reaktanter", value=2, min_value=1, max_value=5, step=1,
-                                   key=f"{mode}_nreact")
-    n_prod = col_np.number_input("Antal produkter", value=1, min_value=1, max_value=5, step=1,
-                                  key=f"{mode}_nprod")
+    n_react = int(col_nr.number_input("Antal reaktanter", value=2, min_value=1,
+                                      max_value=5, step=1, key=f"{mode}_nreact"))
+    n_prod  = int(col_np.number_input("Antal produkter",  value=1, min_value=1,
+                                      max_value=5, step=1, key=f"{mode}_nprod"))
 
-    st.markdown("#### Reaktanter")
-    reactants = []
-    default_names_r = ["A", "B", "C", "D", "E"]
-    default_nu_r    = [1, 1, 1, 1, 1]
-    default_vals_r  = [default_val]*5
-    for i in range(int(n_react)):
+    val_label = val_label_ini if use_ice else val_label_eq
+    lbl3 = f"Start{val_name}" if use_ice else val_label_eq
+
+    st.markdown(f"#### Reaktanter  *(navn | ν | {lbl3})*")
+    reactants_raw = []
+    for i in range(n_react):
         c1, c2, c3 = st.columns([2, 1, 2])
-        name = c1.text_input("Stof", value=default_names_r[i],
+        name = c1.text_input("Stof", value=["N₂","H₂","C","D","E"][i],
                               key=f"{mode}_rname_{i}", label_visibility="collapsed")
-        nu = c2.number_input("ν", value=default_nu_r[i], min_value=1, max_value=10, step=1,
-                              key=f"{mode}_rnu_{i}")
-        val = c3.number_input(val_label, value=float(default_vals_r[i]), min_value=1e-20,
-                               format="%.4g", key=f"{mode}_rval_{i}", label_visibility="collapsed")
-        reactants.append((name, int(nu), val))
+        nu   = c2.number_input("ν", value=[1,3,1,1,1][i], min_value=1, max_value=10,
+                               step=1, key=f"{mode}_rnu_{i}")
+        val  = c3.number_input(val_label, value=float(default_val),
+                               min_value=0.0, format="%.4g",
+                               key=f"{mode}_rval_{i}", label_visibility="collapsed")
+        reactants_raw.append((name, int(nu), val, "r"))
 
-    st.markdown("#### Produkter")
-    products = []
-    default_names_p = ["C", "D", "E", "F", "G"]
-    default_nu_p    = [1, 1, 1, 1, 1]
-    default_vals_p  = [default_val]*5
-    for i in range(int(n_prod)):
+    st.markdown(f"#### Produkter  *(navn | ν | {lbl3})*")
+    products_raw = []
+    for i in range(n_prod):
         c1, c2, c3 = st.columns([2, 1, 2])
-        name = c1.text_input("Stof", value=default_names_p[i],
+        name = c1.text_input("Stof", value=["NH₃","D","E","F","G"][i],
                               key=f"{mode}_pname_{i}", label_visibility="collapsed")
-        nu = c2.number_input("ν", value=default_nu_p[i], min_value=1, max_value=10, step=1,
-                              key=f"{mode}_pnu_{i}")
-        val = c3.number_input(val_label, value=float(default_vals_p[i]), min_value=1e-20,
-                               format="%.4g", key=f"{mode}_pval_{i}", label_visibility="collapsed")
-        products.append((name, int(nu), val))
+        nu   = c2.number_input("ν", value=1, min_value=1, max_value=10,
+                               step=1, key=f"{mode}_pnu_{i}")
+        val  = c3.number_input(val_label, value=float(0.0 if use_ice else default_val),
+                               min_value=0.0, format="%.4g",
+                               key=f"{mode}_pval_{i}", label_visibility="collapsed")
+        products_raw.append((name, int(nu), val, "p"))
+
+    # ── ICE: vælg det kendte ligevægtstryk ────────────────────────────────
+    x_solved = None
+    eq_vals: dict = {}   # name → equilibrium value
+    if use_ice:
+        all_species = [(n, nu, v, side) for n, nu, v, side in reactants_raw + products_raw]
+        species_names = [n for n, *_ in all_species]
+        known_name = st.selectbox(
+            f"Hvilket stof kender du ligevægtstrykket/-koncentrationen for?",
+            species_names, key=f"{mode}_ice_known",
+        )
+        known_eq_val = st.number_input(
+            f"Ligevægtsværdi for {known_name} ({unit})",
+            value=float(95.0 if unit == "bar" else default_val),
+            min_value=0.0, format="%.4g", key=f"{mode}_ice_known_val",
+        )
+        # Find x: eq_val = init_val ± ν·x
+        for n, nu, init, side in all_species:
+            if n == known_name:
+                sign = +1 if side == "p" else -1
+                if nu == 0:
+                    st.error("ν kan ikke være 0.")
+                    return
+                x_solved = (known_eq_val - init) / (sign * nu)
+                break
 
     if st.button(f"Beregn {symbol}", type="primary", key=f"{mode}_calc"):
-        # For Kp: normaliser med P° så Kp er dimensionsløs (P° = 1 bar = 100 kPa = 1e5 Pa)
-        p0 = P0 if not is_kc else 1.0
-        numer = 1.0
-        denom = 1.0
-        for _, nu, val in products:
-            numer *= (val / p0) ** nu
-        for _, nu, val in reactants:
-            denom *= (val / p0) ** nu
-        K = numer / denom
+        # ── Beregn ligevægtsværdier ──────────────────────────────────────
+        if use_ice:
+            if x_solved is None:
+                st.error("Kunne ikke bestemme x.")
+                return
+            # Byg ICE tabel
+            ice_rows = []
+            for n, nu, init, side in reactants_raw + products_raw:
+                sign   = -1 if side == "r" else +1
+                change = sign * nu * x_solved
+                eq     = init + change
+                eq_vals[n] = eq
+                ice_rows.append({"Stof": n, "Initial": init,
+                                 "Ændring": f"{'+' if change>=0 else ''}{change:.4g}",
+                                 "Ligevægt": eq})
 
-        # Δn for unit note
-        if not is_kc:
-            delta_n = sum(nu for _, nu, _ in products) - sum(nu for _, nu, _ in reactants)
-            unit_power = f"{unit}^{{{delta_n:+d}}}" if delta_n != 0 else "(dimensionsløs)"
+            # Vis ICE tabel
+            st.markdown("---")
+            st.markdown("### ICE-tabel")
+            st.markdown(f"Løst: x = {x_solved:.4g} {unit}")
+            import pandas as _pd
+            st.dataframe(_pd.DataFrame(ice_rows), hide_index=True, use_container_width=True)
+
+            if any(v < 0 for v in eq_vals.values()):
+                st.error("⚠️ En eller flere ligevægtsværdier er negative — tjek dine startværdier.")
+                return
+
+            reactants = [(n, nu, eq_vals[n]) for n, nu, _, _ in reactants_raw]
+            products  = [(n, nu, eq_vals[n]) for n, nu, _, _ in products_raw]
+        else:
+            reactants = [(n, nu, v) for n, nu, v, _ in reactants_raw]
+            products  = [(n, nu, v) for n, nu, v, _ in products_raw]
+
+        # ── Kp / Kc beregning ─────────────────────────────────────────────
+        p0 = P0 if not is_kc else 1.0
+        numer = _math.prod((v / p0) ** nu for _, nu, v in products)
+        denom = _math.prod((v / p0) ** nu for _, nu, v in reactants)
+        K = numer / denom
 
         st.markdown("---")
         st.markdown("### Trin-for-trin")
@@ -5389,39 +5444,33 @@ def _show_beregn_k_tab(mode: str):
         prod_str  = " + ".join(f"{nu} {n}" if nu > 1 else n for n, nu, _ in products)
         st.markdown(f"**Reaktion:** {react_str} ⇌ {prod_str}")
 
-        # Formula
-        def _latex_terms(lst, is_kc):
+        def _latex_terms(lst):
             parts = []
             for n, nu, _ in lst:
                 sym = f"\\text{{{n}}}"
                 parts.append(f"[{sym}]^{{{nu}}}" if (is_kc and nu > 1) else
-                              (f"[{sym}]" if is_kc else
-                               (f"P_{{{sym}}}^{{{nu}}}" if nu > 1 else f"P_{{{sym}}}")))
+                             (f"[{sym}]" if is_kc else
+                             (f"P_{{{sym}}}^{{{nu}}}" if nu > 1 else f"P_{{{sym}}}")))
             return " \\cdot ".join(parts)
 
-        num_latex = _latex_terms(products, is_kc)
-        den_latex = _latex_terms(reactants, is_kc)
         ksym = "c" if is_kc else "p"
-        st.latex(rf"K_{{{ksym}}} = \frac{{{num_latex}}}{{{den_latex}}}")
+        st.latex(rf"K_{{{ksym}}} = \frac{{{_latex_terms(products)}}}{{{_latex_terms(reactants)}}}")
 
-        # Substitution (vis normaliserede værdier for Kp)
-        def _fmt(val, nu, p0):
+        def _fmt(val, nu):
             v = val / p0
             return f"({v:.4g})^{{{nu}}}" if nu > 1 else f"({v:.4g})"
-        num_sub = " \\cdot ".join(_fmt(val, nu, p0) for _, nu, val in products)
-        den_sub = " \\cdot ".join(_fmt(val, nu, p0) for _, nu, val in reactants)
+        num_sub = " \\cdot ".join(_fmt(v, nu) for _, nu, v in products)
+        den_sub = " \\cdot ".join(_fmt(v, nu) for _, nu, v in reactants)
         if not is_kc and p0 != 1.0:
-            st.markdown(f"*(Tryk divideres med P° = {p0:.4g} {unit} inden beregning)*")
+            st.markdown(f"*(divideret med P° = {p0:.4g} {unit})*")
         st.latex(rf"= \frac{{{num_sub}}}{{{den_sub}}} = \frac{{{numer:.4g}}}{{{denom:.4g}}}")
         st.latex(rf"K_{{{ksym}}} = {K:.4g}")
 
         if not is_kc:
-            st.caption(f"Δn = {delta_n:+d} — Kp er dimensionsløs (P/P° brugt)")
+            delta_n = sum(nu for _, nu, _ in products) - sum(nu for _, nu, _ in reactants)
+            st.caption(f"Δn = {delta_n:+d} — Kp dimensionsløs (P/P° brugt)")
 
-        col_r1, col_r2 = st.columns(2)
-        col_r1.metric(symbol, f"{K:.4g}")
-        if not is_kc:
-            col_r2.metric("Trykkenhed", unit)
+        st.metric(symbol, f"{K:.4g}")
 
 
 def _show_beregn_kc_tab():
@@ -5430,6 +5479,8 @@ def _show_beregn_kc_tab():
 
 def _show_beregn_kp_tab():
     _show_beregn_k_tab("Kp")
+
+
 
 
 def show_kc_kp_conversion_tab():
