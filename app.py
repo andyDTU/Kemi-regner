@@ -150,7 +150,9 @@ SEARCH_INDEX = [
     {"title": "Opvarmnings-/afkølingskurve", "keywords": ["opvarmning", "afkøling", "faseskift", "smelteenthalpi", "kogepunkt", "kurve", "plateau"], "page": "thermochemistry", "tab": None, "description": "Beregn energi til opvarmning med faseovergange"},
     {"title": "ICE-tabel (ligevægt)", "keywords": ["ice", "ligevægt", "kc", "kp", "equilibrium", "koncentration", "ice-tabel", "balance"], "page": "ligevaegt", "tab": None, "description": "Opsæt ICE-tabel og beregn ligevægtskoncentrationer"},
     {"title": "Reaktionskvotient (Q)", "keywords": ["q", "reaktionskvotient", "ligevægt", "shift", "le chatelier", "kc vs q"], "page": "ligevaegt", "tab": None, "description": "Find Q og afgør hvilken retning reaktionen går"},
-    {"title": "Kc/Kp konvertering", "keywords": ["kc", "kp", "konvertering", "delta n", "gasreaktioner", "ligevægt"], "page": "ligevaegt", "tab": None, "description": "Konverter mellem Kc og Kp"},
+    {"title": "Kc/Kp konvertering", "keywords": ["kc", "kp", "konvertering", "delta n", "gasreaktioner", "ligevægt"], "page": "ligevaegt", "tab": "🔄 Kc/Kp konvertering", "description": "Konverter mellem Kc og Kp"},
+    {"title": "Beregn Kc", "keywords": ["kc", "beregn kc", "ligevægtskonstant kc", "koncentration ligevægt", "find kc", "kc fra koncentration", "ligevægt koncentration"], "page": "ligevaegt", "tab": "🔢 Beregn Kc", "description": "Kc = Π[prod]^ν / Π[reak]^ν – beregn fra ligevægtskoncentrationer"},
+    {"title": "Beregn Kp", "keywords": ["kp", "beregn kp", "ligevægtskonstant kp", "partialtryk ligevægt", "find kp", "kp fra partialtryk", "gasligevægt"], "page": "ligevaegt", "tab": "🔢 Beregn Kp", "description": "Kp = Π(P_prod)^ν / Π(P_reak)^ν – beregn fra partialtryk"},
     {"title": "Cellespænding (E°)", "keywords": ["elektrokemi", "celle", "spænding", "e°", "emf", "oxidation", "reduktion", "batteri", "galvanisk"], "page": "electrochemistry", "tab": None, "description": "Beregn standardcellespænding og spontanitet"},
     {"title": "Nernst ligning", "keywords": ["nernst", "cellespænding", "ikke-standard", "koncentration", "e"], "page": "electrochemistry", "tab": None, "description": "Beregn cellespænding under ikke-standardbetingelser"},
     {"title": "Reaktionshastighed & kinetik", "keywords": ["kinetik", "hastighed", "rate", "orden", "halvliv", "half-life", "k", "arrhenius", "aktiveringsenergy"], "page": "kinetics", "tab": None, "description": "Beregn reaktionshastigheder og halveringstider"},
@@ -4708,6 +4710,8 @@ def show_equilibrium_page():
         "⚖️ Le Chateliers princip",
         "🔢 Oxidationstrin",
         "🧊 ICE Table",
+        "🔢 Beregn Kc",
+        "🔢 Beregn Kp",
         "🔄 Kc/Kp konvertering",
         "📊 Reaktionskvotient Q",
         "💧 Opløselighed (Ksp)",
@@ -4716,6 +4720,8 @@ def show_equilibrium_page():
         "⚖️ Le Chateliers princip": "le-chatelier",
         "🔢 Oxidationstrin":         "oxidation",
         "🧊 ICE Table":              "ice",
+        "🔢 Beregn Kc":              "beregn-kc",
+        "🔢 Beregn Kp":              "beregn-kp",
         "🔄 Kc/Kp konvertering":    "kc-kp",
         "📊 Reaktionskvotient Q":    "qvsK",
         "💧 Opløselighed (Ksp)":    "ksp",
@@ -4784,6 +4790,10 @@ def show_equilibrium_page():
         render_oxidation_states_tab()
     elif active_subpage == "🧊 ICE Table":
         show_ice_table_tab()
+    elif active_subpage == "🔢 Beregn Kc":
+        _show_beregn_kc_tab()
+    elif active_subpage == "🔢 Beregn Kp":
+        _show_beregn_kp_tab()
     elif active_subpage == "🔄 Kc/Kp konvertering":
         show_kc_kp_conversion_tab()
     elif active_subpage == "📊 Reaktionskvotient Q":
@@ -4873,6 +4883,116 @@ def show_ice_table_tab():
         
         except Exception as e:
             st.error(f"❌ **Error parsing reaction**: {str(e)}")
+
+
+def _show_beregn_k_tab(mode: str):
+    """Shared logic for Beregn Kc and Beregn Kp tabs."""
+    is_kc = (mode == "Kc")
+    unit = "M" if is_kc else "atm"
+    symbol = "Kc" if is_kc else "Kp"
+    conc_label = "Ligevægtskoncentration [X] (M)" if is_kc else "Partialtryk P(X) (atm)"
+
+    st.subheader(f"Beregn {symbol} fra ligevægtsdata")
+    if is_kc:
+        st.latex(r"K_c = \frac{\prod [\text{prod}]^{\nu}}{\prod [\text{reak}]^{\nu}}")
+        st.markdown("Angiv alle stoffer ved ligevægt med deres støkiometriske koefficienter og koncentrationer.")
+    else:
+        st.latex(r"K_p = \frac{\prod P_{\text{prod}}^{\nu}}{\prod P_{\text{reak}}^{\nu}}")
+        st.markdown("Angiv alle stoffer ved ligevægt med deres støkiometriske koefficienter og partialtryk.")
+
+    st.info("💡 Eksempel: N₂ + 3 H₂ ⇌ 2 NH₃  →  tilføj N₂ (reak, ν=1), H₂ (reak, ν=3), NH₃ (prod, ν=2)")
+
+    n_react = st.number_input("Antal reaktanter", value=2, min_value=1, max_value=5, step=1,
+                               key=f"{mode}_nreact")
+    n_prod = st.number_input("Antal produkter", value=1, min_value=1, max_value=5, step=1,
+                              key=f"{mode}_nprod")
+
+    st.markdown("#### Reaktanter")
+    reactants = []
+    for i in range(int(n_react)):
+        c1, c2, c3 = st.columns([2, 1, 2])
+        name = c1.text_input(f"Stof {i+1}", value=["A", "B", "C", "D", "E"][i],
+                              key=f"{mode}_rname_{i}")
+        nu = c2.number_input("ν", value=1, min_value=1, max_value=10, step=1,
+                              key=f"{mode}_rnu_{i}")
+        val = c3.number_input(conc_label, value=0.10, min_value=1e-20, format="%.4f",
+                               key=f"{mode}_rval_{i}")
+        reactants.append((name, int(nu), val))
+
+    st.markdown("#### Produkter")
+    products = []
+    for i in range(int(n_prod)):
+        c1, c2, c3 = st.columns([2, 1, 2])
+        name = c1.text_input(f"Stof {i+1}", value=["C", "D", "E", "F", "G"][i],
+                              key=f"{mode}_pname_{i}")
+        nu = c2.number_input("ν", value=1, min_value=1, max_value=10, step=1,
+                              key=f"{mode}_pnu_{i}")
+        val = c3.number_input(conc_label, value=0.20, min_value=1e-20, format="%.4f",
+                               key=f"{mode}_pval_{i}")
+        products.append((name, int(nu), val))
+
+    if st.button(f"Beregn {symbol}", type="primary", key=f"{mode}_calc"):
+        numer = 1.0
+        denom = 1.0
+        numer_parts = []
+        denom_parts = []
+
+        for name, nu, val in products:
+            numer *= val ** nu
+            sup = f"^{nu}" if nu > 1 else ""
+            numer_parts.append(f"[{name}]^{{{nu}}}" if nu > 1 else f"[{name}]")
+
+        for name, nu, val in reactants:
+            denom *= val ** nu
+            denom_parts.append(f"[{name}]^{{{nu}}}" if nu > 1 else f"[{name}]")
+
+        K = numer / denom
+
+        st.markdown("---")
+        st.markdown("### Trin-for-trin")
+
+        # Show reaction
+        react_str = " + ".join(
+            f"{nu} {n}" if nu > 1 else n for n, nu, _ in reactants
+        )
+        prod_str = " + ".join(
+            f"{nu} {n}" if nu > 1 else n for n, nu, _ in products
+        )
+        st.markdown(f"**Reaktion:** {react_str} ⇌ {prod_str}")
+
+        # Show formula
+        num_latex = " \\cdot ".join(
+            f"[\\text{{{n}}}]^{{{nu}}}" if nu > 1 else f"[\\text{{{n}}}]"
+            for n, nu, _ in products
+        )
+        den_latex = " \\cdot ".join(
+            f"[\\text{{{n}}}]^{{{nu}}}" if nu > 1 else f"[\\text{{{n}}}]"
+            for n, nu, _ in reactants
+        )
+        st.latex(rf"K_{'c' if is_kc else 'p'} = \frac{{{num_latex}}}{{{den_latex}}}")
+
+        # Substitution
+        num_sub = " \\cdot ".join(
+            f"({val:.4g})^{{{nu}}}" if nu > 1 else f"({val:.4g})"
+            for _, nu, val in products
+        )
+        den_sub = " \\cdot ".join(
+            f"({val:.4g})^{{{nu}}}" if nu > 1 else f"({val:.4g})"
+            for _, nu, val in reactants
+        )
+        st.latex(rf"= \frac{{{num_sub}}}{{{den_sub}}} = \frac{{{numer:.4g}}}{{{denom:.4g}}}")
+
+        st.latex(rf"K_{'c' if is_kc else 'p'} = {K:.4g}")
+
+        st.metric(symbol, f"{K:.4g}")
+
+
+def _show_beregn_kc_tab():
+    _show_beregn_k_tab("Kc")
+
+
+def _show_beregn_kp_tab():
+    _show_beregn_k_tab("Kp")
 
 
 def show_kc_kp_conversion_tab():
