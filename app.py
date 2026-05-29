@@ -4888,103 +4888,116 @@ def show_ice_table_tab():
 def _show_beregn_k_tab(mode: str):
     """Shared logic for Beregn Kc and Beregn Kp tabs."""
     is_kc = (mode == "Kc")
-    unit = "M" if is_kc else "atm"
     symbol = "Kc" if is_kc else "Kp"
-    conc_label = "Ligevægtskoncentration [X] (M)" if is_kc else "Partialtryk P(X) (atm)"
 
     st.subheader(f"Beregn {symbol} fra ligevægtsdata")
     if is_kc:
         st.latex(r"K_c = \frac{\prod [\text{prod}]^{\nu}}{\prod [\text{reak}]^{\nu}}")
-        st.markdown("Angiv alle stoffer ved ligevægt med deres støkiometriske koefficienter og koncentrationer.")
+        st.markdown("Angiv alle stoffer **ved ligevægt** med støkiometriske koefficienter og koncentrationer.")
+        unit = "M"
+        val_label = "Ligevægtskonc. (M)"
+        default_val = 0.10
     else:
         st.latex(r"K_p = \frac{\prod P_{\text{prod}}^{\nu}}{\prod P_{\text{reak}}^{\nu}}")
-        st.markdown("Angiv alle stoffer ved ligevægt med deres støkiometriske koefficienter og partialtryk.")
+        st.markdown("Angiv alle stoffer **ved ligevægt** med støkiometriske koefficienter og partialtryk.")
+        unit = st.selectbox(
+            "Trykkenhed",
+            ["bar", "atm", "kPa", "Pa"],
+            index=0,
+            key="Kp_unit",
+        )
+        val_label = f"Partialtryk ({unit})"
+        default_val = 100.0 if unit in ("bar", "kPa") else (1.0 if unit == "atm" else 1e5)
 
-    st.info("💡 Eksempel: N₂ + 3 H₂ ⇌ 2 NH₃  →  tilføj N₂ (reak, ν=1), H₂ (reak, ν=3), NH₃ (prod, ν=2)")
+    st.info("💡 Eksempel: N₂ + 3 H₂ ⇌ 2 NH₃  →  N₂ (reak, ν=1), H₂ (reak, ν=3), NH₃ (prod, ν=2)")
 
-    n_react = st.number_input("Antal reaktanter", value=2, min_value=1, max_value=5, step=1,
-                               key=f"{mode}_nreact")
-    n_prod = st.number_input("Antal produkter", value=1, min_value=1, max_value=5, step=1,
-                              key=f"{mode}_nprod")
+    col_nr, col_np = st.columns(2)
+    n_react = col_nr.number_input("Antal reaktanter", value=2, min_value=1, max_value=5, step=1,
+                                   key=f"{mode}_nreact")
+    n_prod = col_np.number_input("Antal produkter", value=1, min_value=1, max_value=5, step=1,
+                                  key=f"{mode}_nprod")
 
     st.markdown("#### Reaktanter")
     reactants = []
+    default_names_r = ["N₂", "H₂", "C", "D", "E"]
+    default_nu_r    = [1, 3, 1, 1, 1]
+    default_vals_r  = [52.5, 157.5, 0.10, 0.10, 0.10] if not is_kc else [0.10]*5
     for i in range(int(n_react)):
         c1, c2, c3 = st.columns([2, 1, 2])
-        name = c1.text_input(f"Stof {i+1}", value=["A", "B", "C", "D", "E"][i],
-                              key=f"{mode}_rname_{i}")
-        nu = c2.number_input("ν", value=1, min_value=1, max_value=10, step=1,
+        name = c1.text_input("Stof", value=default_names_r[i],
+                              key=f"{mode}_rname_{i}", label_visibility="collapsed")
+        nu = c2.number_input("ν", value=default_nu_r[i], min_value=1, max_value=10, step=1,
                               key=f"{mode}_rnu_{i}")
-        val = c3.number_input(conc_label, value=0.10, min_value=1e-20, format="%.4f",
-                               key=f"{mode}_rval_{i}")
+        val = c3.number_input(val_label, value=float(default_vals_r[i]), min_value=1e-20,
+                               format="%.4g", key=f"{mode}_rval_{i}", label_visibility="collapsed")
         reactants.append((name, int(nu), val))
 
     st.markdown("#### Produkter")
     products = []
+    default_names_p = ["NH₃", "D", "E", "F", "G"]
+    default_nu_p    = [2, 1, 1, 1, 1]
+    default_vals_p  = [95.0, 0.20, 0.20, 0.20, 0.20] if not is_kc else [0.20]*5
     for i in range(int(n_prod)):
         c1, c2, c3 = st.columns([2, 1, 2])
-        name = c1.text_input(f"Stof {i+1}", value=["C", "D", "E", "F", "G"][i],
-                              key=f"{mode}_pname_{i}")
-        nu = c2.number_input("ν", value=1, min_value=1, max_value=10, step=1,
+        name = c1.text_input("Stof", value=default_names_p[i],
+                              key=f"{mode}_pname_{i}", label_visibility="collapsed")
+        nu = c2.number_input("ν", value=default_nu_p[i], min_value=1, max_value=10, step=1,
                               key=f"{mode}_pnu_{i}")
-        val = c3.number_input(conc_label, value=0.20, min_value=1e-20, format="%.4f",
-                               key=f"{mode}_pval_{i}")
+        val = c3.number_input(val_label, value=float(default_vals_p[i]), min_value=1e-20,
+                               format="%.4g", key=f"{mode}_pval_{i}", label_visibility="collapsed")
         products.append((name, int(nu), val))
 
     if st.button(f"Beregn {symbol}", type="primary", key=f"{mode}_calc"):
         numer = 1.0
         denom = 1.0
-        numer_parts = []
-        denom_parts = []
-
-        for name, nu, val in products:
+        for _, nu, val in products:
             numer *= val ** nu
-            sup = f"^{nu}" if nu > 1 else ""
-            numer_parts.append(f"[{name}]^{{{nu}}}" if nu > 1 else f"[{name}]")
-
-        for name, nu, val in reactants:
+        for _, nu, val in reactants:
             denom *= val ** nu
-            denom_parts.append(f"[{name}]^{{{nu}}}" if nu > 1 else f"[{name}]")
-
         K = numer / denom
+
+        # Δn for unit note
+        if not is_kc:
+            delta_n = sum(nu for _, nu, _ in products) - sum(nu for _, nu, _ in reactants)
+            unit_power = f"{unit}^{{{delta_n:+d}}}" if delta_n != 0 else "(dimensionsløs)"
 
         st.markdown("---")
         st.markdown("### Trin-for-trin")
 
-        # Show reaction
-        react_str = " + ".join(
-            f"{nu} {n}" if nu > 1 else n for n, nu, _ in reactants
-        )
-        prod_str = " + ".join(
-            f"{nu} {n}" if nu > 1 else n for n, nu, _ in products
-        )
+        react_str = " + ".join(f"{nu} {n}" if nu > 1 else n for n, nu, _ in reactants)
+        prod_str  = " + ".join(f"{nu} {n}" if nu > 1 else n for n, nu, _ in products)
         st.markdown(f"**Reaktion:** {react_str} ⇌ {prod_str}")
 
-        # Show formula
-        num_latex = " \\cdot ".join(
-            f"[\\text{{{n}}}]^{{{nu}}}" if nu > 1 else f"[\\text{{{n}}}]"
-            for n, nu, _ in products
-        )
-        den_latex = " \\cdot ".join(
-            f"[\\text{{{n}}}]^{{{nu}}}" if nu > 1 else f"[\\text{{{n}}}]"
-            for n, nu, _ in reactants
-        )
-        st.latex(rf"K_{'c' if is_kc else 'p'} = \frac{{{num_latex}}}{{{den_latex}}}")
+        # Formula
+        def _latex_terms(lst, is_kc):
+            parts = []
+            for n, nu, _ in lst:
+                sym = f"\\text{{{n}}}"
+                parts.append(f"[{sym}]^{{{nu}}}" if (is_kc and nu > 1) else
+                              (f"[{sym}]" if is_kc else
+                               (f"P_{{{sym}}}^{{{nu}}}" if nu > 1 else f"P_{{{sym}}}")))
+            return " \\cdot ".join(parts)
+
+        num_latex = _latex_terms(products, is_kc)
+        den_latex = _latex_terms(reactants, is_kc)
+        ksym = "c" if is_kc else "p"
+        st.latex(rf"K_{{{ksym}}} = \frac{{{num_latex}}}{{{den_latex}}}")
 
         # Substitution
         num_sub = " \\cdot ".join(
-            f"({val:.4g})^{{{nu}}}" if nu > 1 else f"({val:.4g})"
-            for _, nu, val in products
-        )
+            f"({val:.4g})^{{{nu}}}" if nu > 1 else f"({val:.4g})" for _, nu, val in products)
         den_sub = " \\cdot ".join(
-            f"({val:.4g})^{{{nu}}}" if nu > 1 else f"({val:.4g})"
-            for _, nu, val in reactants
-        )
+            f"({val:.4g})^{{{nu}}}" if nu > 1 else f"({val:.4g})" for _, nu, val in reactants)
         st.latex(rf"= \frac{{{num_sub}}}{{{den_sub}}} = \frac{{{numer:.4g}}}{{{denom:.4g}}}")
+        st.latex(rf"K_{{{ksym}}} = {K:.4g}")
 
-        st.latex(rf"K_{'c' if is_kc else 'p'} = {K:.4g}")
+        if not is_kc:
+            st.caption(f"Δn = {delta_n:+d} → enhed: {unit_power}")
 
-        st.metric(symbol, f"{K:.4g}")
+        col_r1, col_r2 = st.columns(2)
+        col_r1.metric(symbol, f"{K:.4g}")
+        if not is_kc:
+            col_r2.metric("Trykkenhed", unit)
 
 
 def _show_beregn_kc_tab():
