@@ -136,6 +136,7 @@ SEARCH_INDEX = [
     {"title": "Buffer pH (Henderson-Hasselbalch)", "keywords": ["buffer", "ph", "henderson", "hasselbalch", "bufferløsning", "acetat", "konjugeret"], "page": "acids-bases", "tab": "Buffer", "description": "Blanding af svag syre og dens konjugerede base"},
     {"title": "Titrering", "keywords": ["titrering", "ækvivalenspunkt", "neutralisation", "titration", "halvækvivalenspunkt"], "page": "acids-bases", "tab": "Titrering", "description": "Beregn pH ved titrering af syre med base"},
     {"title": "Flerprotonisk syre + NaOH", "keywords": ["flerprotonisk", "polyprotisk", "triprotisk", "diprotisk", "fosforsyre", "phosphoric acid", "H3PO4", "H2SO4", "H2CO3", "flerprotonisk syre", "syre og naoh", "neutralisering syre base", "stærk base svag syre masse", "ph af blanding", "ph fosforsyre naoh"], "page": "acids-bases", "tab": "🧬 Flerprotonisk syre", "description": "pH når flerprotonisk syre (H₃PO₄, H₂SO₄ m.fl.) blandes med NaOH – stoichiometri + buffer/ækvivalenspunkt automatisk"},
+    {"title": "Ka-tabel – syrestyrke", "keywords": ["ka tabel", "ka værdier", "pka", "syrestyrke", "stærkeste syre", "sammenlign syrer", "H2PO4", "HPO4", "HCO3", "NH4+", "ladet syre", "konjugeret syre", "fosfat syre", "hvilken er stærkest", "rangér syrer", "ka reference"], "page": "acids-bases", "tab": "📊 Ka-tabel", "description": "Ka- og pKa-referencetabel for 20+ syrer inkl. ladede former (H₂PO₄⁻, HPO₄²⁻, NH₄⁺, HCO₃⁻) – søg og filtrer"},
     {"title": "Molarmasse", "keywords": ["molarmasse", "molar masse", "g/mol", "molekylvægt", "h2o", "nacl", "formel", "sammensætning"], "page": "atoms-molar", "tab": None, "description": "Find molarmassen for en kemisk forbindelse"},
     {"title": "Elektronkonfiguration", "keywords": ["elektron", "konfiguration", "orbital", "atom", "ion", "aufbau", "periodisk", "elektroner"], "page": "atoms-molar", "tab": None, "description": "Find elektronkonfiguration for atomer og ioner"},
     {"title": "Balancer kemisk reaktion", "keywords": ["balancer", "reaktion", "ligning", "balance", "koefficient", "afstemning"], "page": "stoichiometry", "tab": "⚖️ Balancer reaktion", "description": "Balancer en kemisk reaktionsligning"},
@@ -3169,7 +3170,7 @@ def show_acids_bases_page():
     st.title("🧪 Acids & Bases Calculator")
     st.markdown("---")
 
-    _ab_options = ["Stærk syre/base", "Svag syre/base", "⚗️ Salthydrolyse", "Buffer", "Titrering", "🧬 Flerprotonisk syre", "🧮 Debye-Hückel", "📋 pH-beregner"]
+    _ab_options = ["Stærk syre/base", "Svag syre/base", "⚗️ Salthydrolyse", "Buffer", "Titrering", "🧬 Flerprotonisk syre", "📊 Ka-tabel", "🧮 Debye-Hückel", "📋 pH-beregner"]
     _ab_active = _render_styled_tab_nav(_ab_options, key="acids_bases_tab", nav_key="nav_acids_bases")
 
     if _ab_active == "Stærk syre/base":
@@ -3212,6 +3213,8 @@ def show_acids_bases_page():
             ("Buffer", "acids-bases", "Buffer"),
             ("Svag syre/base", "acids-bases", "Svag syre/base"),
         ])
+    elif _ab_active == "📊 Ka-tabel":
+        _show_ka_tabel_tab()
     elif _ab_active == "🧮 Debye-Hückel":
         _show_debye_huckel_tab()
         _quick_links([
@@ -3670,6 +3673,96 @@ def show_strong_acids_bases_tab():
             
             except Exception as e:
                 st.error(f"❌ **Fejl**: {str(e)}")
+
+
+def _show_ka_tabel_tab():
+    """Ka-referencetabel for almindelige syrer inkl. ladede former."""
+    import math as _math
+    import pandas as pd
+
+    st.markdown("### 📊 Ka-referencetabel – syrestyrke")
+    st.markdown(
+        "Større Ka (lavere pKa) = **stærkere syre**. "
+        "Inkluderer ladede syrer som H₂PO₄⁻ og HPO₄²⁻."
+    )
+
+    # (Syre, formel/ladning, Ka, noter)
+    KA_DATA = [
+        # Stærke syrer
+        ("Svovlsyre (1. trin)",    "H₂SO₄",      1e3,       "Stærk syre"),
+        ("Saltsyre",               "HCl",          1e7,       "Stærk syre"),
+        ("Salpetersyre",           "HNO₃",         2.4e1,     "Stærk syre"),
+        ("Hydroniiumion",          "H₃O⁺",         5.5e1,     "Reference"),
+        # Svage syrer – uorganiske
+        ("Svovlsyre (2. trin)",    "HSO₄⁻",        1.2e-2,    "Konjugeret syre"),
+        ("Fosforsyre (1. trin)",   "H₃PO₄",        7.5e-3,    "Ka1"),
+        ("Fluorbrinte",            "HF",            6.8e-4,    ""),
+        ("Kulsyre (1. trin)",      "H₂CO₃/CO₂(aq)",4.3e-7,   "Ka1 – effektiv"),
+        ("Fosforsyre (2. trin)",   "H₂PO₄⁻",       6.2e-8,    "Ka2 – ladet syre"),
+        ("Svovlbrinte (1. trin)",  "H₂S",           9.5e-8,    "Ka1"),
+        ("Ammoniumion",            "NH₄⁺",          5.6e-10,   "Konjugeret syre til NH₃"),
+        ("Kulsyre (2. trin)",      "HCO₃⁻",         4.7e-11,   "Ka2 – ladet syre"),
+        ("Fosforsyre (3. trin)",   "HPO₄²⁻",        4.8e-13,   "Ka3 – ladet syre"),
+        ("Svovlbrinte (2. trin)",  "HS⁻",           1.0e-14,   "Ka2"),
+        ("Vand",                   "H₂O",           1.8e-16,   "Ekstremt svag syre"),
+        # Organiske
+        ("Myresyre",               "HCOOH",         1.8e-4,    ""),
+        ("Eddikesyre",             "CH₃COOH",       1.8e-5,    "Ka1"),
+        ("Benzoesyre",             "C₆H₅COOH",      6.3e-5,    ""),
+        ("Oxalsyre (1. trin)",     "H₂C₂O₄",        5.9e-2,    "Ka1"),
+        ("Oxalsyre (2. trin)",     "HC₂O₄⁻",        6.4e-5,    "Ka2 – ladet syre"),
+        ("Citronsyre (1. trin)",   "H₃C₆H₅O₇",      7.4e-4,    "Ka1"),
+        ("Phenol",                 "C₆H₅OH",        1.0e-10,   ""),
+    ]
+
+    rows = []
+    for name, formula, Ka, note in KA_DATA:
+        pKa = -_math.log10(Ka) if Ka > 0 else None
+        styrke = ("💪 Stærk" if Ka > 1
+                  else "🔶 Middel" if Ka > 1e-4
+                  else "🔹 Svag" if Ka > 1e-9
+                  else "🔸 Meget svag")
+        rows.append({
+            "Syre": name,
+            "Formel": formula,
+            "Ka": Ka,
+            "pKa": round(pKa, 2) if pKa is not None else "—",
+            "Styrke": styrke,
+            "Note": note,
+        })
+
+    df = pd.DataFrame(rows).sort_values("Ka", ascending=False).reset_index(drop=True)
+
+    # Filter
+    col_f1, col_f2 = st.columns([2, 1])
+    search = col_f1.text_input("Søg (navn eller formel)", placeholder="fx phosphat, NH4, HCO3",
+                                key="ka_search")
+    show_only = col_f2.selectbox("Vis", ["Alle", "Kun ladede syrer", "Kun stærke (Ka>1)", "Kun svage (Ka<1e-4)"],
+                                  key="ka_filter")
+
+    if search:
+        mask = (df["Syre"].str.contains(search, case=False, na=False) |
+                df["Formel"].str.contains(search, case=False, na=False) |
+                df["Note"].str.contains(search, case=False, na=False))
+        df = df[mask]
+    if show_only == "Kun ladede syrer":
+        df = df[df["Formel"].str.contains(r"[⁻⁺²³]|[\-\+]\d*\)", regex=True, na=False) |
+                df["Formel"].str.endswith("⁻") | df["Formel"].str.endswith("⁺")]
+    elif show_only == "Kun stærke (Ka>1)":
+        df = df[df["Ka"] > 1]
+    elif show_only == "Kun svage (Ka<1e-4)":
+        df = df[df["Ka"] < 1e-4]
+
+    st.dataframe(
+        df[["Syre", "Formel", "Ka", "pKa", "Styrke", "Note"]],
+        use_container_width=True,
+        hide_index=True,
+        column_config={
+            "Ka": st.column_config.NumberColumn(format="%.2e"),
+            "pKa": st.column_config.TextColumn(),
+        },
+    )
+    st.caption("Sortering: stærkest øverst. Ka-værdier ved 25°C.")
 
 
 def _show_debye_huckel_tab():
