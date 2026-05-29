@@ -178,6 +178,7 @@ SEARCH_INDEX = [
     {"title": "Ideel gaslov – find ubekendt", "keywords": ["pv=nrt", "gaslov", "find tryk", "find volumen", "find temperature", "find mol gas", "beregn gas"], "page": "gases", "tab": "Ideel gaslov", "description": "PV = nRT – beregn P, V, n eller T"},
     {"title": "Molarmasse fra densitet", "keywords": ["densitet", "molarmasse fra densitet", "m fra densitet", "rho", "ρ", "g/l", "molar masse densitet", "identificer gas", "ukendt gas", "nitrogen oxid", "kvælstofoxid"], "page": "gases", "tab": "🔬 M fra densitet", "description": "M = ρRT/P – find molarmassen fra densitet, tryk og temperatur"},
     {"title": "Empirisk formel", "keywords": ["empirisk formel", "empirisk", "procentsammensætning", "procent sammensætning", "masseandel", "elementaranalyse", "forbrændingsanalyse", "%c", "%h", "%o", "hvad er formlen", "find formel fra procent", "molekylær formel", "molecular formula"], "page": "atoms-molar", "tab": "🔬 Empirisk formel", "description": "Find empirisk/molekylær formel fra procentvis sammensætning – klassisk elementaranalyse"},
+    {"title": "Polymerisationsgrad", "keywords": ["polymer", "polymerisationsgrad", "repeatenhed", "repeat unit", "PET", "PE", "PP", "nylon", "polyethylen", "polyethylenterephthalat", "n i polymer", "molekylvægt polymer", "grad af polymerisation", "polymerisation", "polymerization"], "page": "atoms-molar", "tab": "🔗 Polymerisationsgrad", "description": "n = M_polymer / M_repeatenhed – find polymerisationsgraden fra molekylvægt og repeatenhed"},
     {"title": "Formel ladning", "keywords": ["formel ladning", "formal charge", "fc", "lewis struktur rangering", "sandsynlig struktur", "lone pair", "bindende elektroner", "valenselektroner", "rang struktur", "oktett", "resonans formal", "sammenlign strukturer", "v minus l minus b"], "page": "atoms-molar", "tab": "⚗️ Formel ladning", "description": "Beregn FC = V − L − ½B for hvert atom og rangér Lewis-strukturer efter sandsynlighed"},
     {"title": "Funktionelle grupper", "keywords": ["funktionel gruppe", "organisk", "keton", "aldehyd", "alkohol", "ester", "carboxylsyre", "amin", "alken", "alkyn", "alkan", "CH3CO", "CHO", "COOH", "COO", "identify group", "find gruppe", "kondenseret formel", "organisk formel"], "page": "organisk", "tab": None, "description": "Identificér funktionelle grupper fra kondenseret formel eller IUPAC-navn"},
     {"title": "Organisk reaktion", "keywords": ["organisk reaktion", "hydrering", "halogenering", "oxidation alkohol", "reduktion keton", "esterifikation", "hydrolyse ester", "markovnikov", "additionsreaktion", "eliminering", "saponifikation", "hvad dannes", "reaktionsprodukt", "alken reaktion", "br2 alken"], "page": "organisk", "tab": None, "description": "Forudsig produkt af organiske reaktioner: hydrering, halogenering, oxidation, esterifikation m.fl."},
@@ -1031,6 +1032,7 @@ def show_molar_mass_page():
     subpage_labels = [
         "⚖️ Molar Mass",
         "🔬 Empirisk formel",
+        "🔗 Polymerisationsgrad",
         "⚛️ Elektronkonfiguration og atomradius",
         "🧭 Interaktivt periodisk system",
         "🧷 Lewis-struktur",
@@ -1041,6 +1043,7 @@ def show_molar_mass_page():
     subpage_to_query = {
         "⚖️ Molar Mass": "molar",
         "🔬 Empirisk formel": "empirisk",
+        "🔗 Polymerisationsgrad": "polymer",
         "⚛️ Elektronkonfiguration og atomradius": "electron",
         "🧭 Interaktivt periodisk system": "periodic",
         "🧷 Lewis-struktur": "lewis",
@@ -1436,6 +1439,9 @@ def show_molar_mass_page():
     if active_subpage == "🔬 Empirisk formel":
         _show_empirisk_formel_tab()
 
+    if active_subpage == "🔗 Polymerisationsgrad":
+        _show_polymerisationsgrad_tab()
+
     if active_subpage == "⚗️ Formel ladning":
         _show_formel_ladning_tab()
 
@@ -1801,6 +1807,86 @@ def _show_formel_ladning_tab():
                 st.markdown(f"{medal} **Struktur {k}** — {note}  \n{parts}")
         elif filled:
             st.info("Tilføj atomer til mindst 2 strukturer for at sammenligne og rangere.")
+
+
+def _show_polymerisationsgrad_tab():
+    """Beregn polymerisationsgraden n = M_polymer / M_repeatenhed."""
+    st.markdown("### 🔗 Polymerisationsgrad")
+    st.latex(r"n = \frac{M_{\text{polymer}}}{M_{\text{repeatenhed}}}")
+    st.markdown(
+        "Repeatenheden er den mindste struktur der gentages i polymerkæden — "
+        "den del der står inden for `[ ]`$_n$ i strukturformlen."
+    )
+
+    # ── Fælles polymerer ────────────────────────────────────────────────────
+    POLYMERS = [
+        ("PET (polyethylenterephthalat)", "C10H8O4", 192.17),
+        ("PE (polyethylen)", "C2H4", 28.05),
+        ("PP (polypropylen)", "C3H6", 42.08),
+        ("PVC (polyvinylchlorid)", "C2H3Cl", 62.50),
+        ("PS (polystyren)", "C8H8", 104.15),
+        ("Nylon-6,6", "C12H22N2O2", 226.32),
+        ("Nylon-6 (caprolactam)", "C6H11NO", 113.16),
+        ("PTFE (teflon)", "C2F4", 100.02),
+        ("PMMA (plexiglas)", "C5H8O2", 100.12),
+        ("PLA (polymelkesyre)", "C3H4O2", 72.06),
+    ]
+
+    with st.expander("📋 Repeatenheder for almindelige polymerer", expanded=False):
+        cols = st.columns([3, 2, 2])
+        cols[0].markdown("**Polymer**")
+        cols[1].markdown("**Repeatenhed**")
+        cols[2].markdown("**M (g/mol)**")
+        for name, formula, m in POLYMERS:
+            c1, c2, c3 = st.columns([3, 2, 2])
+            c1.markdown(name)
+            c2.markdown(f"`{formula}`")
+            c3.markdown(f"{m:.2f}")
+
+    st.markdown("---")
+    st.markdown("#### Beregn n")
+
+    col_a, col_b = st.columns(2)
+    M_poly_input = col_a.number_input(
+        "Polymer molekylvægt", value=100.0, min_value=1e-6, format="%.4g",
+        key="poly_Mpoly",
+    )
+    poly_unit = col_a.selectbox("Enhed", ["kg/mol", "g/mol"], index=0, key="poly_unit")
+    repeat_formula = col_b.text_input(
+        "Repeatenhedens formel", value="C10H8O4", key="poly_formula",
+        help="fx C10H8O4 for PET, C2H4 for PE",
+    )
+
+    if st.button("Beregn n", type="primary", key="poly_calc"):
+        M_poly_gmol = M_poly_input * 1000.0 if poly_unit == "kg/mol" else M_poly_input
+        if not repeat_formula.strip():
+            st.error("Angiv repeatenhedens formel.")
+        else:
+            try:
+                M_rep, steps, _ = calculate_molar_mass_with_steps(repeat_formula.strip())
+            except Exception as e:
+                st.error(f"Kunne ikke beregne molarmasse for '{repeat_formula}': {e}")
+                return
+
+            n = M_poly_gmol / M_rep
+            st.markdown("---")
+            st.markdown("### Trin-for-trin")
+
+            st.markdown(f"**1. Polymer molekylvægt:** {M_poly_input:.4g} {poly_unit} "
+                        f"= {M_poly_gmol:.4g} g/mol")
+            st.markdown(f"**2. Molarmasse af repeatenhed ({repeat_formula}):**")
+            for step in steps:
+                st.markdown(f"   {step}")
+
+            st.latex(
+                rf"n = \frac{{M_{{\text{{polymer}}}}}}{{M_{{\text{{rep}}}}}} "
+                rf"= \frac{{{M_poly_gmol:.4g}\,\text{{g/mol}}}}{{{M_rep:.4f}\,\text{{g/mol}}}} "
+                rf"= {n:.2f}"
+            )
+            st.metric("Polymerisationsgrad n", f"{n:.1f}")
+            st.caption(
+                f"n er dimensionsløs og angiver antallet af repeatenheder i én polymerkæde."
+            )
 
 
 def _show_empirisk_formel_tab():
