@@ -7,34 +7,53 @@ Giver trin-for-trin løsninger på de mest almindelige eksamensopgaver.
 
 ## 🚀 Kom i gang (Mac)
 
-### Trin 1 – Hent programmet
+### Trin 1 – Hent programmet (kun første gang)
 
 Åbn **Terminal** (søg efter "Terminal" i Spotlight med ⌘ + mellemrum) og kør:
 
 ```bash
 cd ~/Desktop
 git clone https://github.com/andyDTU/Kemi-regner.git
-cd Kemi-regner
 ```
 
+Programmet ligger nu i mappen **`/Users/dit-navn/Desktop/Kemi-regner`**.
+
 > **Har du ikke Git?**  
-> Gå til [github.com/andyDTU/Kemi-regner](https://github.com/andyDTU/Kemi-regner), klik på den grønne **Code**-knap → **Download ZIP**, pak filen ud på Skrivebordet og åbn Terminal i den mappe.
+> Gå til [github.com/andyDTU/Kemi-regner](https://github.com/andyDTU/Kemi-regner), klik på den grønne **Code**-knap → **Download ZIP**, pak filen ud på Skrivebordet så mappen hedder `Kemi-regner`.
 
 ---
 
 ### Trin 2 – Start appen
 
+**Hver gang du vil bruge appen**, kør disse to linjer i Terminal:
+
 ```bash
+cd ~/Desktop/Kemi-regner
 bash run.sh
 ```
 
-Det er det! Scriptet installerer automatisk alt det nødvendige og åbner appen i din browser på **http://localhost:8501**.
+Appen åbner automatisk i din browser på **http://localhost:8501**.
 
 > Første gang tager det 1–2 minutter mens pakkerne installeres. Næste gang starter den på få sekunder.
 
+> ⚠️ **Vigtigt:** Start altid appen med `cd ~/Desktop/Kemi-regner` først — ellers finder appen ikke sine filer (strukturbilleder m.m.).
+
 ---
 
-### Trin 3 – Opdatér til nyeste version
+### Trin 3 – Download strukturbilleder (anbefalet, kun første gang)
+
+For at se 2D-strukturbilleder i Molekyle-databasen skal du køre dette én gang:
+
+```bash
+cd ~/Desktop/Kemi-regner
+python3 scripts/download_structure_images.py
+```
+
+> Tager ~5–10 minutter og downloader ~613 billeder. Skal kun gøres én gang per computer.
+
+---
+
+### Trin 4 – Opdatér til nyeste version
 
 Når der er kommet nye funktioner:
 
@@ -42,10 +61,9 @@ Når der er kommet nye funktioner:
 cd ~/Desktop/Kemi-regner
 git pull
 bash run.sh
-python3 scripts/download_structure_images.py
 ```
 
-> `download_structure_images.py` springer automatisk allerede hentede billeder over – kun nye stoffer hentes.
+> `download_structure_images.py` behøver kun køres igen hvis der er tilføjet nye stoffer.
 
 ---
 
@@ -55,19 +73,25 @@ python3 scripts/download_structure_images.py
 1. Installér [Python 3.10+](https://www.python.org/downloads/) – sæt flueben ved **"Add Python to PATH"** under installationen
 2. Installér [Git](https://git-scm.com/download/win)
 
-### Start
+### Trin 1 – Hent programmet (kun første gang)
 
 Åbn **Kommandoprompt** og kør:
 
 ```
 cd %USERPROFILE%\Desktop
 git clone https://github.com/andyDTU/Kemi-regner.git
-cd Kemi-regner
+```
+
+### Trin 2 – Start appen
+
+**Hver gang du vil bruge appen:**
+
+```
+cd %USERPROFILE%\Desktop\Kemi-regner
 run.bat
 ```
 
-Dobbeltklik alternativt på **`run.bat`** i File Explorer.  
-Scriptet installerer automatisk alt og åbner appen på **http://localhost:8501**.
+Alternativt: dobbeltklik på **`run.bat`** i File Explorer (under `Desktop\Kemi-regner`).
 
 ### Opdatér til nyeste version (Windows)
 
@@ -93,13 +117,11 @@ python3 scripts/download_structure_images.py
 Til eksamen:
 
 ```bash
+cd ~/Desktop/Kemi-regner
 bash run.sh
 ```
 
 Åbn **http://localhost:8501** i din browser. Alt virker uden internet.
-
-> `download_structure_images.py` henter strukturbilleder for alle stoffer (~20 MB, ~5–10 min).  
-> Billederne gemmes lokalt og skal kun hentes **én gang** per computer.
 
 ---
 
@@ -129,18 +151,18 @@ Klik på **🏠 Fundamentals** for at se alle beregnere som opgavekort.
 
 | Emne | Indeholder bl.a. |
 |------|-----------------|
-| 🧪 Syrer & Baser | pH (stærk/svag syre/base), buffer (Ka- og Kb-system), titrering, salthydrolyse, bufferkapacitet, Debye-Hückel |
-| ⚖️ Atoms & Molarmasse | Molarmasse, empirisk formel, procentsammensætning, elektronkonfiguration, Lewis-struktur, formel ladning |
+| 🧪 Syrer & Baser | pH (stærk/svag syre/base), buffer (Ka- og Kb-system), titrering, salthydrolyse, flerprotonisk syre + NaOH, Ka-tabel |
+| ⚖️ Atoms & Molarmasse | Molarmasse, empirisk formel, polymerisationsgrad, elektronkonfiguration, Lewis-struktur, formel ladning |
 | 🧮 Stofmængder | Afstem reaktioner, begrænsende reaktant, fortynding, redox, stofmænge fra ligning |
 | 📊 Gasser | Ideel gaslov, Daltons lov, van der Waals, Graham, molarmasse fra gasdensitet |
 | 🔥 Termokemi | ΔH°, Gibbs (ΔG), find ΔH°/ΔG°/ΔS°, kalorimetri, opvarmningskurver, Hess, Van't Hoff, Kirchhoff, Born-Haber |
-| ⚗️ Ligevægt | ICE-tabel, Kc/Kp, reaktionskvotient Q, Le Chatelier, Ksp og fælding |
-| 🔋 Elektrokemi | Cellespænding E°, Nernst, ΔG og K, Faradays lov |
+| ⚗️ Ligevægt | ICE-tabel, Kc/Kp (direkte + ICE-mode), reaktionskvotient Q, Le Chatelier, Ksp og fælding |
+| 🔋 Elektrokemi | Cellespænding E°, Nernst, koncentrationscelle, ΔG og K, Faradays lov |
 | ⚡ Kinetik | Integreret hastighedslov, halvliv, reaktionsorden & k, initial rates, Arrhenius |
 | 🌡️ Kolligative egenskaber | Kogepunktselevering, frysepunktssænkning, osmotisk tryk, find molarmasse |
 | 🌫️ Damptryk | Raoults lov |
 | 🔷 Geometri & Bindinger | VSEPR (geometri + planaritet), Lewis-struktur, IMF, bindingsentalpier |
-| 🔩 Faststofkemi | Enhedscellevolumen, densitet, gitterparameter for SC/BCC/FCC |
+| 🔩 Faststofkemi | Enhedscellevolumen, densitet (g/cm³ og kg/m³), gitterparameter for SC/BCC/FCC |
 | ☢️ Nuklear kemi | α/β/γ-henfald, halvliv |
 | 🧬 Organisk kemi | Funktionelle grupper, reaktionsprediktor, strukturreference |
 | 🔬 Molekyle database | 600+ stoffer med egenskaber, bindingstype, IMF og strukturbilleder |
@@ -150,10 +172,18 @@ Klik på **🏠 Fundamentals** for at se alle beregnere som opgavekort.
 ## ❓ Fejlfinding
 
 **"bash: run.sh: command not found"**  
-Sørg for at du er i den rigtige mappe: `cd ~/Desktop/Kemi-regner`
+Du er ikke i den rigtige mappe. Kør: `cd ~/Desktop/Kemi-regner` og prøv igen.
+
+**Strukturbilleder vises ikke**  
+Kør download-scriptet fra den rigtige mappe:
+```bash
+cd ~/Desktop/Kemi-regner
+python3 scripts/download_structure_images.py
+```
+Sørg for at køre `cd ~/Desktop/Kemi-regner` først — ellers gemmes billederne det forkerte sted.
 
 **"command not found: python"**  
-På Mac hedder kommandoen `python3` (ikke `python`). Brug `python3 scripts/download_structure_images.py`.
+På Mac hedder kommandoen `python3`. Brug `python3 scripts/download_structure_images.py`.
 
 **"command not found: git"**  
 Installér Git fra [git-scm.com](https://git-scm.com)
