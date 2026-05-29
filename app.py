@@ -4919,9 +4919,9 @@ def _show_beregn_k_tab(mode: str):
 
     st.markdown("#### Reaktanter")
     reactants = []
-    default_names_r = ["N₂", "H₂", "C", "D", "E"]
-    default_nu_r    = [1, 3, 1, 1, 1]
-    default_vals_r  = [100.0, 300.0, 1.0, 1.0, 1.0] if not is_kc else [0.10]*5
+    default_names_r = ["A", "B", "C", "D", "E"]
+    default_nu_r    = [1, 1, 1, 1, 1]
+    default_vals_r  = [default_val]*5
     for i in range(int(n_react)):
         c1, c2, c3 = st.columns([2, 1, 2])
         name = c1.text_input("Stof", value=default_names_r[i],
@@ -4934,9 +4934,9 @@ def _show_beregn_k_tab(mode: str):
 
     st.markdown("#### Produkter")
     products = []
-    default_names_p = ["NH₃", "D", "E", "F", "G"]
-    default_nu_p    = [2, 1, 1, 1, 1]
-    default_vals_p  = [95.0, 1.0, 1.0, 1.0, 1.0] if not is_kc else [0.20]*5
+    default_names_p = ["C", "D", "E", "F", "G"]
+    default_nu_p    = [1, 1, 1, 1, 1]
+    default_vals_p  = [default_val]*5
     for i in range(int(n_prod)):
         c1, c2, c3 = st.columns([2, 1, 2])
         name = c1.text_input("Stof", value=default_names_p[i],
