@@ -1463,39 +1463,35 @@ def show_molar_mass_page():
             try:
                 from core.vsepr import GEOMETRY_TABLE as _GT
                 _vsepr_rows = []
-                _seen_geoms = {}
+                _all_planar_flags = []
                 for _a in last_structure.atoms:
                     if _a.symbol == "H":
-                        continue  # H er altid terminal — ingen interessant geometri
+                        continue
                     _nbonds = [b for b in last_structure.bonds if _a.index in (b.a, b.b)]
                     _bp_v = len(_nbonds)
+                    # Skip terminal atoms (only 1 bond) — VSEPR geometry only meaningful for ≥2 bonds
+                    if _bp_v < 2:
+                        continue
                     _lp_v = _a.lone_pairs
                     _sn_v = _bp_v + _lp_v
                     _g = _GT.get((_sn_v, _lp_v))
                     if _g:
-                        _key = (_sn_v, _lp_v)
-                        if _key not in _seen_geoms:
-                            _seen_geoms[_key] = True
-                            _vsepr_rows.append({
-                                "Atom": f"{_a.symbol} ({_a.index})",
-                                "SN": _sn_v,
-                                "BP": _bp_v,
-                                "LP": _lp_v,
-                                "Geometri": _g.name_da,
-                                "Bindingsvinkel": _g.bond_angles,
-                                "Plan": "✅" if _g.is_planar else "❌",
-                            })
-                        else:
-                            _vsepr_rows.append({
-                                "Atom": f"{_a.symbol} ({_a.index})",
-                                "SN": _sn_v, "BP": _bp_v, "LP": _lp_v,
-                                "Geometri": _g.name_da,
-                                "Bindingsvinkel": _g.bond_angles,
-                                "Plan": "✅" if _g.is_planar else "❌",
-                            })
+                        _all_planar_flags.append(_g.is_planar)
+                        _vsepr_rows.append({
+                            "Atom": f"{_a.symbol} ({_a.index})",
+                            "SN": _sn_v,
+                            "BP": _bp_v,
+                            "LP": _lp_v,
+                            "Geometri": _g.name_da,
+                            "Bindingsvinkel": _g.bond_angles,
+                            "Lokal plan": "✅" if _g.is_planar else "❌",
+                        })
                 if _vsepr_rows:
                     st.markdown("#### Geometri & bindingsvinkler (VSEPR)")
-                    st.caption("SN = steric number = BP + LP  ·  Beregnet for hvert ikke-H atom")
+                    _mol_planar = all(_all_planar_flags) and len(_all_planar_flags) > 0
+                    _plan_label = "✅ Ja — plan geometri" if _mol_planar else "❌ Nej — ikke-plan geometri"
+                    st.metric("Molekylet er plan?", _plan_label)
+                    st.caption("SN = steric number = BP + LP  ·  Et molekyle er plan hvis ALLE tunge atomer har plan lokal geometri (sp² eller sp)")
                     st.dataframe(_pd.DataFrame(_vsepr_rows), use_container_width=True, hide_index=True)
             except Exception:
                 pass

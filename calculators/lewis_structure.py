@@ -56,6 +56,16 @@ _PREDEFINED_TOPOLOGIES: Dict[Tuple[str, int], Tuple[List[str], List[Tuple[int, i
         ["N", "N"],
         [(0, 1)],
     ),
+    # Ethylene C2H4  (H2C=CH2)
+    ("C2H4", 0): (
+        ["C", "C", "H", "H", "H", "H"],
+        [(0, 1), (0, 2), (0, 3), (1, 4), (1, 5)],
+    ),
+    # Acetylene C2H2  (HC≡CH)
+    ("C2H2", 0): (
+        ["C", "C", "H", "H"],
+        [(0, 1), (0, 2), (1, 3)],
+    ),
     # Ethane C2H6
     ("C2H6", 0): (
         ["C", "C", "H", "H", "H", "H", "H", "H"],
