@@ -741,6 +741,36 @@ _EXAM_TASKS = [
     ("BCC jern har atomradius r = 126 pm. Find kantlængde a og enhedscellevolumen.",
      "Nøgleord: atomradius + BCC → a = 4r/√3 → V = a³",
      "Gitterparameter fra atomradius", "faststofkemi", None),
+    # ── Syrer & Baser – flerprotonisk & Ka-tabel ─────────────────────────────
+    ("H₃PO₄ (0,10 M, 25 mL) titreres med 0,10 M NaOH. Find pH ved 37,5 mL tilsat NaOH.",
+     "Nøgleord: flerprotonisk syre + NaOH → tæl mmol base vs. syre → zone: buffer/ækviv./overskud → pH",
+     "Flerprotonisk syre + NaOH", "acids-bases", "🧬 Flerprotonisk syre"),
+    ("Sammenlign syrestyrken: HF, CH₃COOH, H₂PO₄⁻, HPO₄²⁻. Hvem er stærkest?",
+     "Nøgleord: ladede syrer (H₂PO₄⁻, HPO₄²⁻, NH₄⁺, HCO₃⁻) findes IKKE i molekyle-DB → Ka-referencetabel → størst Ka = stærkest syre",
+     "Ka-tabel – syrestyrke", "acids-bases", "📊 Ka-tabel"),
+    # ── Elektrokemi – koncentrationscelle ────────────────────────────────────
+    ("Cu-koncentrationscelle: halvcelle A: 1,0 M Cu²⁺, halvcelle B: 2,0×10⁻³ M. Beregn E.",
+     "Nøgleord: identiske elektroder + forskellig koncentration, E°=0 → E = (0,05916/n)·log(C_høj/C_lav)",
+     "Koncentrationscelle", "electrochemistry", "⚡ Koncentrationscelle"),
+    # ── Atoms & Molarmasse – polymer & reverse konfiguration ─────────────────
+    ("PET-polyester: M_polymer = 19 200 g/mol, repeatenhed er C₁₀H₈O₄. Find polymerisationsgraden n.",
+     "Nøgleord: molarmasse polymer + repeatenhed → beregn M_repeatenhed → n = M_polymer / M_repeatenhed",
+     "Polymerisationsgrad", "atoms-molar", "🔗 Polymerisationsgrad"),
+    ("Elektronkonfiguration: [Ar]3d¹⁰4s²4p³. Hvad er grundstoffet, gruppe og periode?",
+     "Nøgleord: elektronkonfiguration givet → udvid ædel gas-kerne → tæl elektroner i alt → find element, gruppe, periode",
+     "Elektronkonfiguration → Element", "atoms-molar", "⚛️ Elektronkonfiguration og atomradius"),
+    # ── Termokemi – gasvolumen + ΔH° ─────────────────────────────────────────
+    ("C₂H₄ (10,0 L, 25°C, 1 atm) brænder. Givet ΔHf°: C₂H₄=52,4; CO₂=−393,5; H₂O=−285,8 kJ/mol.",
+     "Nøgleord: gasvolumen → ideel gaslov: n = PV/RT; derefter ΔH°rxn = Σ(ν·ΔHf°); Q = n·|ΔH°rxn|",
+     "Reaktionsenthalpi fra gasvolumen", "thermochemistry", "Enthalpi (ΔH°)"),
+    # ── Stofmængder – masse af bundfald → koncentration ──────────────────────
+    ("250 mL NaCl tilsættes overskud AgNO₃. Bundfald (AgCl) vejer 13,5 g. Find c(NaCl) før tilsætning.",
+     "Nøgleord: masse bundfald → n(produkt) = m/M → n(NaCl) = n(AgCl) (1:1) → c = n/V; M(AgCl) = 143,32 g/mol",
+     "Stofmænge fra ligning (masse→konc.)", "stoichiometry", "🔢 Stofmænge fra ligning"),
+    # ── Bindinger – ΔEN-rangering ─────────────────────────────────────────────
+    ("Arranger HI, NaBr, CsBr, Cl₂, LiF efter stigende kovalent karakter.",
+     "Nøgleord: kovalent karakter ↑ når ΔEN ↓; Cl₂: ΔEN=0 (rent kovalent), LiF: ΔEN=3,0 (mest ionisk) → rækkefølge: LiF < CsBr < NaBr < HI < Cl₂",
+     "Bindingskarakter – rangering", "atoms-molar", "⚛️ Elektronkonfiguration og atomradius"),
 ]
 
 
@@ -765,15 +795,17 @@ def show_exam_guide_page():
         "🧪 Syrer & Baser": [
             "Stærk syre", "Stærk base", "Svag syre", "Ioniseringsgrad α",
             "Buffer (Henderson-Hasselbalch)", "Bufferkapacitet β", "Titrering",
-            "Salthydrolyse", "Debye-Hückel",
+            "Salthydrolyse", "Flerprotonisk syre + NaOH", "Ka-tabel – syrestyrke",
+            "Debye-Hückel",
         ],
         "🔥 Termokemi": [
-            "Gibbs fri energi (ΔG)", "Reaktionsenthalpi (ΔH°)", "Kalorimetri (q = mcΔT)",
-            "Opvarmningskurve", "Van't Hoff-plot", "Kirchhoffs lov", "Born-Haber",
+            "Gibbs fri energi (ΔG)", "Reaktionsenthalpi (ΔH°)", "Reaktionsenthalpi fra gasvolumen",
+            "Kalorimetri (q = mcΔT)", "Opvarmningskurve", "Van't Hoff-plot",
+            "Kirchhoffs lov", "Born-Haber",
         ],
         "🧮 Stofmængder & Reaktioner": [
             "Balancer reaktion", "Begrænsende reaktant", "Stofmænge fra ligning",
-            "Fortynding", "Redoxafstemning", "Empirisk formel",
+            "Stofmænge fra ligning (masse→konc.)", "Fortynding", "Redoxafstemning", "Empirisk formel",
         ],
         "📊 Gasser": [
             "Ideel gaslov (PV = nRT)", "Daltons lov (partialtryk)", "M fra gasdensitet",
@@ -783,14 +815,16 @@ def show_exam_guide_page():
             "Ksp – opløselighedsprodukt", "Fælding – Q vs Ksp", "Le Chateliers princip",
         ],
         "🔋 Elektrokemi": [
-            "Cellespænding (E°cell)", "ΔG° og K fra E°", "Nernst-ligning", "Faradays lov",
+            "Cellespænding (E°cell)", "ΔG° og K fra E°", "Nernst-ligning",
+            "Koncentrationscelle", "Faradays lov",
         ],
         "⚡ Kinetik": [
             "Integreret hastighedslov", "Halvliv (2. orden)",
             "Reaktionsorden fra initial rates", "Arrhenius",
         ],
         "⚖️ Atoms & Molarmasse": [
-            "Molarmasse", "Empirisk formel",
+            "Molarmasse", "Empirisk formel", "Polymerisationsgrad",
+            "Elektronkonfiguration → Element", "Bindingskarakter – rangering",
             "Formel ladning", "Formel ladning (struktursammenligning)",
         ],
         "🌡️ Kolligative egenskaber": [
