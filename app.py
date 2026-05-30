@@ -9416,8 +9416,40 @@ def _render_substance_card(s: Substance) -> None:
 
     # ── Struktur (VSEPR) og billede ───────────────────────────────────────
     with st.expander("🧩 Struktur (VSEPR)", expanded=True):
-        st.markdown(f"**VSEPR-struktur:** {get_vsepr_description(s)}")
+        _vsepr_desc = get_vsepr_description(s)
+        st.markdown(f"**VSEPR-struktur:** {_vsepr_desc}")
         st.markdown(f"**Tetraedrisk type:** {get_vsepr_distortion_label(s)}")
+        # Plan geometri — afled fra Lewis-struktur eller VSEPR-tekst
+        _plan_result = None
+        try:
+            from core.vsepr import GEOMETRY_TABLE as _GT2
+            _ls2, _ = calculate_lewis_structure_with_steps(s.formula)
+            _pf2 = []
+            for _a2 in _ls2.atoms:
+                if _a2.symbol == "H":
+                    continue
+                _nb2 = [b for b in _ls2.bonds if _a2.index in (b.a, b.b)]
+                if len(_nb2) < 2:
+                    continue
+                _g2 = _GT2.get((len(_nb2) + _a2.lone_pairs, _a2.lone_pairs))
+                if _g2:
+                    _pf2.append(_g2.is_planar)
+            if _pf2:
+                _plan_result = all(_pf2)
+        except Exception:
+            _d = _vsepr_desc.lower()
+            _plan_kw  = {"lineær", "trigonal plan", "kvadratisk plan", "diatomisk"}
+            _noplan_kw = {"tetraedrisk", "pyramidal", "bipyramidal", "oktaedrisk", "vippestol", "t-formet"}
+            if any(k in _d for k in _plan_kw):
+                _plan_result = True
+            elif any(k in _d for k in _noplan_kw):
+                _plan_result = False
+        if _plan_result is True:
+            st.success("✅ Plan geometri")
+        elif _plan_result is False:
+            st.error("❌ Ikke-plan geometri")
+        else:
+            st.caption("Plan geometri: —")
         _local_img = Path(__file__).resolve().parent / "data" / "structure_images" / f"{s.id}.png"
         if _local_img.exists():
             st.image(str(_local_img), caption=f"2D-struktur: {s.name_da}", use_container_width=False)
