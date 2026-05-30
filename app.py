@@ -7309,28 +7309,63 @@ def show_kinetics_page():
     elif _kin_active == "Arrhenius":
         st.markdown("#### Arrhenius")
         st.caption("💡 **Fremad:** du kender k₁ ved T₁ og Eₐ → beregn k₂ ved T₂. **Baglæns:** du kender k₁ og k₂ → beregn Eₐ.")
-        st.markdown("Forlæns (én måling)")
-        k1 = st.number_input("k1 (s^-1)", value=1.0e-3, format="%.6e")
-        T1 = st.number_input("T1 (K)", value=298.15)
-        T2 = st.number_input("T2 (K)", value=308.15)
-        Ea = st.number_input("Ea (kJ/mol)", value=50.0)
-        if st.button("Beregn k₂", type="primary"):
+
+        _arr_mode = st.radio(
+            "Temperaturenhed:",
+            ["°C (omregnes automatisk til K)", "K (kelvin direkte)"],
+            horizontal=True,
+            key="arr_temp_unit",
+        )
+        _use_celsius = _arr_mode.startswith("°C")
+
+        _t_label = "°C" if _use_celsius else "K"
+        _t_default1 = 25.0 if _use_celsius else 298.15
+        _t_default2 = 35.0 if _use_celsius else 308.15
+
+        st.markdown("---")
+        st.markdown("##### Forlæns – find k₂")
+        st.caption("Du kender k₁, T₁, T₂ og Eₐ → beregn k₂")
+        _col_a1, _col_a2 = st.columns(2)
+        with _col_a1:
+            k1_fwd = st.number_input("k₁", value=1.0e-3, format="%.6e", key="arr_k1_fwd")
+            T1_fwd_in = st.number_input(f"T₁ ({_t_label})", value=_t_default1, key="arr_T1_fwd")
+        with _col_a2:
+            Ea_fwd = st.number_input("Eₐ (kJ/mol)", value=50.0, key="arr_Ea_fwd")
+            T2_fwd_in = st.number_input(f"T₂ ({_t_label})", value=_t_default2, key="arr_T2_fwd")
+        T1_fwd = T1_fwd_in + 273.15 if _use_celsius else T1_fwd_in
+        T2_fwd = T2_fwd_in + 273.15 if _use_celsius else T2_fwd_in
+        if _use_celsius:
+            st.caption(f"T₁ = {T1_fwd_in} °C = **{T1_fwd:.2f} K**  |  T₂ = {T2_fwd_in} °C = **{T2_fwd:.2f} K**")
+        if st.button("Beregn k₂", type="primary", key="arr_btn_fwd"):
             try:
-                k2, steps, _ = calculate_arrhenius_forward_with_steps(k1, T1, T2, Ea)
-                st.success(f"k2 = {k2:.6g} s^-1")
+                k2_res, steps_fwd, _ = calculate_arrhenius_forward_with_steps(k1_fwd, T1_fwd, T2_fwd, Ea_fwd)
+                st.success(f"k₂ = {k2_res:.4g}")
                 with st.expander("Vis trin"):
-                    for s in steps:
+                    for s in steps_fwd:
                         st.markdown(s)
             except Exception as e:
                 st.error(str(e))
-        st.markdown("Baglæns – find Eₐ (to målinger)")
-        k2v = st.number_input("k2 (s^-1)", value=3.0e-3, format="%.6e")
-        if st.button("Beregn Eₐ", type="primary"):
+
+        st.markdown("---")
+        st.markdown("##### Baglæns – find Eₐ")
+        st.caption("Du kender k₁ og k₂ ved to temperaturer → beregn aktiveringsenergi")
+        _col_b1, _col_b2 = st.columns(2)
+        with _col_b1:
+            k1_bak = st.number_input("k₁", value=3.0e-3, format="%.6e", key="arr_k1_bak")
+            T1_bak_in = st.number_input(f"T₁ ({_t_label})", value=_t_default1, key="arr_T1_bak")
+        with _col_b2:
+            k2_bak = st.number_input("k₂", value=20.0, format="%.6e", key="arr_k2_bak")
+            T2_bak_in = st.number_input(f"T₂ ({_t_label})", value=_t_default2, key="arr_T2_bak")
+        T1_bak = T1_bak_in + 273.15 if _use_celsius else T1_bak_in
+        T2_bak = T2_bak_in + 273.15 if _use_celsius else T2_bak_in
+        if _use_celsius:
+            st.caption(f"T₁ = {T1_bak_in} °C = **{T1_bak:.2f} K**  |  T₂ = {T2_bak_in} °C = **{T2_bak:.2f} K**")
+        if st.button("Beregn Eₐ", type="primary", key="arr_btn_bak"):
             try:
-                Ea_kJ, steps, _ = calculate_arrhenius_two_point_Ea_with_steps(k1, T1, k2v, T2)
-                st.success(f"Ea = {Ea_kJ:.4g} kJ/mol")
+                Ea_kJ, steps_bak, _ = calculate_arrhenius_two_point_Ea_with_steps(k1_bak, T1_bak, k2_bak, T2_bak)
+                st.success(f"**Eₐ = {Ea_kJ:.4g} kJ/mol**")
                 with st.expander("Vis trin"):
-                    for s in steps:
+                    for s in steps_bak:
                         st.markdown(s)
             except Exception as e:
                 st.error(str(e))
