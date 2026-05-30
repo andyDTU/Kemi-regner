@@ -53,6 +53,19 @@ def _render_boiling_point_elevation_tab() -> None:
     st.latex(r"\Delta T_b = i \cdot K_b \cdot m")
     st.caption("Vælg enheder for input. Beregningen omregner automatisk til g, g/mol, kg og °C internt.")
 
+    col_btn1, col_btn2 = st.columns([1, 4])
+    with col_btn1:
+        if st.button("Brug vand", key="bp_use_water"):
+            st.session_state["bp_kb_value"] = "0.512"
+            st.session_state["bp_kb_unit"] = "°C·kg/mol"
+            st.session_state["bp_start_boiling_value"] = "100"
+            st.session_state["bp_start_boiling_unit"] = "°C"
+            st.rerun()
+    with col_btn2:
+        if st.button("Nulstil", key="bp_reset"):
+            _reset_boiling_point_state()
+            st.rerun()
+
     with st.form("boiling_point_elevation_form", clear_on_submit=False):
         col_left, col_right = st.columns(2)
 
@@ -137,19 +150,6 @@ def _render_boiling_point_elevation_tab() -> None:
 
         submit = st.form_submit_button("Beregn", type="primary")
 
-    col_btn1, col_btn2 = st.columns([1, 4])
-    with col_btn1:
-        if st.button("Brug vand", key="bp_use_water"):
-            st.session_state["bp_kb_value"] = "0.512"
-            st.session_state["bp_kb_unit"] = "°C·kg/mol"
-            st.session_state["bp_start_boiling_value"] = "100"
-            st.session_state["bp_start_boiling_unit"] = "°C"
-            st.rerun()
-    with col_btn2:
-        if st.button("Nulstil", key="bp_reset"):
-            _reset_boiling_point_state()
-            st.rerun()
-
     if not submit:
         return
 
@@ -196,6 +196,18 @@ def _render_freezing_point_depression_tab() -> None:
     st.markdown("Formel:")
     st.latex(r"\Delta T_f = i \cdot K_f \cdot m")
     st.caption("Vælg enheder for input/output. Beregningen omregner automatisk til korrekte SI-basenheder internt.")
+
+    # Knapper SKAL stå før formen — ellers kan session_state ikke sættes for widget-nøgler
+    col_btn1, col_btn2 = st.columns([1, 4])
+    with col_btn1:
+        if st.button("Brug vand", key="fp_use_water"):
+            st.session_state["fp_kf_value"] = "1.86"
+            st.session_state["fp_kf_unit"] = "°C·kg/mol"
+            st.rerun()
+    with col_btn2:
+        if st.button("Nulstil", key="fp_reset"):
+            _reset_freezing_point_state()
+            st.rerun()
 
     with st.form("freezing_point_depression_form", clear_on_submit=False):
         col_left, col_right = st.columns(2)
@@ -265,17 +277,6 @@ def _render_freezing_point_depression_tab() -> None:
                 )
 
         submit = st.form_submit_button("Beregn", type="primary")
-
-    col_btn1, col_btn2 = st.columns([1, 4])
-    with col_btn1:
-        if st.button("Brug vand", key="fp_use_water"):
-            st.session_state["fp_kf_value"] = "1.86"
-            st.session_state["fp_kf_unit"] = "°C·kg/mol"
-            st.rerun()
-    with col_btn2:
-        if st.button("Nulstil", key="fp_reset"):
-            _reset_freezing_point_state()
-            st.rerun()
 
     if not submit:
         return
