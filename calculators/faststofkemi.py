@@ -268,14 +268,138 @@ def _render_overview_tab():
         st.latex(r"N = \frac{\rho \cdot V_{\text{prøve}} \cdot N_A}{M}")
 
 
+def _render_unit_count_tab():
+    st.subheader("🔢 Antal enhedsceller i en prøve")
+    st.markdown("Find hvor mange enhedsceller der er i et givet volumen — fx en belægning eller en krystal.")
+
+    method = st.radio(
+        "Volumen givet som:",
+        ["Direkte volumen (cm³ / m³)", "Areal × tykkelse (belægning)"],
+        horizontal=True,
+        key="fss_nc_method",
+    )
+
+    col1, col2 = st.columns(2)
+    with col1:
+        crystal = st.selectbox(
+            "Krystalstruktur",
+            list(CRYSTAL_TYPES.keys()),
+            index=1,
+            key="fss_nc_crystal",
+        )
+        rho_unit = st.selectbox(
+            "Densitetsenhed",
+            ["g/cm³", "kg/m³", "g/mL"],
+            index=0,
+            key="fss_nc_rho_unit",
+        )
+        default_rho = {"g/cm³": 7.874, "kg/m³": 7874.0, "g/mL": 7.874}[rho_unit]
+        rho_input = st.number_input(
+            f"Densitet ρ ({rho_unit})",
+            value=default_rho,
+            min_value=1e-6,
+            format="%.4g",
+            key="fss_nc_rho",
+        )
+        M_gmol = st.number_input(
+            "Molarmasse M (g/mol)",
+            value=55.85,
+            min_value=0.001,
+            step=0.01,
+            key="fss_nc_M",
+        )
+        st.info(CRYSTAL_TYPES[crystal]["desc"])
+
+    with col2:
+        if method == "Direkte volumen (cm³ / m³)":
+            vol_unit = st.selectbox("Enhed", ["cm³", "m³", "mm³", "μm³"], key="fss_nc_vol_unit")
+            vol_input = st.number_input(
+                f"Volumen ({vol_unit})",
+                value=1.0,
+                min_value=0.0,
+                format="%.4g",
+                key="fss_nc_vol",
+            )
+        else:
+            area_unit = st.selectbox("Arealenhed", ["cm²", "m²", "mm²"], key="fss_nc_area_unit")
+            area_input = st.number_input(
+                f"Areal ({area_unit})",
+                value=10.0,
+                min_value=0.0,
+                format="%.4g",
+                key="fss_nc_area",
+            )
+            thick_unit = st.selectbox("Tykkelse-enhed", ["μm", "nm", "mm", "cm"], key="fss_nc_thick_unit")
+            thick_input = st.number_input(
+                f"Tykkelse ({thick_unit})",
+                value=10.0,
+                min_value=0.0,
+                format="%.4g",
+                key="fss_nc_thick",
+            )
+
+    if st.button("Beregn antal enhedsceller", type="primary", key="fss_nc_calc"):
+        ct = CRYSTAL_TYPES[crystal]
+        Z = ct["z"]
+
+        # Konvertér densitet til g/cm³
+        to_gcm3 = {"g/cm³": 1.0, "kg/m³": 0.001, "g/mL": 1.0}[rho_unit]
+        rho_gcm3 = rho_input * to_gcm3
+
+        # Enhedscellevolumen i cm³
+        rho_kg = rho_gcm3 * 1000
+        M_kg = M_gmol / 1000
+        V_cell_m3 = (Z * M_kg) / (AVOGADRO * rho_kg)
+        V_cell_cm3 = V_cell_m3 * 1e6  # 1 m³ = 1e6 cm³
+
+        # Konvertér prøvevolumen til cm³
+        if method == "Direkte volumen (cm³ / m³)":
+            to_cm3 = {"cm³": 1.0, "m³": 1e6, "mm³": 1e-3, "μm³": 1e-12}[vol_unit]
+            V_sample_cm3 = vol_input * to_cm3
+            vol_desc = f"{vol_input} {vol_unit}"
+        else:
+            area_to_cm2 = {"cm²": 1.0, "m²": 1e4, "mm²": 1e-2}[area_unit]
+            thick_to_cm = {"μm": 1e-4, "nm": 1e-7, "mm": 0.1, "cm": 1.0}[thick_unit]
+            V_sample_cm3 = area_input * area_to_cm2 * thick_input * thick_to_cm
+            vol_desc = f"{area_input} {area_unit} × {thick_input} {thick_unit}"
+
+        N_cells = V_sample_cm3 / V_cell_cm3
+
+        st.markdown("---")
+        st.markdown("### Trin-for-trin løsning")
+
+        st.markdown(f"**Trin 1 – Enhedscellevolumen ({crystal}, Z={Z}):**")
+        st.latex(
+            rf"V_{{celle}} = \frac{{Z \cdot M}}{{N_A \cdot \rho}} = "
+            rf"\frac{{{Z} \times {M_gmol}}}{{{AVOGADRO:.3e} \times {rho_gcm3:.4g}}} = "
+            rf"{V_cell_cm3:.4e}\,\text{{cm}}^3"
+        )
+
+        st.markdown(f"**Trin 2 – Prøvevolumen ({vol_desc}):**")
+        st.latex(rf"V_{{prøve}} = {V_sample_cm3:.4e}\,\text{{cm}}^3")
+
+        st.markdown("**Trin 3 – Antal enhedsceller:**")
+        st.latex(
+            rf"N = \frac{{V_{{prøve}}}}{{V_{{celle}}}} = "
+            rf"\frac{{{V_sample_cm3:.4e}}}{{{V_cell_cm3:.4e}}} = {N_cells:.3e}"
+        )
+
+        st.markdown("---")
+        col_r1, col_r2, col_r3 = st.columns(3)
+        col_r1.metric("Enhedscellevolumen", f"{V_cell_cm3:.3e} cm³")
+        col_r2.metric("Prøvevolumen", f"{V_sample_cm3:.3e} cm³")
+        col_r3.metric("Antal enhedsceller N", f"{N_cells:.3e}")
+
+
 def render_faststofkemi_page():
     st.title("🔩 Faststofkemi – Krystalstrukturer")
     st.markdown("Beregn enhedscellevolumen, densitet og gitterparametre for kubiske krystaller.")
 
-    tab_vol, tab_rho, tab_lat, tab_overview = st.tabs([
+    tab_vol, tab_rho, tab_lat, tab_count, tab_overview = st.tabs([
         "📦 Find volumen",
         "⚖️ Find densitet",
         "📐 Find gitterparameter",
+        "🔢 Antal enhedsceller",
         "📊 Oversigt",
     ])
 
@@ -285,5 +409,7 @@ def render_faststofkemi_page():
         _render_density_tab()
     with tab_lat:
         _render_lattice_param_tab()
+    with tab_count:
+        _render_unit_count_tab()
     with tab_overview:
         _render_overview_tab()
