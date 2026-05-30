@@ -34,13 +34,15 @@ def render_kogepunkt_frysepunkt_page() -> None:
     st.title("🌡️ Koge- og frysepunkt (colligative properties)")
     st.markdown("---")
 
-    tab_boiling, tab_freezing, tab_osmotic, tab_molmass = st.tabs([
-        "Kogepunktsforhøjelse", "Frysepunktsnedsættelse", "Osmotisk tryk", "🔍 Find molarmasse",
+    tab_boiling, tab_freezing, tab_compare, tab_osmotic, tab_molmass = st.tabs([
+        "Kogepunktsforhøjelse", "Frysepunktsnedsættelse", "🆚 Sammenlign opløsninger", "Osmotisk tryk", "🔍 Find molarmasse",
     ])
     with tab_boiling:
         _render_boiling_point_elevation_tab()
     with tab_freezing:
         _render_freezing_point_depression_tab()
+    with tab_compare:
+        _render_compare_solutions_tab()
     with tab_osmotic:
         _render_osmotic_pressure_tab()
     with tab_molmass:
@@ -340,7 +342,7 @@ def _render_freezing_point_depression_tab() -> None:
                 "van't Hoff-faktor i",
                 key="fp_vant_hoff_i",
                 placeholder="Fx 1",
-                help="Typisk: glucose=1, NaCl=2, H2SO4=3.",
+                help="Typisk: glucose=1, NaCl=2, CaCl₂=3, H₂SO₄=3.",
             )
             c4a, c4b = st.columns([3, 2])
             with c4a:
@@ -355,6 +357,12 @@ def _render_freezing_point_depression_tab() -> None:
                     options=["°C·kg/mol", "K·kg/mol"],
                     key="fp_kf_unit",
                 )
+            tf_star_raw = st.text_input(
+                "Frysepunkt rent opløsningsmiddel (°C)",
+                key="fp_tf_star",
+                value="0",
+                help="Vand = 0 °C",
+            )
 
         submit = st.form_submit_button("Beregn", type="primary")
 
@@ -366,6 +374,7 @@ def _render_freezing_point_depression_tab() -> None:
         molar_mass_value = _parse_required_float(molar_mass_raw, "Molarmasse")
         mass_solvent_value = _parse_required_float(mass_solvent_raw, "Masse af opløsningsmiddel")
         kf_value = _parse_required_float(kf_raw, "Frysepunktskonstant K_f")
+        tf_star = _parse_required_float(tf_star_raw, "Frysepunkt rent opløsningsmiddel")
 
         data = FreezingPointDepressionInput(
             mass_solute_g=convert_mass_to_g(mass_solute_value, mass_solute_unit),
@@ -380,6 +389,7 @@ def _render_freezing_point_depression_tab() -> None:
             raise ValueError("; ".join(validation_errors))
 
         result = solve_freezing_point_depression(data)
+        new_tf = tf_star - result.delta_tf_c
 
         st.success("Beregning gennemført")
         out_col1, out_col2 = st.columns(2)
@@ -388,14 +398,122 @@ def _render_freezing_point_depression_tab() -> None:
             st.metric("Molalitet m", f"{result.molality_mol_per_kg:.6g} mol/kg")
         with out_col2:
             st.metric("Frysepunktet falder med (ΔT_f)", f"{result.delta_tf_c:.6g} °C")
-            st.metric("Frysepunktet falder med (ΔT_f)", f"{result.delta_tf_c:.6g} K")
+            st.metric("Nyt frysepunkt T_f", f"{new_tf:.6g} °C")
 
         with st.expander("Vis mellemregninger", expanded=False):
             for step in result.steps:
                 st.markdown(f"- {step}")
+            st.markdown(f"- Nyt frysepunkt: {tf_star} − {result.delta_tf_c:.6g} = **{new_tf:.6g} °C**")
 
     except Exception as exc:
         st.error(str(exc))
+
+
+def _render_compare_solutions_tab() -> None:
+    st.markdown("#### 🆚 Sammenlign frysepunkter for to opløsninger")
+    st.markdown(
+        "Beregn og sammenlign frysepunkterne for to opløsninger med samme opløsningsmiddel. "
+        "Typisk opgavetype: *1 g NaCl i 500 g vand vs. 1 g CaCl₂ i 500 g vand – hvad er lavest?*"
+    )
+    st.latex(r"\Delta T_f = i \cdot K_f \cdot m \qquad m = \frac{n}{m_{\text{opl.}}\,[\text{kg}]}")
+    st.markdown("---")
+
+    # Common solvent settings
+    c1, c2, c3 = st.columns(3)
+    with c1:
+        kf_cmp = st.number_input("Kf (°C·kg/mol)", value=1.86, min_value=1e-6, step=0.01, key="cmp_kf",
+                                  help="Vand = 1,86 °C·kg/mol")
+    with c2:
+        solvent_mass_cmp_g = st.number_input("Masse af opløsningsmiddel (g)", value=500.0,
+                                              min_value=1e-3, step=10.0, key="cmp_solv_g")
+    with c3:
+        tf_star_cmp = st.number_input("Frysepunkt rent opløsningsmiddel (°C)", value=0.0,
+                                       step=0.1, key="cmp_tf_star",
+                                       help="Vand = 0 °C")
+
+    solvent_kg = solvent_mass_cmp_g / 1000.0
+
+    st.markdown("---")
+    col_s1, col_s2 = st.columns(2)
+
+    with col_s1:
+        st.markdown("##### Opløsning 1")
+        name1 = st.text_input("Navn / formel", value="NaCl", key="cmp_name1")
+        mass1 = st.number_input("Masse af opløst stof (g)", value=1.0, min_value=1e-9, step=0.1, key="cmp_mass1")
+        M1 = st.number_input("Molarmasse (g/mol)", value=58.44, min_value=1e-3, step=0.1, key="cmp_M1")
+        i1 = st.number_input("van't Hoff-faktor i", value=1.8, min_value=0.01, step=0.1, key="cmp_i1",
+                              help="Eks: NaCl ideal=2, empirisk ≈1.8")
+
+    with col_s2:
+        st.markdown("##### Opløsning 2")
+        name2 = st.text_input("Navn / formel", value="CaCl₂", key="cmp_name2")
+        mass2 = st.number_input("Masse af opløst stof (g)", value=1.0, min_value=1e-9, step=0.1, key="cmp_mass2")
+        M2 = st.number_input("Molarmasse (g/mol)", value=110.98, min_value=1e-3, step=0.1, key="cmp_M2")
+        i2 = st.number_input("van't Hoff-faktor i", value=2.6, min_value=0.01, step=0.1, key="cmp_i2",
+                              help="Eks: CaCl₂ ideal=3, empirisk ≈2.6")
+
+    if st.button("Sammenlign", type="primary", key="cmp_btn"):
+        def _calc(mass_g, M_g_mol, i_vH, kf, solv_kg):
+            n = mass_g / M_g_mol
+            m = n / solv_kg
+            dTf = i_vH * kf * m
+            return n, m, dTf
+
+        n1, m1, dTf1 = _calc(mass1, M1, i1, kf_cmp, solvent_kg)
+        n2, m2, dTf2 = _calc(mass2, M2, i2, kf_cmp, solvent_kg)
+        Tf1 = tf_star_cmp - dTf1
+        Tf2 = tf_star_cmp - dTf2
+
+        st.markdown("---")
+        st.markdown("#### Resultater")
+
+        r1, r2 = st.columns(2)
+        with r1:
+            st.markdown(f"**{name1}**")
+            st.metric("n (mol)", f"{n1:.5g}")
+            st.metric("molalitet m", f"{m1:.5g} mol/kg")
+            st.metric("ΔT_f", f"{dTf1:.4g} °C")
+            st.metric("Frysepunkt T_f", f"{Tf1:.4g} °C")
+        with r2:
+            st.markdown(f"**{name2}**")
+            st.metric("n (mol)", f"{n2:.5g}")
+            st.metric("molalitet m", f"{m2:.5g} mol/kg")
+            st.metric("ΔT_f", f"{dTf2:.4g} °C")
+            st.metric("Frysepunkt T_f", f"{Tf2:.4g} °C")
+
+        st.markdown("---")
+        st.markdown("#### Konklusion")
+        if abs(Tf1 - Tf2) < 1e-9:
+            st.info(f"**T_m,1 = T_m,2 = {Tf1:.4g} °C** — de to opløsninger fryser ved samme temperatur.")
+        elif Tf1 < Tf2:
+            st.success(
+                f"**T_m,1 < T_m,2 < {tf_star_cmp} °C**  \n"
+                f"{name1}-opløsningen fryser lavest ({Tf1:.4g} °C), "
+                f"{name2}-opløsningen fryser ved {Tf2:.4g} °C."
+            )
+        else:
+            st.success(
+                f"**T_m,2 < T_m,1 < {tf_star_cmp} °C**  \n"
+                f"{name2}-opløsningen fryser lavest ({Tf2:.4g} °C), "
+                f"{name1}-opløsningen fryser ved {Tf1:.4g} °C."
+            )
+
+        with st.expander("🔍 Vis mellemregninger", expanded=True):
+            st.markdown(f"""
+**Fælles:** Kf = {kf_cmp} °C·kg/mol, opløsningsmiddel = {solvent_mass_cmp_g} g = {solvent_kg} kg, T*_f = {tf_star_cmp} °C
+
+**{name1}:**
+- n = {mass1} g / {M1} g/mol = **{n1:.5g} mol**
+- m = {n1:.5g} / {solvent_kg} kg = **{m1:.5g} mol/kg**
+- ΔT_f = {i1} × {kf_cmp} × {m1:.5g} = **{dTf1:.4g} °C**
+- **T_m,1 = {tf_star_cmp} − {dTf1:.4g} = {Tf1:.4g} °C**
+
+**{name2}:**
+- n = {mass2} g / {M2} g/mol = **{n2:.5g} mol**
+- m = {n2:.5g} / {solvent_kg} kg = **{m2:.5g} mol/kg**
+- ΔT_f = {i2} × {kf_cmp} × {m2:.5g} = **{dTf2:.4g} °C**
+- **T_m,2 = {tf_star_cmp} − {dTf2:.4g} = {Tf2:.4g} °C**
+""")
 
 
 def _render_osmotic_pressure_tab() -> None:
