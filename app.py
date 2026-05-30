@@ -1459,6 +1459,47 @@ def show_molar_mass_page():
             _col_fc1.metric("Total ladning Σ(FC)", f"{_sum_fc:+d}")
             _col_fc2.metric("Σ|FC| (lavere = bedre)", _sum_abs)
 
+            # ── VSEPR bindingsvinkler ──────────────────────────────────────
+            try:
+                from core.vsepr import GEOMETRY_TABLE as _GT
+                _vsepr_rows = []
+                _seen_geoms = {}
+                for _a in last_structure.atoms:
+                    if _a.symbol == "H":
+                        continue  # H er altid terminal — ingen interessant geometri
+                    _nbonds = [b for b in last_structure.bonds if _a.index in (b.a, b.b)]
+                    _bp_v = len(_nbonds)
+                    _lp_v = _a.lone_pairs
+                    _sn_v = _bp_v + _lp_v
+                    _g = _GT.get((_sn_v, _lp_v))
+                    if _g:
+                        _key = (_sn_v, _lp_v)
+                        if _key not in _seen_geoms:
+                            _seen_geoms[_key] = True
+                            _vsepr_rows.append({
+                                "Atom": f"{_a.symbol} ({_a.index})",
+                                "SN": _sn_v,
+                                "BP": _bp_v,
+                                "LP": _lp_v,
+                                "Geometri": _g.name_da,
+                                "Bindingsvinkel": _g.bond_angles,
+                                "Plan": "✅" if _g.is_planar else "❌",
+                            })
+                        else:
+                            _vsepr_rows.append({
+                                "Atom": f"{_a.symbol} ({_a.index})",
+                                "SN": _sn_v, "BP": _bp_v, "LP": _lp_v,
+                                "Geometri": _g.name_da,
+                                "Bindingsvinkel": _g.bond_angles,
+                                "Plan": "✅" if _g.is_planar else "❌",
+                            })
+                if _vsepr_rows:
+                    st.markdown("#### Geometri & bindingsvinkler (VSEPR)")
+                    st.caption("SN = steric number = BP + LP  ·  Beregnet for hvert ikke-H atom")
+                    st.dataframe(_pd.DataFrame(_vsepr_rows), use_container_width=True, hide_index=True)
+            except Exception:
+                pass
+
             if last_structure.resonance_forms > 1:
                 max_forms_to_show = 12
                 if last_structure.resonance_forms <= max_forms_to_show:
@@ -1478,8 +1519,7 @@ def show_molar_mass_page():
                 try:
                     from core.vsepr import GEOMETRY_TABLE
                     _central = last_structure.atoms[0]
-                    # BP = number of distinct neighbouring atoms (each bond counts once in VSEPR)
-                    _central_bonds = [b for b in last_structure.bonds if _central.index in (b.atom1, b.atom2)]
+                    _central_bonds = [b for b in last_structure.bonds if _central.index in (b.a, b.b)]
                     _bp = len(_central_bonds)
                     _lp = _central.lone_pairs
                     _sn = _bp + _lp

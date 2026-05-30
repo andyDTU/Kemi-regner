@@ -35,7 +35,7 @@ GEOMETRY_TABLE: dict[tuple[int, int], GeometryInfo] = {
     # steric 4
     (4, 0): GeometryInfo("tetrahedral",            "tetraedrisk",         "109.5°",      False, True,  "4 bindingspar, 0 frie elektroner → tetraedrisk, 109.5°"),
     (4, 1): GeometryInfo("trigonal pyramidal",     "trigonal pyramidal",  "~107°",       False, True,  "3 bindingspar, 1 frit elektronpar → trigonal pyramidal, ~107°"),
-    (4, 2): GeometryInfo("bent",                   "vinklet (104.5°)",    "~104.5°",     True,  True,  "2 bindingspar, 2 frie elektroner → vinklet, ~104.5°"),
+    (4, 2): GeometryInfo("bent",                   "vinklet (sp³)",       "~109.5°",     True,  True,  "2 bindingspar, 2 frie elektroner → vinklet, ~109.5° (ideal sp³; frie elektroner reducerer til ~104.5° i H₂O)"),
     (4, 3): GeometryInfo("linear",                 "lineær",              "180°",        True,  False, "1 bindingspar, 3 frie elektroner → lineær, 180°"),
     # steric 5
     (5, 0): GeometryInfo("trigonal bipyramidal",   "trigonal bipyramidal","90°, 120°",   False, True,  "5 bindingspar, 0 frie elektroner → trigonal bipyramidal"),
