@@ -2,6 +2,7 @@
 Opløselighedsregler og Beer-Lambert lov — Streamlit UI.
 """
 
+import math
 import streamlit as st
 import pandas as pd
 
@@ -118,6 +119,7 @@ def render_oploselighedsregler_page():
         "🔍 Opslag på salt",
         "⚗️ Van't Hoff faktor (i)",
         "🌈 Beer-Lamberts lov",
+        "🌠 Fotonenergi (λ → E)",
     ])
 
     # ── Regler ────────────────────────────────────────────────────────────────
@@ -306,4 +308,99 @@ Absorbansen aflæses til A = 0.470.
 c = A / (ε × l) = 0.470 / (2350 × 1.00) = **2.0 × 10⁻⁴ M**
 
 Transmittans: T = 10⁻⁰·⁴⁷⁰ = 0.339 = **33.9%**
+            """)
+
+    # ── Fotonenergi ───────────────────────────────────────────────────────────
+    with subtabs[4]:
+        _H = 6.62607015e-34   # J·s
+        _C = 2.99792458e8     # m/s
+        _NA = 6.02214076e23   # mol⁻¹
+        _EV = 1.602176634e-19 # J/eV
+
+        st.markdown("## 🌠 Fotonenergi")
+        st.markdown(
+            r"Omsæt bølgelængde til energi: $E = \dfrac{h \cdot c}{\lambda}$ pr. foton, "
+            r"og $E_{\text{mol}} = \dfrac{h \cdot c \cdot N_A}{\lambda}$ pr. mol."
+        )
+        st.markdown("---")
+
+        col1, col2 = st.columns(2)
+        with col1:
+            lam_val = st.number_input("Bølgelængde:", value=501.0, min_value=0.001, format="%.4g", key="pe_lam")
+            lam_unit = st.selectbox("Enhed:", ["nm", "μm", "pm", "m", "cm⁻¹ (bølgetal)"], key="pe_unit")
+        with col2:
+            st.markdown("**Konstanter:**")
+            st.caption(f"h = 6.626 × 10⁻³⁴ J·s")
+            st.caption(f"c = 2.998 × 10⁸ m/s")
+            st.caption(f"Nₐ = 6.022 × 10²³ mol⁻¹")
+
+        if st.button("Beregn energi", type="primary", key="pe_calc"):
+            if lam_unit == "nm":
+                lam_m = lam_val * 1e-9
+                lam_display = f"{lam_val} nm"
+            elif lam_unit == "μm":
+                lam_m = lam_val * 1e-6
+                lam_display = f"{lam_val} μm"
+            elif lam_unit == "pm":
+                lam_m = lam_val * 1e-12
+                lam_display = f"{lam_val} pm"
+            elif lam_unit == "m":
+                lam_m = lam_val
+                lam_display = f"{lam_val} m"
+            else:  # cm⁻¹
+                lam_m = 1.0 / (lam_val * 100)
+                lam_display = f"{lam_val} cm⁻¹"
+
+            E_photon = _H * _C / lam_m          # J/foton
+            E_mol_J  = E_photon * _NA            # J/mol
+            E_mol_kJ = E_mol_J / 1000            # kJ/mol
+            E_eV     = E_photon / _EV            # eV/foton
+            freq     = _C / lam_m                # Hz
+
+            # Determine light region
+            lam_nm = lam_m * 1e9
+            if lam_nm < 10:
+                region = "Røntgenstråling"
+            elif lam_nm < 400:
+                region = "Ultraviolet (UV)"
+            elif lam_nm <= 700:
+                region = "Synligt lys"
+            elif lam_nm <= 2500:
+                region = "Nær-infrarød (NIR)"
+            else:
+                region = "Infrarød (IR)"
+
+            col_r1, col_r2, col_r3 = st.columns(3)
+            col_r1.metric("E pr. mol", f"{E_mol_kJ:.4g} kJ/mol")
+            col_r2.metric("E pr. foton", f"{E_photon:.4e} J")
+            col_r3.metric("E i eV", f"{E_eV:.4g} eV")
+
+            st.info(f"**Spektralregion:** {region}  |  **Frekvens:** {freq:.4e} Hz")
+
+            st.markdown("---")
+            st.markdown("### Trin-for-trin")
+            st.latex(
+                rf"E_{{\text{{mol}}}} = \frac{{h \cdot c \cdot N_A}}{{\lambda}} = "
+                rf"\frac{{6.626 \times 10^{{-34}} \times 2.998 \times 10^{{8}} \times 6.022 \times 10^{{23}}}}{{{lam_m:.4e}\ \text{{m}}}}"
+            )
+            st.latex(
+                rf"= \frac{{{_H*_C*_NA:.4e}\ \text{{J·m/mol}}}}{{{lam_m:.4e}\ \text{{m}}}} = "
+                rf"{E_mol_J:.4e}\ \text{{J/mol}} = \mathbf{{{E_mol_kJ:.4g}\ \text{{kJ/mol}}}}"
+            )
+            with st.expander("Vis pr. foton og i eV"):
+                st.latex(rf"E_{{\text{{foton}}}} = \frac{{h c}}{{\lambda}} = {E_photon:.4e}\ \text{{J}}")
+                st.latex(rf"E_{{\text{{eV}}}} = \frac{{{E_photon:.4e}\ \text{{J}}}}{{1.602 \times 10^{{-19}}\ \text{{J/eV}}}} = {E_eV:.4g}\ \text{{eV}}")
+
+        st.markdown("---")
+        with st.expander("📚 Eksempel: He-emissionslinje ved 501 nm"):
+            st.markdown("""
+**Opgave:** En af de stærke linjer i emissionsspektret for helium er ved 501 nm. Hvilken energi repræsenterer denne emissionslinje?
+
+**Løsning:**
+
+λ = 501 nm = 501 × 10⁻⁹ m
+
+$$E = \\frac{h \\cdot c \\cdot N_A}{\\lambda} = \\frac{6.626 \\times 10^{-34} \\times 2.998 \\times 10^8 \\times 6.022 \\times 10^{23}}{501 \\times 10^{-9}}$$
+
+$$= \\frac{0.1196 \\text{ J·m/mol}}{5.01 \\times 10^{-7} \\text{ m}} = 2.39 \\times 10^5 \\text{ J/mol} = \\mathbf{239 \\text{ kJ/mol}}$$
             """)
