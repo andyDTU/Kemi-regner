@@ -9032,6 +9032,52 @@ _FILTER_TO_CATEGORY = {
 
 
 
+_EN_TABLE = {
+    "H": 2.20, "Li": 0.98, "Be": 1.57, "B": 2.04, "C": 2.55,
+    "N": 3.04, "O": 3.44, "F": 3.98, "Na": 0.93, "Mg": 1.31,
+    "Al": 1.61, "Si": 1.90, "P": 2.19, "S": 2.58, "Cl": 3.16,
+    "K": 0.82, "Ca": 1.00, "Br": 2.96, "I": 2.66, "Cs": 0.79,
+    "Rb": 0.82, "Ba": 0.89, "Sr": 0.95, "Fr": 0.70, "Ra": 0.90,
+    "Fe": 1.83, "Cu": 1.90, "Zn": 1.65, "Ag": 1.93, "Au": 2.54,
+    "Cr": 1.66, "Mn": 1.55, "Co": 1.88, "Ni": 1.91, "Pt": 2.28,
+    "Pb": 2.33, "Sn": 1.96, "Ti": 1.54, "V": 1.63, "W": 2.36,
+    "Mo": 2.16, "Pd": 2.20, "Hg": 2.00, "Ge": 2.01, "As": 2.18,
+    "Se": 2.55, "Te": 2.10, "At": 2.20,
+}
+
+
+def _bond_delta_en(unique_atoms) -> dict | None:
+    """Return ΔEN stats for a set of element symbols, or None if insufficient data."""
+    import math as _math
+    known = {a: _EN_TABLE[a] for a in unique_atoms if a in _EN_TABLE}
+    if len(known) < 2:
+        return None
+    en_vals = list(known.values())
+    el_names = list(known.keys())
+    max_en = max(en_vals)
+    min_en = min(en_vals)
+    delta = max_en - min_en
+    el_max = el_names[en_vals.index(max_en)]
+    el_min = el_names[en_vals.index(min_en)]
+    pct_ionic = (1 - _math.exp(-0.25 * delta ** 2)) * 100
+    if delta < 0.4:
+        bond_char = "Upolar kovalent"
+    elif delta < 1.7:
+        bond_char = "Polar kovalent"
+    else:
+        bond_char = "Ionisk"
+    return {
+        "delta_en": delta,
+        "pct_ionic": pct_ionic,
+        "pct_covalent": 100 - pct_ionic,
+        "el_high": el_max,
+        "en_high": max_en,
+        "el_low": el_min,
+        "en_low": min_en,
+        "bond_char": bond_char,
+    }
+
+
 def _bonding_info(s: Substance) -> dict:
     """Auto-determine intramolecular bond type and dominant IMF for a substance."""
     import re as _re
@@ -9049,9 +9095,17 @@ def _bonding_info(s: Substance) -> dict:
     atoms = _re.findall(r"[A-Z][a-z]?", f)
     unique_atoms = set(atoms)
 
+    # Compute ΔEN for all atoms present (shared for all paths)
+    den_info = _bond_delta_en(unique_atoms)
+
+    def _attach(d: dict) -> dict:
+        if den_info:
+            d["den_info"] = den_info
+        return d
+
     # ── Noble gas ──────────────────────────────────────────────────────────
     if f in NOBLE_GASES:
-        return {
+        return _attach({
             "intramolecular": "Ingen (monatomisk ædel gas)",
             "imf": "London-dispersions (van der Waals)",
             "imf_icon": "🔵",
@@ -9059,11 +9113,11 @@ def _bonding_info(s: Substance) -> dict:
                 "Ædel gas – fuldstændigt fyldt yderste skal, danner ingen kovalente eller ioniske bindinger. "
                 "I fast og flydende form holdes atomerne kun sammen af svage **London-dispersions-kræfter**."
             ),
-        }
+        })
 
     # ── Pure metal ─────────────────────────────────────────────────────────
     if f in METALS or (len(unique_atoms) == 1 and unique_atoms <= METALS):
-        return {
+        return _attach({
             "intramolecular": "Metalbindinger",
             "imf": "Metalbindinger",
             "imf_icon": "⚙️",
@@ -9071,7 +9125,7 @@ def _bonding_info(s: Substance) -> dict:
                 "Rent metal – atomer holdt sammen af **metalbindinger** (delokaliserede valenselektroner "
                 "i et 'elektronhav'). God elektrisk og termisk ledningsevne."
             ),
-        }
+        })
 
     # ── Ionic compound ─────────────────────────────────────────────────────
     has_metal = bool(unique_atoms & METALS)
@@ -9079,7 +9133,7 @@ def _bonding_info(s: Substance) -> dict:
     is_ionic = s.salt_components or s.category == "salt" or (has_metal and len(unique_atoms) > 1) or has_NH4
 
     if is_ionic:
-        return {
+        return _attach({
             "intramolecular": "Ioniske bindinger",
             "imf": "Ioniske bindinger (elektrostatisk tiltrækning)",
             "imf_icon": "⚡",
@@ -9087,7 +9141,7 @@ def _bonding_info(s: Substance) -> dict:
                 "Ionisk forbindelse – **positive og negative ioner** tiltrækker hinanden elektrostatisk. "
                 "Høje smeltepunkter, sprødt, leder strøm i smeltet/opløst form."
             ),
-        }
+        })
 
     # ── Covalent – determine IMF ────────────────────────────────────────────
     has_H = "H" in unique_atoms
@@ -9100,7 +9154,7 @@ def _bonding_info(s: Substance) -> dict:
     bond_label = "Kovalente bindinger (polar)" if is_polar else "Kovalente bindinger (upolar)"
 
     if hbond:
-        return {
+        return _attach({
             "intramolecular": bond_label,
             "imf": "Hydrogenbindinger + London-dispersions",
             "imf_icon": "💧",
@@ -9109,9 +9163,9 @@ def _bonding_info(s: Substance) -> dict:
                 "intermolekylære kræfter (stærkeste IMF for molekylære forbindelser). "
                 "Desuden London-dispersions."
             ),
-        }
+        })
     elif is_polar:
-        return {
+        return _attach({
             "intramolecular": bond_label,
             "imf": "Dipol-dipol-kræfter + London-dispersions",
             "imf_icon": "↔️",
@@ -9119,9 +9173,9 @@ def _bonding_info(s: Substance) -> dict:
                 "Polært molekyle – permanent dipolmoment → **dipol-dipol-kræfter** + London-dispersions. "
                 "Stærkere IMF end rene London-kræfter."
             ),
-        }
+        })
     else:
-        return {
+        return _attach({
             "intramolecular": bond_label,
             "imf": "London-dispersions (van der Waals)",
             "imf_icon": "🔵",
@@ -9129,7 +9183,7 @@ def _bonding_info(s: Substance) -> dict:
                 "Upolært kovalent molekyle – kun **London-dispersions-kræfter** (van der Waals). "
                 "Svagere IMF; lavere koge-/frysepunkt end polære molekyler."
             ),
-        }
+        })
 
 
 def _render_substance_card(s: Substance) -> None:
@@ -9191,6 +9245,28 @@ def _render_substance_card(s: Substance) -> None:
         bc1.metric("Intramolekylær binding", _bi["intramolecular"])
         bc2.metric(f"{_bi['imf_icon']} Dominerende IMF", _bi["imf"])
         st.info(_bi["note"])
+        # ── ΔEN / kovalent karakter ────────────────────────────────────────
+        _di = _bi.get("den_info")
+        if _di:
+            st.markdown("---")
+            st.markdown("**Bindingskarakter (Pauling-skala)**")
+            dc1, dc2, dc3 = st.columns(3)
+            dc1.metric("ΔEN (maks.)", f"{_di['delta_en']:.2f}")
+            dc2.metric("% ionisk karakter", f"{_di['pct_ionic']:.0f}%")
+            dc3.metric("% kovalent karakter", f"{_di['pct_covalent']:.0f}%")
+            # Visual scale: 0 = rent kovalent, 1 = rent ionisk
+            pct = _di["pct_ionic"] / 100.0
+            bar_filled = int(pct * 20)
+            bar_str = "█" * bar_filled + "░" * (20 - bar_filled)
+            st.markdown(
+                f"🟢 Kovalent `{bar_str}` Ionisk ⚡  "
+                f"— **{_di['el_low']}** (EN={_di['en_low']:.2f}) → **{_di['el_high']}** (EN={_di['en_high']:.2f})"
+            )
+            st.caption(
+                f"ΔEN = |{_di['en_high']:.2f} − {_di['en_low']:.2f}| = {_di['delta_en']:.2f}  "
+                f"→ Klassifikation: **{_di['bond_char']}**  "
+                f"(Fauske-regel: ΔEN < 0,4 upolar, 0,4–1,7 polar, > 1,7 ionisk)"
+            )
 
     # ── Struktur (VSEPR) og billede ───────────────────────────────────────
     with st.expander("🧩 Struktur (VSEPR)", expanded=True):
