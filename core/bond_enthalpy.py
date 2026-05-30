@@ -27,12 +27,20 @@ BOND_ENTHALPIES: dict[str, float] = {
     "H-I":   298,
     "H–O":   460,
     "H-O":   460,
+    "O–H":   460,   # alias — kemikere skriver ofte O–H
+    "O-H":   460,
     "H–N":   391,
     "H-N":   391,
+    "N–H":   391,   # alias
+    "N-H":   391,
     "H–C":   413,
     "H-C":   413,
+    "C–H":   413,   # alias — kemikere skriver ofte C–H
+    "C-H":   413,
     "H–S":   363,
     "H-S":   363,
+    "S–H":   363,   # alias
+    "S-H":   363,
     # C–X single bonds
     "C–C":   347,
     "C-C":   347,
