@@ -110,6 +110,13 @@ MOLECULE_IMF_DB: dict[str, MoleculeIMFEntry] = {
     "CH3COCH3":MoleculeIMFEntry(False,True, False, True,  58.1,  "acetone, dipol-dipol (acceptor, ingen donor)"),
     "CHCl3": MoleculeIMFEntry(False, True,  False, False, 119.4, "polar, dipol-dipol"),
     "CH2Cl2":MoleculeIMFEntry(False, True,  False, False, 84.9,  "polar, dipol-dipol"),
+    "CH3Cl": MoleculeIMFEntry(False, True,  False, False, 50.5,  "chlormethan, dipol-dipol"),
+    "CCl4":  MoleculeIMFEntry(False, False, False, False, 153.8, "upolær, London dispersion"),
+    "C2H6":  MoleculeIMFEntry(False, False, False, False, 30.1,  "ethan, London dispersion"),
+    "C3H8":  MoleculeIMFEntry(False, False, False, False, 44.1,  "propan, London dispersion"),
+    "C4H10": MoleculeIMFEntry(False, False, False, False, 58.1,  "butan, London dispersion"),
+    "C6H6":  MoleculeIMFEntry(False, False, False, False, 78.1,  "benzen, London dispersion"),
+    "C2H4":  MoleculeIMFEntry(False, False, False, False, 28.1,  "ethylen, London dispersion"),
     # Ions
     "NaCl":  MoleculeIMFEntry(True,  False, False, False, 58.4,  "ionbinding"),
     "KCl":   MoleculeIMFEntry(True,  False, False, False, 74.6,  "ionbinding"),
@@ -247,7 +254,10 @@ def compare_imf(formulas: list[str]) -> list[tuple[str, IMFResult]]:
             results.append((f, r))
         except IMFError:
             pass
-    results.sort(key=lambda x: IMF_STRENGTH_RANK[x[1].dominant_imf])
+    results.sort(key=lambda x: (
+        IMF_STRENGTH_RANK[x[1].dominant_imf],
+        x[1].molar_mass_approx or 0,
+    ))
     return results
 
 
