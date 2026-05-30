@@ -46,6 +46,17 @@ def _fmt(val: float, sig: int = 4) -> str:
     return f"{coeff:.{sig-1}f} × 10^{exp}"
 
 
+def _ltx(val: float, sig: int = 4) -> str:
+    """Return LaTeX scientific notation, e.g. 3.6026 \\times 10^{-23}."""
+    if val == 0:
+        return "0"
+    exp = math.floor(math.log10(abs(val)))
+    coeff = val / 10**exp
+    if exp == 0:
+        return rf"{coeff:.{sig-1}f}"
+    return rf"{coeff:.{sig-1}f} \times 10^{{{exp}}}"
+
+
 def _render_unit_cell_volume_tab():
     st.subheader("📦 Volumen af enhedscelle")
     st.markdown("Givet densitet og molarmasse — find volumen af enhedscellen.")
@@ -371,17 +382,17 @@ def _render_unit_count_tab():
         st.markdown(f"**Trin 1 – Enhedscellevolumen ({crystal}, Z={Z}):**")
         st.latex(
             rf"V_{{celle}} = \frac{{Z \cdot M}}{{N_A \cdot \rho}} = "
-            rf"\frac{{{Z} \times {M_gmol}}}{{{AVOGADRO:.3e} \times {rho_gcm3:.4g}}} = "
-            rf"{V_cell_cm3:.4e}\,\text{{cm}}^3"
+            rf"\frac{{{Z} \times {M_gmol}}}{{6.022 \times 10^{{23}} \times {rho_gcm3:.4g}}} = "
+            rf"{_ltx(V_cell_cm3)}\,\text{{cm}}^3"
         )
 
         st.markdown(f"**Trin 2 – Prøvevolumen ({vol_desc}):**")
-        st.latex(rf"V_{{prøve}} = {V_sample_cm3:.4e}\,\text{{cm}}^3")
+        st.latex(rf"V_{{\text{{prøve}}}} = {_ltx(V_sample_cm3)}\,\text{{cm}}^3")
 
         st.markdown("**Trin 3 – Antal enhedsceller:**")
         st.latex(
-            rf"N = \frac{{V_{{prøve}}}}{{V_{{celle}}}} = "
-            rf"\frac{{{V_sample_cm3:.4e}}}{{{V_cell_cm3:.4e}}} = {N_cells:.3e}"
+            rf"N = \frac{{V_{{\text{{prøve}}}}}}{{V_{{celle}}}} = "
+            rf"\frac{{{_ltx(V_sample_cm3)}}}{{{_ltx(V_cell_cm3)}}} = {_ltx(N_cells, sig=4)}"
         )
 
         st.markdown("---")
