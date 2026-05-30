@@ -49,6 +49,8 @@ from calculators.lewis_structure import (
     generate_resonance_structures,
     render_lewis_structure_svg,
     render_lewis_structure_text,
+    _valence_electrons_for_symbol,
+    _bonding_electrons,
 )
 from calculators.vsepr import render_vsepr_tab
 from calculators.imf import render_imf_tab
@@ -1427,6 +1429,35 @@ def show_molar_mass_page():
             )
 
             st.markdown(render_lewis_structure_svg(last_structure), unsafe_allow_html=True)
+
+            # ── Formelle ladninger ─────────────────────────────────────────
+            st.markdown("#### Formelle ladninger")
+            st.caption("FC = V − L − ½B  ·  V = valenselektroner  ·  L = frie elektroner  ·  B = bindende elektroner")
+            _fc_rows = []
+            for _a in last_structure.atoms:
+                try:
+                    _V = _valence_electrons_for_symbol(_a.symbol)
+                except Exception:
+                    _V = "?"
+                _L = 2 * _a.lone_pairs
+                _B = _bonding_electrons(_a.index, last_structure.bonds)
+                _fc = _a.formal_charge
+                _badge = "🟢" if _fc == 0 else ("🟡" if abs(_fc) == 1 else "🔴")
+                _fc_rows.append({
+                    "Atom (indeks)": f"{_a.symbol} ({_a.index})",
+                    "V": _V,
+                    "L (frie e⁻)": _L,
+                    "B (bindende e⁻)": _B,
+                    "FC": f"{_badge} {_fc:+d}",
+                })
+            import pandas as _pd
+            _fc_df = _pd.DataFrame(_fc_rows)
+            st.dataframe(_fc_df, use_container_width=True, hide_index=True)
+            _sum_fc = sum(a.formal_charge for a in last_structure.atoms)
+            _sum_abs = sum(abs(a.formal_charge) for a in last_structure.atoms)
+            _col_fc1, _col_fc2 = st.columns(2)
+            _col_fc1.metric("Total ladning Σ(FC)", f"{_sum_fc:+d}")
+            _col_fc2.metric("Σ|FC| (lavere = bedre)", _sum_abs)
 
             if last_structure.resonance_forms > 1:
                 max_forms_to_show = 12
