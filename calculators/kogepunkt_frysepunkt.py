@@ -49,9 +49,48 @@ def render_kogepunkt_frysepunkt_page() -> None:
 
 def _render_boiling_point_elevation_tab() -> None:
     st.markdown("#### Kogepunktsforhøjelse")
-    st.markdown("Formel: kogepunktet STIGER")
-    st.latex(r"\Delta T_b = i \cdot K_b \cdot m")
-    st.caption("Vælg enheder for input. Beregningen omregner automatisk til g, g/mol, kg og °C internt.")
+    st.latex(r"\Delta T_b = i \cdot K_b \cdot m \qquad T_b = T_b^* + \Delta T_b")
+
+    bp_mode = st.radio(
+        "Inputtilstand:",
+        ["Fra masse og molarmasse", "Direkte molalitet (mol/kg)"],
+        horizontal=True,
+        key="bp_input_mode",
+        help="Vælg 'Direkte molalitet' hvis opgaven giver m i mol/kg direkte.",
+    )
+
+    if bp_mode == "Direkte molalitet (mol/kg)":
+        with st.form("bp_direct_molality_form", clear_on_submit=False):
+            col1, col2, col3, col4 = st.columns(4)
+            with col1:
+                m_raw = st.text_input("Molalitet m (mol/kg)", placeholder="Fx 0.60", key="bp_m_direct")
+            with col2:
+                i_raw = st.text_input("van't Hoff-faktor i", placeholder="Fx 1", key="bp_i_direct",
+                                      help="Ikke-elektrolyt=1, NaCl=2, CaCl₂=3")
+            with col3:
+                kb_raw = st.text_input("Kogepunktskonstant K_b", placeholder="Fx 0.512", key="bp_kb_direct")
+            with col4:
+                tb_star_raw = st.text_input("Kogepunkt for rent opløsn. (°C)", value="100", key="bp_tb_star_direct",
+                                            help="Vand = 100 °C")
+            submit_d = st.form_submit_button("Beregn", type="primary")
+
+        if submit_d:
+            try:
+                m_val = _parse_required_float(m_raw, "Molalitet m")
+                i_val = _parse_required_float(i_raw, "van't Hoff-faktor i")
+                kb_val = _parse_required_float(kb_raw, "K_b")
+                tb_star = _parse_required_float(tb_star_raw, "Kogepunkt rent opløsningsmiddel")
+                delta_tb = i_val * kb_val * m_val
+                tb = tb_star + delta_tb
+                st.success(f"**ΔT_b = {delta_tb:.4g} °C  →  Kogepunkt = {tb:.4g} °C**")
+                c1, c2 = st.columns(2)
+                c1.metric("ΔT_b (kogepunktsforhøjelse)", f"{delta_tb:.4g} °C")
+                c2.metric("Kogepunkt T_b", f"{tb:.4g} °C")
+                st.markdown(f"**Beregning:** ΔT_b = {i_val} × {kb_val} × {m_val} = **{delta_tb:.4g} °C**")
+                st.markdown(f"**Kogepunkt:** {tb_star} + {delta_tb:.4g} = **{tb:.4g} °C**")
+            except Exception as exc:
+                st.error(str(exc))
+        return
 
     col_btn1, col_btn2 = st.columns([1, 4])
     with col_btn1:
@@ -192,12 +231,53 @@ def _render_boiling_point_elevation_tab() -> None:
 
 
 def _render_freezing_point_depression_tab() -> None:
+    import math
     st.markdown("#### Frysepunktsnedsættelse")
-    st.markdown("Formel:")
-    st.latex(r"\Delta T_f = i \cdot K_f \cdot m")
-    st.caption("Vælg enheder for input/output. Beregningen omregner automatisk til korrekte SI-basenheder internt.")
+    st.latex(r"\Delta T_f = i \cdot K_f \cdot m \qquad T_f = T_f^* - \Delta T_f")
 
-    # Knapper SKAL stå før formen — ellers kan session_state ikke sættes for widget-nøgler
+    fp_mode = st.radio(
+        "Inputtilstand:",
+        ["Fra masse og molarmasse", "Direkte molalitet (mol/kg)"],
+        horizontal=True,
+        key="fp_input_mode",
+        help="Vælg 'Direkte molalitet' hvis opgaven giver m i mol/kg direkte.",
+    )
+
+    # ── Tilstand A: direkte molalitet ────────────────────────────────────────
+    if fp_mode == "Direkte molalitet (mol/kg)":
+        with st.form("fp_direct_molality_form", clear_on_submit=False):
+            col1, col2, col3, col4 = st.columns(4)
+            with col1:
+                m_raw = st.text_input("Molalitet m (mol/kg)", placeholder="Fx 0.60", key="fp_m_direct")
+            with col2:
+                i_raw = st.text_input("van't Hoff-faktor i", placeholder="Fx 1", key="fp_i_direct",
+                                      help="Ikke-elektrolyt=1, NaCl=2, CaCl₂=3")
+            with col3:
+                kf_raw = st.text_input("Frysepunktskonstant K_f", placeholder="Fx 1.86", key="fp_kf_direct")
+            with col4:
+                tf_star_raw = st.text_input("Frysepunkt for rent opløsn. (°C)", value="0", key="fp_tf_star_direct",
+                                            help="Vand = 0 °C")
+            submit_d = st.form_submit_button("Beregn", type="primary")
+
+        if submit_d:
+            try:
+                m_val = _parse_required_float(m_raw, "Molalitet m")
+                i_val = _parse_required_float(i_raw, "van't Hoff-faktor i")
+                kf_val = _parse_required_float(kf_raw, "K_f")
+                tf_star = _parse_required_float(tf_star_raw, "Frysepunkt rent opløsningsmiddel")
+                delta_tf = i_val * kf_val * m_val
+                tf = tf_star - delta_tf
+                st.success(f"**ΔT_f = {delta_tf:.4g} °C  →  Frysepunkt = {tf:.4g} °C**")
+                c1, c2 = st.columns(2)
+                c1.metric("ΔT_f (frysepunktssænkning)", f"{delta_tf:.4g} °C")
+                c2.metric("Frysepunkt T_f", f"{tf:.4g} °C")
+                st.markdown(f"**Beregning:** ΔT_f = {i_val} × {kf_val} × {m_val} = **{delta_tf:.4g} °C**")
+                st.markdown(f"**Frysepunkt:** {tf_star} − {delta_tf:.4g} = **{tf:.4g} °C**")
+            except Exception as exc:
+                st.error(str(exc))
+        return
+
+    # ── Tilstand B: fra masse og molarmasse ──────────────────────────────────
     col_btn1, col_btn2 = st.columns([1, 4])
     with col_btn1:
         if st.button("Brug vand", key="fp_use_water"):
