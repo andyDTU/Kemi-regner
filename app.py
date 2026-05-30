@@ -4061,9 +4061,15 @@ def show_weak_acids_bases_tab():
         with col1:
             concentration = st.number_input("Acid concentration (M):", value=0.1, step=0.01, min_value=1e-7, key="weak_acid_conc")
             stoich_h3o = st.number_input("H₃O⁺ ions per molecule (n):", value=1.0, step=0.5, min_value=0.5, key="weak_acid_stoich")
-        
+
         with col2:
-            ka = st.number_input("Ka value:", value=1.8e-5, step=1e-6, min_value=1e-12, format="%.2e", key="weak_acid_ka")
+            ka_input_mode = st.radio("Ka input:", ["Ka (tal)", "pKa"], horizontal=True, key="weak_acid_ka_mode")
+            if ka_input_mode == "pKa":
+                pka_val = st.number_input("pKa:", value=4.74, min_value=0.0, max_value=14.0, step=0.01, key="weak_acid_pka_input")
+                ka = 10 ** (-pka_val)
+                st.caption(f"Ka = 10^(−{pka_val}) = {ka:.3e}")
+            else:
+                ka = st.number_input("Ka value:", value=1.8e-5, step=1e-6, min_value=1e-12, format="%.2e", key="weak_acid_ka")
             reaction_eq = st.text_input("Reaction equation (optional):", value="HA ⇌ H₃O⁺ + A⁻", key="weak_acid_rxn")
         
         if st.button("Calculate pH", type="primary", key="weak_acid_calc_ph"):
@@ -4105,11 +4111,23 @@ def show_weak_acids_bases_tab():
         st.caption(_kb_help[kb_method])
 
         if kb_method == "Direct Kb value":
-            kb = st.number_input("Kb value:", value=1.8e-5, step=1e-6, min_value=1e-12, format="%.2e", key="weak_base_kb")
+            kb_input_mode = st.radio("Kb input:", ["Kb (tal)", "pKb"], horizontal=True, key="weak_base_kb_mode")
+            if kb_input_mode == "pKb":
+                pkb_val = st.number_input("pKb:", value=4.74, min_value=0.0, max_value=14.0, step=0.01, key="weak_base_pkb_input")
+                kb = 10 ** (-pkb_val)
+                st.caption(f"Kb = 10^(−{pkb_val}) = {kb:.3e}")
+            else:
+                kb = st.number_input("Kb value:", value=1.8e-5, step=1e-6, min_value=1e-12, format="%.2e", key="weak_base_kb")
             ka_conjugate = None
         else:
             kb = None
-            ka_conjugate = st.number_input("Ka of conjugate acid:", value=5.6e-10, step=1e-11, min_value=1e-12, format="%.2e", key="weak_base_ka_conj")
+            ka_conj_mode = st.radio("Ka input:", ["Ka (tal)", "pKa"], horizontal=True, key="weak_base_ka_conj_mode")
+            if ka_conj_mode == "pKa":
+                pka_conj = st.number_input("pKa (konjugeret syre):", value=9.25, min_value=0.0, max_value=14.0, step=0.01, key="weak_base_pka_conj_input")
+                ka_conjugate = 10 ** (-pka_conj)
+                st.caption(f"Ka = 10^(−{pka_conj}) = {ka_conjugate:.3e}")
+            else:
+                ka_conjugate = st.number_input("Ka of conjugate acid:", value=5.6e-10, step=1e-11, min_value=1e-12, format="%.2e", key="weak_base_ka_conj")
         
         if st.button("Calculate pH", type="primary", key="weak_base_calc_ph"):
             try:
