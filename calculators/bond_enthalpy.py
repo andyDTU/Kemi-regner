@@ -56,11 +56,17 @@ def _get_mol_bonds(formula: str) -> dict[str, int] | None:
     return _MOL_BONDS_NORM.get(formula.strip().upper())
 
 
+_PHASE_RE = re.compile(r"\s*\((?:g|l|s|aq)\)\s*$", re.IGNORECASE)
+
+
 def _parse_reaction(eq: str):
     """Return (reactants, products) as lists of (formula, coeff) or (None, error_msg)."""
     parts = re.split(r"->|=>|→|=", eq)
     if len(parts) != 2:
         return None, "Brug → eller -> som pil (fx Br2 + 3F2 -> 2BrF3)"
+
+    def _clean(f: str) -> str:
+        return _PHASE_RE.sub("", f).strip()
 
     def _side(s):
         result = []
@@ -70,9 +76,9 @@ def _parse_reaction(eq: str):
                 continue
             m = re.match(r"^(\d+(?:\.\d+)?)\s*(.+)$", term)
             if m:
-                result.append((m.group(2).strip(), float(m.group(1))))
+                result.append((_clean(m.group(2)), float(m.group(1))))
             else:
-                result.append((term, 1.0))
+                result.append((_clean(term), 1.0))
         return result
 
     return _side(parts[0]), _side(parts[1])
@@ -214,7 +220,7 @@ def _render_from_equation():
                 hint = f"(db: {int(db_val)})" if db_val else "(ikke i db)"
                 v = st.number_input(
                     f"{bond} kJ/mol {hint}",
-                    value=default, min_value=0.0, step=1.0,
+                    value=default, step=1.0,
                     key=f"be_ov_{bond}",
                 )
                 override_vals[bond] = v
