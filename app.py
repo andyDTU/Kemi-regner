@@ -3200,14 +3200,23 @@ def show_redox_balancing_tab():
         if "redox_species_error" not in st.session_state:
             st.session_state["redox_species_error"] = None
 
-        species_input = st.text_input(
-            "Art/molekyle:",
-            placeholder="f.eks. MnO4^-, H2O2, Fe^3+, KO2, OF2, NaH",
-            help="Ladning kan skrives som Fe2+, Fe^2+ eller Fe_2+. Brug evt. (s), (l), (g), (aq) som fase.",
-            key="redox_species_input",
-        )
+        col_f, col_e = st.columns([3, 1])
+        with col_f:
+            species_input = st.text_input(
+                "Art/molekyle:",
+                placeholder="f.eks. H2SO4, MnO4^-, H2O2, Fe^3+",
+                help="Ladning kan skrives som Fe2+, Fe^2+ eller Fe_2+. Brug evt. (s), (l), (g), (aq) som fase.",
+                key="redox_species_input",
+            )
+        with col_e:
+            focus_element = st.text_input(
+                "Grundstof (valgfri):",
+                placeholder="fx S, Mn, Fe",
+                key="redox_focus_element",
+                help="Skriv symbolet på det grundstof du søger — det fremhæves i resultatet.",
+            )
 
-        example_species = "MnO4^-"
+        example_species = "H2SO4"
         preview_species = species_input.strip() if species_input.strip() else example_species
         formatted_species = format_chemical_notation_html(preview_species)
         st.markdown(f"**Din indtastning:** {formatted_species}", unsafe_allow_html=True)
@@ -3217,13 +3226,15 @@ def show_redox_balancing_tab():
             do_calc = st.button("Beregn oxidationstal", type="primary", key="redox_species_calc")
         with b2:
             if st.button("Indlæs eksempel", key="redox_species_example"):
-                st.session_state["redox_species_input"] = "H2O2"
+                st.session_state["redox_species_input"] = "H2SO4"
+                st.session_state["redox_focus_element"] = "S"
                 st.session_state["redox_species_result"] = None
                 st.session_state["redox_species_error"] = None
                 st.rerun()
         with b3:
             if st.button("Nulstil", key="redox_species_reset"):
                 st.session_state["redox_species_input"] = ""
+                st.session_state["redox_focus_element"] = ""
                 st.session_state["redox_species_result"] = None
                 st.session_state["redox_species_error"] = None
                 st.rerun()
@@ -3249,10 +3260,21 @@ def show_redox_balancing_tab():
 
         result = st.session_state.get("redox_species_result")
         if result:
+            # Highlighted answer for specific element
+            focus = focus_element.strip().capitalize() if focus_element.strip() else None
+            if focus and focus in result:
+                ox = result[focus]
+                val_txt = "?" if ox is None else f"{ox:+g}"
+                st.markdown(f"### Oxidationstal for **{focus}** i {species_input.strip()}")
+                st.success(f"## {val_txt}")
+                st.markdown("---")
+
+            # Full table
             rows = []
             for element, ox_val in result.items():
                 val_txt = "?" if ox_val is None else f"{ox_val:+g}"
-                rows.append({"Element": element, "Oxidationstal": val_txt})
+                highlight = "◀ søgt" if focus and element == focus else ""
+                rows.append({"Element": element, "Oxidationstal": val_txt, "": highlight})
 
             result_df = pd.DataFrame(rows)
             st.dataframe(result_df, use_container_width=True, hide_index=True)
@@ -3260,6 +3282,8 @@ def show_redox_balancing_tab():
             unknown = [element for element, ox_val in result.items() if ox_val is None]
             if unknown:
                 st.warning("Kunne ikke bestemme oxidationstal for: " + ", ".join(unknown))
+            elif focus and focus not in result:
+                st.warning(f"Grundstof **{focus}** ikke fundet i formlen.")
             else:
                 st.success("✅ Oxidationstal fundet for alle elementer.")
 
