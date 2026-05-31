@@ -88,7 +88,7 @@ NAVIGATION_OPTIONS = [
     "📊 Gases",
     "🔥 Thermochemistry",
     "🌫️ Damptryk",
-    "🌡️ Koge- og frysepunkt (colligative properties)",
+    "🌡️ Kolligative egenskaber",
     "🧪 Acids & Bases",
     "⚗️ Solutions",
     "⚡ Kinetics",
@@ -110,7 +110,7 @@ PAGE_LABEL_TO_QUERY = {
     "🧮 Balancering og stofmængde": "stoichiometry",
     "📊 Gases": "gases",
     "🌫️ Damptryk": "damptryk",
-    "🌡️ Koge- og frysepunkt (colligative properties)": "koge-fryse",
+    "🌡️ Kolligative egenskaber": "koge-fryse",
     "🔥 Thermochemistry": "thermochemistry",
     "🧪 Acids & Bases": "acids-bases",
     "🧪 Colligative Properties": "colligatives",
@@ -402,7 +402,7 @@ def main():
         show_gas_laws_page()
     elif page == "🌫️ Damptryk":
         render_damptryk_page()
-    elif page == "🌡️ Koge- og frysepunkt (colligative properties)":
+    elif page == "🌡️ Kolligative egenskaber":
         render_kogepunkt_frysepunkt_page()
     elif page == "🔥 Thermochemistry":
         show_thermochemistry_page()
