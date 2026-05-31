@@ -143,4 +143,4 @@ Thumbs.db
 
 # Large local assets
 data/electron_shell_blocks.png
-data/structure_images/
+data/structure_images/*.png
