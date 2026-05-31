@@ -6280,28 +6280,34 @@ def show_solubility_tab():
         col_l, col_r = st.columns(2)
         with col_l:
             ksp_da = st.number_input("Ksp:", value=1.08e-10, min_value=1e-40, format="%.3e", key="sol_ksp_da")
-            molar_mass_da = st.number_input("Molarmasse (g/mol):", value=233.39, min_value=1e-3, step=0.01, key="sol_M_da",
-                                            help="BaSO₄ = 233,39 g/mol  |  Cu(OH)₂ = 97,57 g/mol  |  CaF₂ = 78,07 g/mol")
         with col_r:
-            vol_ml_da = st.number_input("Volumen (mL):", value=100.0, min_value=1e-6, step=10.0, key="sol_vol_da")
             a_da = st.number_input("Kation-koefficient a", value=default_a, min_value=1, max_value=4, key="sol_a_da",
                                    help="Antal kationer pr. formelenhed: MX → 1, Ag₂SO₄ → 2, Ca₃(PO₄)₂ → 3")
             b_da = st.number_input("Anion-koefficient b", value=default_b, min_value=1, max_value=4, key="sol_b_da",
                                    help="Antal anioner pr. formelenhed: MX → 1, CaF₂ → 2, Fe(OH)₃ → 3")
 
         # Show ICE preview
-        st.caption(f"ICE-tabel: Salt ⇌ {a_da} kation (s = {a_da}·s) + {b_da} anion (= {b_da}·s)  →  Ksp = ({a_da}s)^{a_da} · ({b_da}s)^{b_da} = {a_da**a_da}·{b_da**b_da}·s^{a_da+b_da}")
+        st.caption(f"ICE: Salt ⇌ {a_da} kation ({a_da}s) + {b_da} anion ({b_da}s)  →  Ksp = ({a_da}s)^{a_da}·({b_da}s)^{b_da} = {a_da**a_da}·{b_da**b_da}·s^{a_da+b_da}")
+
+        # Optional mass calculation
+        with st.expander("➕ Beregn også masse (valgfri — kun hvis opgaven spørger)", expanded=False):
+            col_m1, col_m2 = st.columns(2)
+            with col_m1:
+                molar_mass_da = st.number_input("Molarmasse (g/mol):", value=233.39, min_value=1e-3, step=0.01, key="sol_M_da",
+                                                help="BaSO₄=233,39 | Cu(OH)₂=97,57 | CaF₂=78,07 | AgCl=143,32")
+            with col_m2:
+                vol_ml_da = st.number_input("Volumen (mL):", value=100.0, min_value=1e-6, step=10.0, key="sol_vol_da")
+            calc_mass = True
+        # calc_mass is always True if expander was rendered, but only meaningful if user opened it
+        # We compute mass unconditionally (it's just hidden in results if not opened)
 
         if st.button("Beregn opløselighed", type="primary", key="sol_calc_da"):
             try:
-                # Solve Ksp = (a·s)^a · (b·s)^b for s
-                # = a^a · b^b · s^(a+b) = Ksp → s = (Ksp / (a^a · b^b))^(1/(a+b))
                 s_mol_L = (ksp_da / (a_da**a_da * b_da**b_da)) ** (1 / (a_da + b_da))
                 V_L = vol_ml_da / 1000.0
                 n_mol = s_mol_L * V_L
                 mass_g = n_mol * molar_mass_da
 
-                # Auto-choose best unit for mass
                 if mass_g >= 1:
                     mass_str = f"{mass_g:.4g} g"
                 elif mass_g >= 1e-3:
@@ -6311,24 +6317,27 @@ def show_solubility_tab():
                 else:
                     mass_str = f"{mass_g*1e9:.4g} ng"
 
-                st.success(f"**Opløselig masse = {mass_str}**")
-                c1, c2, c3 = st.columns(3)
+                # Primary result: molar solubility
+                st.success(f"**Molar opløselighed s = {s_mol_L:.4e} mol/L**")
+                c1, c2 = st.columns(2)
                 c1.metric("Molar opløselighed s", f"{s_mol_L:.4e} mol/L")
-                c2.metric("Stofmængde n", f"{n_mol:.4e} mol")
-                c3.metric("Masse", mass_str)
+                c2.metric("s i g/L", f"{s_mol_L * molar_mass_da:.4e} g/L")
 
                 with st.expander("🔍 Trin-for-trin", expanded=True):
                     st.markdown(f"""
 **Ligevægt:** Salt ⇌ {a_da} kation + {b_da} anion
-**Ksp = ({a_da}s)^{a_da} · ({b_da}s)^{b_da} = {a_da**a_da} · {b_da**b_da} · s^{a_da+b_da}**
 
-**Trin 1 – Find s:**
-$$s = \\left(\\frac{{K_{{sp}}}}{{a^a \\cdot b^b}}\\right)^{{\\frac{{1}}{{a+b}}}} = \\left(\\frac{{{ksp_da:.3e}}}{{{a_da**a_da} \\cdot {b_da**b_da}}}\\right)^{{\\frac{{1}}{{{a_da+b_da}}}}} = \\mathbf{{{s_mol_L:.4e}\\,\\text{{mol/L}}}}$$
+**Ksp = ({a_da}s)^{a_da} · ({b_da}s)^{b_da} = {a_da**a_da}·{b_da**b_da}·s^{a_da+b_da}**
 
-**Trin 2 – Stofmængde i {vol_ml_da:.4g} mL = {V_L} L:**
+**Find s:**
+$$s = \\left(\\frac{{K_{{sp}}}}{{{a_da**a_da} \\cdot {b_da**b_da}}}\\right)^{{\\frac{{1}}{{{a_da+b_da}}}}} = \\left(\\frac{{{ksp_da:.3e}}}{{{a_da**a_da * b_da**b_da}}}\\right)^{{\\frac{{1}}{{{a_da+b_da}}}}} = \\mathbf{{{s_mol_L:.4e}\\,\\text{{mol/L}}}}$$
+""")
+                    if vol_ml_da != 100.0 or molar_mass_da != 233.39:
+                        st.markdown(f"""
+**Stofmængde i {vol_ml_da:.4g} mL:**
 $$n = s \\cdot V = {s_mol_L:.4e} \\times {V_L} = {n_mol:.4e}\\,\\text{{mol}}$$
 
-**Trin 3 – Masse:**
+**Masse:**
 $$m = n \\cdot M = {n_mol:.4e} \\times {molar_mass_da} = \\mathbf{{{mass_str}}}$$
 """)
             except Exception as exc:
