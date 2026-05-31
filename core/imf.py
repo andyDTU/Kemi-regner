@@ -171,6 +171,24 @@ MOLECULE_IMF_DB: dict[str, MoleculeIMFEntry] = {
     "HNO3":  MoleculeIMFEntry(False, True,  True,  True,  63.0,  "stærk syre, H-bond + dipol"),
     "H2SO4": MoleculeIMFEntry(False, True,  True,  True,  98.1,  "stærk syre, H-bond"),
     "H3PO4": MoleculeIMFEntry(False, True,  True,  True,  98.0,  "H-bond"),
+    # Sukkerarter og biomolekyler
+    "C6H12O6":  MoleculeIMFEntry(False, True,  True,  True,  180.2, "glukose – 5 OH-grupper, meget stærk H-bond, fast stof ved stuetemperatur"),
+    "C12H22O11":MoleculeIMFEntry(False, True,  True,  True,  342.3, "saccharose – 8 OH-grupper, meget stærk H-bond, fast stof"),
+    "C3H8O3":   MoleculeIMFEntry(False, True,  True,  True,  92.1,  "glycerol – 3 OH-grupper, stærk H-bond"),
+    # Yderligere salte
+    "CaCl2":    MoleculeIMFEntry(True,  False, False, False, 111.0, "ionbinding"),
+    "MgCl2":    MoleculeIMFEntry(True,  False, False, False, 95.2,  "ionbinding"),
+    "Na2SO4":   MoleculeIMFEntry(True,  False, False, False, 142.0, "ionbinding"),
+    "K2SO4":    MoleculeIMFEntry(True,  False, False, False, 174.3, "ionbinding"),
+    "NH4Cl":    MoleculeIMFEntry(True,  False, False, False, 53.5,  "ionbinding"),
+    "AgNO3":    MoleculeIMFEntry(True,  False, False, False, 170.0, "ionbinding"),
+    "Ca(OH)2":  MoleculeIMFEntry(True,  False, False, False, 74.1,  "ionbinding"),
+    "Al2(SO4)3":MoleculeIMFEntry(True,  False, False, False, 342.2, "ionbinding"),
+    # Halogenider
+    "Cl2":      MoleculeIMFEntry(False, False, False, False, 70.9,  "upolær, London"),
+    "Br2":      MoleculeIMFEntry(False, False, False, False, 159.8, "upolær, London (flydende pga. stor M)"),
+    "I2":       MoleculeIMFEntry(False, False, False, False, 253.8, "upolær, London (fast pga. stor M)"),
+    "F2":       MoleculeIMFEntry(False, False, False, False, 38.0,  "upolær, London"),
 }
 
 
