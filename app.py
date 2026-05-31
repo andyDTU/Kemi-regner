@@ -7252,10 +7252,30 @@ def show_kinetics_page():
         )
         st.info("💡 Typisk eksamen: du får en tabel med [A], [B] og initial rate – find m, n og k.")
 
-        n_reactants = st.radio("Antal reaktanter:", [1, 2], index=1, horizontal=True, key="ir_nreact")
-        n_exp = st.number_input("Antal eksperimenter:", value=3, min_value=2, max_value=6, step=1, key="ir_nexp")
+        # Settings row
+        _ir_set_col1, _ir_set_col2, _ir_set_col3 = st.columns([1, 2, 2])
+        with _ir_set_col1:
+            n_reactants = st.radio("Antal reaktanter:", [1, 2], index=1, horizontal=True, key="ir_nreact")
+            n_exp = st.number_input("Antal eksperimenter:", value=3, min_value=2, max_value=6, step=1, key="ir_nexp")
+        with _ir_set_col2:
+            if n_reactants >= 1:
+                ir_name_A = st.text_input("Navn på reaktant A", value="A", key="ir_nameA",
+                                          help="Fx 'CO', 'NO₂', 'H₂'")
+            if n_reactants == 2:
+                ir_name_B = st.text_input("Navn på reaktant B", value="B", key="ir_nameB",
+                                          help="Fx 'Cl₂', 'O₂'")
+            else:
+                ir_name_B = "B"
+        with _ir_set_col3:
+            ir_conc_unit = st.selectbox("Koncentrationsenhed", ["M", "atm", "mol/L", "mmol/L"],
+                                        key="ir_cu", help="M = mol/L; atm = tryk for gasser")
+            ir_rate_unit = st.selectbox("Hastighed enhed", ["M/s", "atm/s", "mol/(L·s)", "mmol/(L·s)"],
+                                        key="ir_ru")
 
-        headers = ["Eksperiment"] + (["[A] (M)", "[B] (M)"] if n_reactants == 2 else ["[A] (M)"]) + ["Initial rate (M/s)"]
+        _uA = ir_conc_unit
+        _uB = ir_conc_unit
+        _ur = ir_rate_unit
+
         defaults = {
             2: [
                 [1, 0.10, 0.10, 1.2e-4],
@@ -7269,20 +7289,35 @@ def show_kinetics_page():
             ],
         }[n_reactants]
 
+        # Table header
+        if n_reactants == 2:
+            h_cols = st.columns([1, 2, 2, 2])
+            h_cols[0].markdown("**Exp**")
+            h_cols[1].markdown(f"**[{ir_name_A}] ({_uA})**")
+            h_cols[2].markdown(f"**[{ir_name_B}] ({_uB})**")
+            h_cols[3].markdown(f"**Rate ({_ur})**")
+        else:
+            h_cols = st.columns([1, 2, 2])
+            h_cols[0].markdown("**Exp**")
+            h_cols[1].markdown(f"**[{ir_name_A}] ({_uA})**")
+            h_cols[2].markdown(f"**Rate ({_ur})**")
+
         rows = []
         for i in range(int(n_exp)):
             d = defaults[i] if i < len(defaults) else ([i+1] + [0.10]*n_reactants + [1e-5])
-            cols_row = st.columns(len(headers))
-            row = [i + 1]
-            cols_row[0].markdown(f"**Exp {i+1}**")
             if n_reactants == 2:
-                row.append(cols_row[1].number_input("", value=float(d[1]), min_value=1e-9, format="%.4f", key=f"ir_A_{i}", label_visibility="collapsed"))
-                row.append(cols_row[2].number_input("", value=float(d[2]), min_value=1e-9, format="%.4f", key=f"ir_B_{i}", label_visibility="collapsed"))
-                row.append(cols_row[3].number_input("", value=float(d[3]), min_value=1e-20, format="%.3e", key=f"ir_r_{i}", label_visibility="collapsed"))
+                cols_row = st.columns([1, 2, 2, 2])
+                cols_row[0].markdown(f"**{i+1}**")
+                vA = cols_row[1].number_input("", value=float(d[1]), min_value=1e-9, format="%.4f", key=f"ir_A_{i}", label_visibility="collapsed")
+                vB = cols_row[2].number_input("", value=float(d[2]), min_value=1e-9, format="%.4f", key=f"ir_B_{i}", label_visibility="collapsed")
+                vr = cols_row[3].number_input("", value=float(d[3]), min_value=1e-20, format="%.3e", key=f"ir_r_{i}", label_visibility="collapsed")
+                rows.append([i+1, vA, vB, vr])
             else:
-                row.append(cols_row[1].number_input("", value=float(d[1]), min_value=1e-9, format="%.4f", key=f"ir_A_{i}", label_visibility="collapsed"))
-                row.append(cols_row[2].number_input("", value=float(d[2]), min_value=1e-20, format="%.3e", key=f"ir_r_{i}", label_visibility="collapsed"))
-            rows.append(row)
+                cols_row = st.columns([1, 2, 2])
+                cols_row[0].markdown(f"**{i+1}**")
+                vA = cols_row[1].number_input("", value=float(d[1]), min_value=1e-9, format="%.4f", key=f"ir_A_{i}", label_visibility="collapsed")
+                vr = cols_row[2].number_input("", value=float(d[2]), min_value=1e-20, format="%.3e", key=f"ir_r_{i}", label_visibility="collapsed")
+                rows.append([i+1, vA, vr])
 
         if st.button("Beregn orden og k", type="primary", key="ir_calc"):
             try:
@@ -7317,11 +7352,15 @@ def show_kinetics_page():
                         ratio_A = data[j][1] / data[i][1]
                         m_raw = math.log(ratio_r) / math.log(ratio_A)
                         m = round(m_raw)
-                        steps_out.append(f"**Orden for A (m):** Exp {i+1} og {j+1} (samme [B])")
-                        steps_out.append(f"r{j+1}/r{i+1} = ([A]{j+1}/[A]{i+1})^m → {ratio_r:.4f} = {ratio_A:.4f}^m → m = ln({ratio_r:.4f})/ln({ratio_A:.4f}) = **{m_raw:.3f} ≈ {m}**")
+                        steps_out.append(f"**Orden for {ir_name_A} (x):** Exp {i+1} og {j+1} — [{ir_name_B}] er konstant")
+                        steps_out.append(
+                            f"r{j+1}/r{i+1} = ([{ir_name_A}]{j+1}/[{ir_name_A}]{i+1})^x  →  "
+                            f"{ratio_r:.4f} = {ratio_A:.4f}^x  →  "
+                            f"x = ln({ratio_r:.4f})/ln({ratio_A:.4f}) = **{m_raw:.3f} ≈ {m}**"
+                        )
                     else:
                         m = None
-                        steps_out.append("⚠️ Kunne ikke finde eksperimentpar med samme [B] – juster input.")
+                        steps_out.append(f"⚠️ Kunne ikke finde eksperimentpar med samme [{ir_name_B}] – juster input.")
 
                     if pair_B:
                         i, j = pair_B
@@ -7329,20 +7368,24 @@ def show_kinetics_page():
                         ratio_B = data[j][2] / data[i][2]
                         n_raw = math.log(ratio_r) / math.log(ratio_B)
                         n_ord = round(n_raw)
-                        steps_out.append(f"**Orden for B (n):** Exp {i+1} og {j+1} (samme [A])")
-                        steps_out.append(f"r{j+1}/r{i+1} = ([B]{j+1}/[B]{i+1})^n → {ratio_r:.4f} = {ratio_B:.4f}^n → n = **{n_raw:.3f} ≈ {n_ord}**")
+                        steps_out.append(f"**Orden for {ir_name_B} (y):** Exp {i+1} og {j+1} — [{ir_name_A}] er konstant")
+                        steps_out.append(
+                            f"r{j+1}/r{i+1} = ([{ir_name_B}]{j+1}/[{ir_name_B}]{i+1})^y  →  "
+                            f"{ratio_r:.4f} = {ratio_B:.4f}^y  →  "
+                            f"y = ln({ratio_r:.4f})/ln({ratio_B:.4f}) = **{n_raw:.3f} ≈ {n_ord}**"
+                        )
                     else:
                         n_ord = None
-                        steps_out.append("⚠️ Kunne ikke finde eksperimentpar med samme [A] – juster input.")
+                        steps_out.append(f"⚠️ Kunne ikke finde eksperimentpar med samme [{ir_name_A}] – juster input.")
 
                     if m is not None and n_ord is not None:
                         k_vals = [row[3] / (row[1]**m * row[2]**n_ord) for row in data]
                         k_avg = sum(k_vals) / len(k_vals)
-                        steps_out.append(f"**Beregn k** for hvert eksperiment (k = r / ([A]^{m}·[B]^{n_ord})):")
+                        steps_out.append(f"**Beregn k** for hvert eksperiment (k = r / ([{ir_name_A}]^{m}·[{ir_name_B}]^{n_ord})):")
                         for idx, (row, kv) in enumerate(zip(data, k_vals)):
                             steps_out.append(f"  Exp {idx+1}: k = {row[3]:.3e} / ({row[1]:.4f}^{m} × {row[2]:.4f}^{n_ord}) = **{kv:.4e}**")
-                        steps_out.append(f"**k (gennemsnit) = {k_avg:.4e} M^(1−m−n)·s⁻¹**")
-                        st.success(f"✅ **r = k·[A]^{m}·[B]^{n_ord}**   med  k = {k_avg:.4e}")
+                        steps_out.append(f"**k (gennemsnit) = {k_avg:.4e}**")
+                        st.success(f"✅ **x = {m},  y = {n_ord}**   →   r = k·p({ir_name_A})^{m}·p({ir_name_B})^{n_ord}   med  k = {k_avg:.4e}")
                     else:
                         st.warning("Kunne ikke bestemme begge ordener automatisk.")
 
@@ -7354,13 +7397,15 @@ def show_kinetics_page():
                             ratio_A = data[j][1] / data[i][1]
                             m_raw = math.log(ratio_r) / math.log(ratio_A)
                             all_m.append(m_raw)
-                            steps_out.append(f"Exp {i+1}→{j+1}: m = ln(r{j+1}/r{i+1})/ln([A]{j+1}/[A]{i+1}) = {m_raw:.3f}")
+                            steps_out.append(
+                                f"Exp {i+1}→{j+1}: x = ln(r{j+1}/r{i+1})/ln([{ir_name_A}]{j+1}/[{ir_name_A}]{i+1}) = {m_raw:.3f}"
+                            )
                     m = round(sum(all_m) / len(all_m))
-                    steps_out.append(f"**m ≈ {m}** (gennemsnit af {len(all_m)} par)")
+                    steps_out.append(f"**x ≈ {m}** (gennemsnit af {len(all_m)} par)")
                     k_vals = [row[2] / row[1]**m for row in data]
                     k_avg = sum(k_vals) / len(k_vals)
                     steps_out.append(f"**k (gennemsnit) = {k_avg:.4e}**")
-                    st.success(f"✅ **r = k·[A]^{m}**   med  k = {k_avg:.4e}")
+                    st.success(f"✅ **x = {m}**   →   r = k·[{ir_name_A}]^{m}   med  k = {k_avg:.4e}")
 
                 with st.expander("🔍 Trin-for-trin", expanded=True):
                     for s in steps_out:
