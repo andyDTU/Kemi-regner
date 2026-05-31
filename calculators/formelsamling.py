@@ -21,6 +21,7 @@ def render_formelsamling_page():
         "🌡️ Kolligative egenskaber",
         "🔷 Geometri & Bindinger",
         "☢️ Nuklear kemi",
+        "💡 Eksamenskoncepter (sandt/falsk)",
     ]
 
     active = st.radio(
@@ -267,6 +268,119 @@ Afhænger kun af antal opløste partikler, ikke hvad de er.
 **Huskeregel:** Efter $n$ halveringstider er $(1/2)^n$ tilbage.
 3 halveringstider → $12.5\%$ → $87.5\%$ henfaldet.
         """)
+
+    elif active == "💡 Eksamenskoncepter (sandt/falsk)":
+        st.markdown("## 💡 Eksamenskoncepter – sandt/falsk oversigt")
+        st.markdown(
+            "Oversigt over typiske **multiple choice-udsagn** og om de er ✅ korrekte eller ❌ forkerte. "
+            "Særligt nyttigt til opgaver der spørger 'Hvilket udsagn er **ikke** korrekt?'"
+        )
+        st.markdown("---")
+
+        with st.expander("⚗️ Katalysatorer", expanded=True):
+            st.markdown("""
+| Udsagn | ✅ / ❌ | Forklaring |
+|--------|--------|-----------|
+| Katalysatorer sænker aktiveringsenergi $E_a$ | ✅ | Tilbyder en alternativ reaktionsvej med lavere $E_a$ |
+| Katalysatorer forøger reaktionshastigheden | ✅ | Lavere $E_a$ → flere kollisioner med tilstrækkelig energi |
+| Katalysatorer påvirker **begge** retninger (frem og tilbage) ligeligt | ✅ | Derfor ændres $K$ ikke |
+| Katalysatorer ændrer **ikke** ligevægtskonstanten $K$ | ✅ | $K$ bestemmes kun af $\\Delta G^\\circ$, ikke reaktionsvej |
+| Katalysatorer forbruges **ikke** i reaktionen | ✅ | De gendannes til sidst (kan dog deaktiveres) |
+| Katalysatorer kan være heterogene **eller** homogene | ✅ | Hetero: fast Pt + gas; homo: syre i opløsning |
+| Katalysatorer ændrer **ikke** $\\Delta H$, $\\Delta G$ eller $\\Delta S$ | ✅ | Kun kinetik påvirkes, ikke termodynamik |
+| **Katalysatorer virker kun ved høj temperatur** | ❌ | Enzymer er biologiske katalysatorer ved ~37 °C |
+| **Katalysatorer ændrer ligevægtskonstanten** | ❌ | $K$ er uændret — ligevægtspositionen nås blot hurtigere |
+| **En katalysator forskyder ligevægten mod produkterne** | ❌ | Den fremskynder reaktionen, men ændrer ikke $K$ |
+""")
+
+        with st.expander("⚗️ Ligevægt & Le Chatelier"):
+            st.markdown("""
+| Udsagn | ✅ / ❌ | Forklaring |
+|--------|--------|-----------|
+| Stigning i temperatur favoriserer den endoterme retning | ✅ | Le Chatelier: systemet modvirker ændringen |
+| Stigning i tryk (ved konstant T) favoriserer siden med **færre** gasmol | ✅ | Le Chatelier |
+| Tilsætning af inert gas ved konstant volumen ændrer **ikke** ligevægten | ✅ | Partialtrykke for reaktanterne uændrede |
+| $K$ afhænger kun af temperaturen | ✅ | $K$ er konstant ved konstant T |
+| Forøgelse af reaktantkoncentration forskyder ligevægt mod produkter | ✅ | $Q < K$ → reaktionen går fremad |
+| **Tilsætning af katalysator forskyder ligevægten** | ❌ | Katalysator påvirker kun hastighed, ikke $K$ |
+| **Fortynding ændrer $K$** | ❌ | $K$ er uafhængig af koncentration/tryk |
+| **Inert gas ved konstant tryk ændrer ikke ligevægten** | ❌ | Det ændrer den faktisk — volumen øges, partialtryk falder |
+""")
+
+        with st.expander("🔥 Termokemi"):
+            st.markdown("""
+| Udsagn | ✅ / ❌ | Forklaring |
+|--------|--------|-----------|
+| Eksoterm reaktion: $\\Delta H < 0$ (energi frigives) | ✅ | Produkter er mere stabile end reaktanter |
+| Endoterm reaktion: $\\Delta H > 0$ (energi optages) | ✅ | |
+| Hess' lov: $\\Delta H_{rxn}$ er uafhængig af reaktionsvej | ✅ | Tilstandsfunktion |
+| Standarddannelsesentalpien for et grundstof i standardtilstand = 0 | ✅ | Fx $\\Delta H_f^\\circ(O_2) = 0$ |
+| En spontan reaktion kræver **ikke** nødvendigvis $\\Delta H < 0$ | ✅ | $\\Delta G = \\Delta H - T\\Delta S$ – entropi kan drive reaktionen |
+| **Eksoterme reaktioner er altid spontane** | ❌ | Spontanitet bestemmes af $\\Delta G$, ikke kun $\\Delta H$ |
+| **En reaktion med $\\Delta G < 0$ er hurtig** | ❌ | $\\Delta G$ siger noget om spontanitet, ikke hastighed |
+""")
+
+        with st.expander("⚡ Kinetik"):
+            st.markdown("""
+| Udsagn | ✅ / ❌ | Forklaring |
+|--------|--------|-----------|
+| Reaktionshastighed stiger med temperaturen | ✅ | Arrhenius: $k = Ae^{-E_a/RT}$ |
+| Reaktionsordenen bestemmes **eksperimentelt** (ikke fra koefficienter) | ✅ | Gælder for det overordnede hastighedsudtryk |
+| For elementarreaktioner kan orden aflæses fra koefficienter | ✅ | Kun for enkelttrins-mekanismer |
+| 1. ordens reaktion: halvliv $t_{1/2} = \\ln2 / k$ er koncentrationsuafhængigt | ✅ | |
+| Aktiveringsenergi $E_a$ sænkes af en katalysator | ✅ | |
+| **Reaktionsordenen kan altid aflæses fra den afstemte reaktionsligning** | ❌ | Kun for elementarreaktioner |
+| **En reaktion med stor $E_a$ er altid langsom** | ❌ | Hastighed afhænger også af frekvensfaktoren $A$ og T |
+| **Halvliv for 2. orden er koncentrationsuafhængigt** | ❌ | $t_{1/2} = 1/(k[A]_0)$ – afhænger af $[A]_0$ |
+""")
+
+        with st.expander("🧪 Syrer & Baser"):
+            st.markdown("""
+| Udsagn | ✅ / ❌ | Forklaring |
+|--------|--------|-----------|
+| Stærke syrer dissocierer fuldstændigt i vand | ✅ | HCl, HBr, HI, $H_2SO_4$, $HNO_3$, $HClO_4$ |
+| $pH + pOH = 14$ ved 25°C | ✅ | $K_w = 10^{-14}$ ved 25°C |
+| En buffer modstår pH-ændring ved tilsætning af syre/base | ✅ | |
+| Konjugerede base af stærk syre er en **svag** base | ✅ | Fx $Cl^-$ er en meget svag base |
+| **Stærk syre har altid lavest pH** | ❌ | En fortyndet stærk syre kan have højere pH end en koncentreret svag syre |
+| **En syre med lav $K_a$ er altid farlig/kraftig** | ❌ | $K_a$ siger noget om styrke, ikke om farlighed |
+""")
+
+        with st.expander("🌡️ Kolligative egenskaber"):
+            st.markdown("""
+| Udsagn | ✅ / ❌ | Forklaring |
+|--------|--------|-----------|
+| Frysepunktssænkning og kogepunktsstigning afhænger af **antal** opløste partikler | ✅ | Kolligativ egenskab — ikke partikeltype |
+| Elektrolytter giver større effekt end ikke-elektrolytter ved samme masse | ✅ | Pga. van't Hoff-faktoren $i > 1$ |
+| $\\Delta T_f = i \\cdot K_f \\cdot m$ | ✅ | $i=1$ for glucose, $i\\approx2$ for NaCl |
+| Osmotisk tryk: $\\pi = iMRT$ | ✅ | |
+| **Kogepunktssænkning opstår ved tilsætning af opløst stof** | ❌ | Opløst stof giver kogepunktS**STIGNING**, ikke sænkning |
+| **Van't Hoff-faktoren $i$ er altid et helt tal** | ❌ | Ufuldstændig dissociation giver $1 < i < n_{ideal}$ |
+""")
+
+        with st.expander("🔋 Elektrokemi"):
+            st.markdown("""
+| Udsagn | ✅ / ❌ | Forklaring |
+|--------|--------|-----------|
+| Oxidation sker ved anoden | ✅ | "An-ox, Red-cat" |
+| Reduktion sker ved katoden | ✅ | |
+| I en galvanisk celle: $\\Delta G = -nFE_{celle}$ | ✅ | |
+| Positiv $E^\\circ_{celle}$ → spontan reaktion ($\\Delta G < 0$) | ✅ | |
+| **I en elektrolytisk celle produceres der energi** | ❌ | Elektrolyse **kræver** energi (tilført strøm) |
+| **Anionen reduceres altid i en elektrolytisk celle** | ❌ | Anionen oxideres ved anoden |
+""")
+
+        with st.expander("🔷 Bindinger & IMF"):
+            st.markdown("""
+| Udsagn | ✅ / ❌ | Forklaring |
+|--------|--------|-----------|
+| Hydrogenbinding kræver N–H, O–H eller F–H | ✅ | Disse er tilstrækkeligt elektronegative |
+| London-kræfter (dispersion) eksisterer i **alle** molekyler | ✅ | Selv i upolære |
+| Et molekyle med polære bindinger kan godt være upolært | ✅ | Fx $CO_2$, $CCl_4$ (symmetri ophæver dipolerne) |
+| Ionbindinger er generelt stærkere end kovalente bindinger | ✅ | Højere smeltepunkt, hårdere |
+| **Et molekyle med frie elektronpar er altid polært** | ❌ | Fx $XeF_4$ (kvadratisk plan) er upolær pga. symmetri |
+| **Stærkere IMF giver altid lavere kogepunkt** | ❌ | Stærkere IMF → **højere** kogepunkt |
+""")
 
     # Always show constants footer
     st.markdown("---")
