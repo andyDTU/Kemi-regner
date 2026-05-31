@@ -5874,69 +5874,67 @@ def show_solubility_tab():
     st.info(_sol_help[mode])
 
     if mode == "Opløselighed fra Ksp":
-        st.markdown("#### Beregn molar opløselighed fra Ksp")
-        
-        salt_formula = st.text_input(
-            "Salt formula:",
-            placeholder="e.g., AgCl, Ca(OH)2",
-            help="Enter the chemical formula of the salt",
-            key="eq_solubility_formula1"
-        )
-        
-        if salt_formula:
-            ksp = st.number_input(
-                "Ksp value:",
-                value=1.8e-10,
-                step=1e-11,
-                min_value=1e-30,
-                format="%.2e"
-            )
-            
-            # Common ion effect
-            st.markdown("**Common ion concentrations (optional):**")
-            common_ion_input = st.text_input(
-                "Common ions:",
-                placeholder="e.g., Cl-:0.1, Na+:0.05",
-                help="Format: ion:concentration, separate with commas"
-            )
-            
-            common_ion_concentrations = {}
-            if common_ion_input:
-                try:
-                    for pair in common_ion_input.split(','):
-                        if ':' in pair:
-                            ion, conc = pair.strip().split(':')
-                            common_ion_concentrations[ion.strip()] = float(conc)
-                except:
-                    st.warning("Invalid common ion format. Using no common ions.")
-            
-            if st.button("Calculate Solubility", type="primary"):
-                try:
-                    with st.spinner("Calculating..."):
-                        result, steps, metadata = calculate_solubility_with_steps(
-                            salt_formula, ksp, common_ion_concentrations
-                        )
-                    
-                    st.success("✅ **Solubility Calculated!**")
+        import math
+        st.markdown("#### Beregn molar opløselighed og opløselig masse fra Ksp")
+        st.latex(r"K_{sp} = s^a \cdot (bs)^b \quad \Rightarrow \quad m = s \cdot V \cdot M")
 
-                    # Results
-                    s = result['solubility']
-                    s_fmt = f"{s:.4e}" if s < 1e-3 else f"{s:.6f}"
-                    st.markdown(f"**Molar solubility:** {s_fmt} M")
+        col_l, col_r = st.columns(2)
+        with col_l:
+            ksp_da = st.number_input("Ksp:", value=1.08e-10, min_value=1e-40, format="%.3e", key="sol_ksp_da")
+            molar_mass_da = st.number_input("Molarmasse (g/mol):", value=233.39, min_value=1e-3, step=0.01, key="sol_M_da",
+                                            help="BaSO₄ = 137.33+32.06+4×16.00 = 233.39 g/mol")
+        with col_r:
+            vol_ml_da = st.number_input("Volumen (mL):", value=100.0, min_value=1e-6, step=10.0, key="sol_vol_da")
+            a_da = st.number_input("Kation-koefficient a", value=1, min_value=1, max_value=3, key="sol_a_da",
+                                   help="MX → a=1, M₂X → a=2")
+            b_da = st.number_input("Anion-koefficient b", value=1, min_value=1, max_value=3, key="sol_b_da",
+                                   help="MX → b=1, MX₂ → b=2")
 
-                    st.markdown("**Equilibrium concentrations:**")
-                    for species, conc in result['equilibrium_concentrations'].items():
-                        c_fmt = f"{conc:.4e}" if conc < 1e-3 else f"{conc:.6f}"
-                        st.markdown(f"- [{species}] = {c_fmt} M")
-                    
-                    # Steps section
-                    with st.expander("🔍 Vis trin", expanded=False):
-                        for step in steps:
-                            st.markdown(step)
-                
-                except Exception as e:
-                    st.error(f"❌ **Fejl**: {str(e)}")
-    
+        st.caption("Eksempel: BaSO₄ → a=1, b=1 | CaF₂ → a=1, b=2 | Ag₂SO₄ → a=2, b=1")
+
+        if st.button("Beregn opløselighed", type="primary", key="sol_calc_da"):
+            try:
+                # Solve Ksp = (a·s)^a · (b·s)^b for s
+                # = a^a · b^b · s^(a+b) = Ksp → s = (Ksp / (a^a · b^b))^(1/(a+b))
+                s_mol_L = (ksp_da / (a_da**a_da * b_da**b_da)) ** (1 / (a_da + b_da))
+                V_L = vol_ml_da / 1000.0
+                n_mol = s_mol_L * V_L
+                mass_g = n_mol * molar_mass_da
+
+                # Auto-choose best unit for mass
+                if mass_g >= 1:
+                    mass_str = f"{mass_g:.4g} g"
+                elif mass_g >= 1e-3:
+                    mass_str = f"{mass_g*1e3:.4g} mg"
+                elif mass_g >= 1e-6:
+                    mass_str = f"{mass_g*1e6:.4g} μg"
+                else:
+                    mass_str = f"{mass_g*1e9:.4g} ng"
+
+                st.success(f"**Opløselig masse = {mass_str}**")
+                c1, c2, c3 = st.columns(3)
+                c1.metric("Molar opløselighed s", f"{s_mol_L:.4e} mol/L")
+                c2.metric("Stofmængde n", f"{n_mol:.4e} mol")
+                c3.metric("Masse", mass_str)
+
+                with st.expander("🔍 Trin-for-trin", expanded=True):
+                    st.markdown(f"""
+**Ligevægt:** Salt ⇌ {a_da} kation + {b_da} anion
+**Ksp = (a·s)^a · (b·s)^b = {a_da}^{a_da} · {b_da}^{b_da} · s^{a_da+b_da}**
+
+**Trin 1 – Find s:**
+$$s = \\left(\\frac{{K_{{sp}}}}{{a^a \\cdot b^b}}\\right)^{{\\frac{{1}}{{a+b}}}} = \\left(\\frac{{{ksp_da:.3e}}}{{{a_da**a_da} \\cdot {b_da**b_da}}}\\right)^{{\\frac{{1}}{{{a_da+b_da}}}}} = \\mathbf{{{s_mol_L:.4e}\\,\\text{{mol/L}}}}$$
+
+**Trin 2 – Stofmængde i {vol_ml_da:.4g} mL = {V_L} L:**
+$$n = s \\cdot V = {s_mol_L:.4e} \\times {V_L} = {n_mol:.4e}\\,\\text{{mol}}$$
+
+**Trin 3 – Masse:**
+$$m = n \\cdot M = {n_mol:.4e} \\times {molar_mass_da} = \\mathbf{{{mass_str}}}$$
+""")
+            except Exception as exc:
+                st.error(f"Fejl: {exc}")
+
+
     elif mode == "Ksp fra opløselighed":
         st.markdown("#### Beregn Ksp fra opløselighed")
         
