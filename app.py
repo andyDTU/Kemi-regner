@@ -200,6 +200,7 @@ SEARCH_INDEX = [
     {"title": "Halvliv – 0., 1., 2. orden", "keywords": ["halvliv", "half life", "t½", "1. orden halvliv", "2. orden halvliv", "ln2 over k", "t½ = 1/k[A]", "halveringstid reaktion"], "page": "kinetics", "tab": "📊 Halvliv", "description": "t½ for 0., 1. og 2. ordens reaktioner – se forskel og beregn"},
     {"title": "Initial rates – reaktionsorden fra tabel", "keywords": ["initial rates", "initialhastighedsmetode", "reaktionsorden fra eksperiment", "bestem m og n", "method of initial rates", "eksperimentel orden", "rate tabel"], "page": "kinetics", "tab": "📋 Initial rates", "description": "Find reaktionsorden og k fra tabel med eksperimentelle initialhastigheder"},
     {"title": "Ksp fælding – dannes bundfald?", "keywords": ["fældning", "bundfald", "precipitate", "q vs ksp", "ionprodukt", "overmættet", "precipitation check", "dannes der bundfald"], "page": "ligevaegt", "tab": "💧 Opløselighed (Ksp)", "description": "Q vs. Ksp – beregn om bundfald dannes ved blanding af to opløsninger"},
+    {"title": "Selektiv fælding – hvilken fælder først?", "keywords": ["selektiv fælding", "hvilken fælder først", "selective precipitation", "fælder ved lavest koncentration", "AgCl PbCl2", "fælles ion fælding", "metalion tærskel", "precipitation order"], "page": "ligevaegt", "tab": "💧 Opløselighed (Ksp)", "description": "Find hvilken metalion der fælder ved den laveste fællesion-koncentration"},
     {"title": "ICE-tabel / ligevægt", "keywords": ["ice tabel", "ice-tabel", "opstil ice", "opsæt ice", "ligevægtskoncentration", "beregn kc", "beregn kp"], "page": "ligevaegt", "tab": "🧊 ICE Table", "description": "ICE-tabel og ligevægtskoncentrationer"},
     {"title": "Q vs K – reaktionsretning", "keywords": ["reaktionskvotient", "q vs k", "hvilken retning", "går reaktionen frem", "går reaktionen tilbage", "forskydning"], "page": "ligevaegt", "tab": "📊 Reaktionskvotient Q", "description": "Beregn Q og sammenlign med K"},
     {"title": "Eksamensguide", "keywords": ["eksamensguide", "eksamen", "guide", "hjælp", "opgave", "hvilken beregner", "hvad skal jeg bruge"], "page": "eksamensguide", "tab": None, "description": "Oversigt over opgavetyper og hvilken beregner de kræver"},
@@ -6177,7 +6178,7 @@ def show_solubility_tab():
     # Mode selection
     mode = st.radio(
         "Beregningstype:",
-        ["Opløselighed fra Ksp", "Ksp fra opløselighed", "⚠️ Fældes der bundfald?", "🧂 Opløser det fuldt ud?"],
+        ["Opløselighed fra Ksp", "Ksp fra opløselighed", "⚠️ Fældes der bundfald?", "🧂 Opløser det fuldt ud?", "🏆 Selektiv fælding"],
         horizontal=True,
     )
     _sol_help = {
@@ -6185,6 +6186,7 @@ def show_solubility_tab():
         "Ksp fra opløselighed": "💡 **Hvornår?** Du kender opløseligheden (fra eksperiment) og vil beregne Ksp.",
         "⚠️ Fældes der bundfald?": "💡 **Hvornår?** To opløsninger blandes – dannes der bundfald? Beregn Q og sammenlign med Ksp.",
         "🧂 Opløser det fuldt ud?": "💡 **Hvornår?** Et eller to faste salte tilsættes til en løsning med fællesion. Finder om de opløses fuldstændigt (fællesion-effekt).",
+        "🏆 Selektiv fælding": "💡 **Hvornår?** En opløsning indeholder 2 metalioner (fx Ag⁺ og Pb²⁺). Ved en given fællesion-koncentration: hvilken fælder først (ved lavest metalion-koncentration)?",
     }
     st.info(_sol_help[mode])
 
@@ -6458,6 +6460,131 @@ n_max = {s_max:.4e} mol/L × {_vol_L} L = **{mol_max:.4e} mol**
                     "1,6×10⁻⁸", "5,6×10⁻¹²", "2,8×10⁻³⁹"],
         }
         st.dataframe(pd.DataFrame(ksp_ref), hide_index=True, use_container_width=True)
+
+    elif mode == "🏆 Selektiv fælding":
+        import math, pandas as pd
+        st.markdown("#### 🏆 Selektiv fælding – hvilken metalion fælder først?")
+        st.markdown(
+            "Angiv koncentrationen af **fællesionen** (fx Cl⁻) og Ksp for to salte. "
+            "Beregneren finder den minimale metalion-koncentration der kræves for at starte fælding af hvert salt."
+        )
+        st.markdown("---")
+
+        common_ion_label = st.text_input("Fællesion (til visning):", value="Cl⁻", key="sel_common_label")
+        common_ion_conc = st.number_input(
+            f"[{common_ion_label}] (M):", value=1e-3, min_value=1e-20, format="%.3e", key="sel_common_conc"
+        )
+
+        st.markdown("---")
+        cols = st.columns(2)
+        salts = []
+        defaults = [
+            ("AgCl", 1.8e-10, 1, 1, "Ag⁺"),
+            ("PbCl₂", 1.7e-5, 1, 2, "Pb²⁺"),
+        ]
+        for i, (def_name, def_ksp, def_a, def_b, def_metal) in enumerate(defaults):
+            with cols[i]:
+                st.markdown(f"**Salt {i+1}**")
+                name = st.text_input("Navn:", value=def_name, key=f"sel_name_{i}")
+                ksp_v = st.number_input("Ksp:", value=def_ksp, min_value=1e-60, format="%.3e", key=f"sel_ksp_{i}")
+                metal_label = st.text_input("Metalion (til visning):", value=def_metal, key=f"sel_metal_{i}")
+                a = st.number_input("Metalion-koeff. a", value=def_a, min_value=1, max_value=3,
+                                    help="Antal metalioner pr. formelenhend (AgCl→1, PbCl₂→1)", key=f"sel_a_{i}")
+                b = st.number_input(f"[{common_ion_label}]-koeff. b", value=def_b, min_value=1, max_value=4,
+                                    help="Antal fællesioner pr. formelenhed (AgCl→1, PbCl₂→2)", key=f"sel_b_{i}")
+                salts.append({"name": name, "ksp": ksp_v, "metal": metal_label, "a": int(a), "b": int(b)})
+
+        if st.button("Beregn selektiv fælding", type="primary", key="sel_run"):
+            st.markdown("---")
+            results = []
+            for s in salts:
+                # Ksp = [M]^a * [X]^b  →  [M] = (Ksp / [X]^b)^(1/a)
+                try:
+                    cx = common_ion_conc ** s["b"]
+                    metal_min = (s["ksp"] / cx) ** (1.0 / s["a"])
+                    results.append({**s, "metal_min": metal_min})
+                except Exception:
+                    st.error(f"Fejl ved beregning for {s['name']}")
+                    results.append({**s, "metal_min": float("inf")})
+
+            results.sort(key=lambda r: r["metal_min"])
+            winner = results[0]
+
+            # Result cards
+            card_cols = st.columns(len(results))
+            for i, r in enumerate(results):
+                with card_cols[i]:
+                    if i == 0:
+                        st.success(
+                            f"**#{i+1} FÆLDER FØRST**\n\n"
+                            f"### {r['name']}\n\n"
+                            f"[{r['metal']}]_min = **{r['metal_min']:.2e} M**"
+                        )
+                    else:
+                        st.info(
+                            f"**#{i+1} fælder siden**\n\n"
+                            f"{r['name']}\n\n"
+                            f"[{r['metal']}]_min = {r['metal_min']:.2e} M"
+                        )
+
+            # Step-by-step
+            st.markdown("### Udledning trin for trin")
+            for r in results:
+                with st.expander(f"{r['name']} — Ksp = {r['ksp']:.2e}", expanded=True):
+                    st.markdown(f"**Ligevægtsudtryk:**")
+                    a, b = r["a"], r["b"]
+                    if a == 1 and b == 1:
+                        st.latex(rf"K_{{sp}} = [{r['metal']}][{common_ion_label}]")
+                        st.latex(rf"[{r['metal']}] = \frac{{K_{{sp}}}}{{[{common_ion_label}]}} = \frac{{{r['ksp']:.2e}}}{{{common_ion_conc:.2e}}} = {r['metal_min']:.2e}\ \text{{M}}")
+                    elif a == 1 and b == 2:
+                        st.latex(rf"K_{{sp}} = [{r['metal']}][{common_ion_label}]^2")
+                        denom2 = common_ion_conc ** 2
+                        st.latex(rf"[{r['metal']}] = \frac{{K_{{sp}}}}{{[{common_ion_label}]^2}} = \frac{{{r['ksp']:.2e}}}{{{denom2:.2e}}} = {r['metal_min']:.2e}\ \text{{M}}")
+                    else:
+                        denom = common_ion_conc ** b
+                        st.latex(rf"K_{{sp}} = [{r['metal']}]^{{{a}}}[{common_ion_label}]^{{{b}}}")
+                        st.latex(
+                            rf"[{r['metal']}] = \left(\frac{{K_{{sp}}}}{{[{common_ion_label}]^{{{b}}}}}\right)^{{1/{a}}}"
+                            rf" = \left(\frac{{{r['ksp']:.2e}}}{{{denom:.2e}}}\right)^{{1/{a}}}"
+                            rf" = {r['metal_min']:.2e}\ \text{{M}}"
+                        )
+
+            # Summary table
+            st.markdown("---")
+            st.markdown("### Sammenfatning")
+            rows = []
+            for rank, r in enumerate(results, 1):
+                rows.append({
+                    "Rang": f"#{rank}",
+                    "Salt": r["name"],
+                    "Ksp": f"{r['ksp']:.2e}",
+                    f"[Metalion]_min ved [{common_ion_label}]={common_ion_conc:.1e} M": f"{r['metal_min']:.2e} M",
+                    "Fælder": "✅ FØRST" if rank == 1 else f"#{rank}",
+                })
+            st.dataframe(pd.DataFrame(rows), hide_index=True, use_container_width=True)
+            st.info(
+                f"**{winner['name']} fælder først** — kræver kun [{winner['metal']}] = {winner['metal_min']:.2e} M, "
+                f"hvilket er den laveste tærskel. Den anden fælder ved en højere metalion-koncentration."
+            )
+
+        st.markdown("---")
+        st.markdown("""
+#### Metode til eksamen
+
+**Ksp = [metalion]ᵃ × [fællesion]ᵇ**
+
+For hvert salt: isoler metalion-koncentrationen ved den givne [fællesion]:
+
+$$[\\text{metalion}] = \\left(\\frac{K_{sp}}{[\\text{fællesion}]^b}\\right)^{1/a}$$
+
+**Det salt med den laveste tærskel-koncentration fælder først.**
+
+*Eksempel ved [Cl⁻] = 1,0×10⁻³ M:*
+- AgCl: [Ag⁺] = 1,8×10⁻¹⁰ / 1,0×10⁻³ = **1,8×10⁻⁷ M**
+- PbCl₂: [Pb²⁺] = 1,7×10⁻⁵ / (1,0×10⁻³)² = **17 M**
+
+→ AgCl fælder ved langt lavere [Ag⁺] → **AgCl fælder først** ✓
+""")
 
 
 def show_gas_laws_page():
