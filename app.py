@@ -207,7 +207,7 @@ SEARCH_INDEX = [
     {"title": "Densitet af krystal", "keywords": ["densitet kubisk", "densitet bcc fcc", "rho krystal", "beregn densitet krystal", "gitterparameter densitet", "kantlængde densitet"], "page": "faststofkemi", "tab": None, "description": "ρ = ZM/(Nₐa³) – densitet fra kantlængde og molarmasse"},
     {"title": "Gitterparameter / kantlængde", "keywords": ["gitterparameter", "lattice parameter", "kantlængde", "edge length", "atomradius til a", "a fra r", "r til kantlængde"], "page": "faststofkemi", "tab": None, "description": "a fra atomradius for SC, BCC og FCC"},
     # ── Organisk ──
-    {"title": "Tæl isomere ketoner", "keywords": ["isomere", "isomertælling", "keton isomere", "strukturisomere", "hvor mange isomere", "c5h10o", "cnhmo", "tæl isomere", "isomers", "ketone isomers", "molekylformel keton"], "page": "organisk", "tab": "🔢 Isomertælling", "description": "Tæl strukturisomere ketoner for en given CₙHₘO-formel med trin-for-trin metode"},
+    {"title": "Tæl strukturisomere", "keywords": ["isomere", "isomertælling", "keton isomere", "alkohol isomere", "ether isomere", "aldehyd isomere", "strukturisomere", "hvor mange isomere", "c4h10o", "c5h10o", "cnhmo", "tæl isomere", "isomers", "alcohol isomers", "ketone isomers", "molekylformel keton", "molekylformel alkohol", "butanol isomere"], "page": "organisk", "tab": "🔢 Isomertælling", "description": "Tæl strukturisomere ketoner, aldehyder, alkoholer og ethere for en given molekylformel"},
     {"title": "Reaktionsforudsigelse organisk", "keywords": ["organisk reaktion", "hvad dannes", "reaktionsprodukt", "hydrering alken", "halogenering", "esterifikation", "hydrolyse", "oxidation alkohol", "additionsreaktion", "markovnikov"], "page": "organisk", "tab": "⚗️ Reaktionsforudsigelse", "description": "Forudsig produkt af organiske reaktioner"},
     {"title": "Funktionelle grupper identificer", "keywords": ["funktionel gruppe", "identificér", "keton", "aldehyd", "alkohol", "ester", "syre", "amin", "organisk formel", "kondenseret formel"], "page": "organisk", "tab": "🔍 Funktionelle grupper", "description": "Find funktionelle grupper fra kondenseret formel"},
     # ── Elektrokemi ──
@@ -10789,58 +10789,282 @@ def _count_ketone_isomers(formula: str) -> dict:
     return {"count": len(ketones), "ketones": ketones, "steps": steps, "dou": dou}
 
 
+def _count_alcohol_isomers(formula: str) -> dict:
+    """Count structural alcohol isomers (R-OH) for CnH(2n+2)O."""
+    import re as _re
+    m = _re.match(r"C(\d+)H(\d+)O(\d*)$", formula.replace(" ", ""), _re.IGNORECASE)
+    if not m:
+        return {"error": "Ugyldig formel — forvent CₙHₘO (fx C4H10O, C3H8O)"}
+    nc, nh = int(m.group(1)), int(m.group(2))
+    dou = (2 * nc + 2 - nh) / 2
+    if dou != 0.0:
+        return {"error": f"Alkoholer kræver DoU = 0 (formel CₙH₍₂ₙ₊₂₎O, fx C4H10O). Denne formel har DoU = {dou:.1f}."}
+
+    _data = {
+        1: (1, ["Methanol: CH₃OH"]),
+        2: (1, ["Ethanol: CH₃CH₂OH"]),
+        3: (2, ["1-Propanol: CH₃CH₂CH₂OH", "2-Propanol (isopropanol): CH₃CH(OH)CH₃"]),
+        4: (4, [
+            "1-Butanol: CH₃CH₂CH₂CH₂OH",
+            "2-Butanol: CH₃CH(OH)CH₂CH₃",
+            "2-Methyl-1-propanol (isobutanol): (CH₃)₂CHCH₂OH",
+            "2-Methyl-2-propanol (tert-butanol): (CH₃)₃COH",
+        ]),
+        5: (8, [
+            "1-Pentanol: CH₃(CH₂)₃CH₂OH",
+            "2-Pentanol: CH₃CH(OH)CH₂CH₂CH₃",
+            "3-Pentanol: CH₃CH₂CH(OH)CH₂CH₃",
+            "2-Methyl-1-butanol: (CH₃)(C₂H₅)CHCH₂OH",
+            "3-Methyl-1-butanol: (CH₃)₂CHCH₂CH₂OH",
+            "2-Methyl-2-butanol: (CH₃)₂C(OH)CH₂CH₃",
+            "3-Methyl-2-butanol: (CH₃)₂CHCH(OH)CH₃",
+            "2,2-Dimethyl-1-propanol (neopentanol): (CH₃)₃CCH₂OH",
+        ]),
+        6: (17, []),
+    }
+    if nc not in _data:
+        return {"error": f"Tælling for n>{max(_data)} understøttes ikke endnu."}
+
+    count, names = _data[nc]
+    _skels = {
+        3: [("Propan-skelet (C–C–C):",
+             ["C1 (= C3 pga. symmetri): 1-propanol", "C2: 2-propanol"], 2)],
+        4: [
+            ("n-Butan-skelet (C–C–C–C):",
+             ["C1 (= C4): 1-butanol", "C2 (= C3): 2-butanol"], 2),
+            ("Isobutan-skelet ((CH₃)₂CHCH₃):",
+             ["Primær C (3 ækvivalente CH₂): isobutanol", "Tertiær C: tert-butanol"], 2),
+        ],
+        5: [
+            ("n-Pentan-skelet (C–C–C–C–C):",
+             ["C1 (= C5): 1-pentanol", "C2 (= C4): 2-pentanol", "C3: 3-pentanol"], 3),
+            ("2-Methylbutan-skelet:",
+             ["C1 (lang kæde, primær): 3-methyl-1-butanol",
+              "C1 (forgrenet, primær): 2-methyl-1-butanol",
+              "C2 (tertiær): 2-methyl-2-butanol",
+              "C3 (sekundær): 3-methyl-2-butanol"], 4),
+            ("Neopentan-skelet ((CH₃)₄C):",
+             ["Alle 4 CH₃ ækvivalente: 2,2-dimethyl-1-propanol"], 1),
+        ],
+    }
+
+    steps = [
+        f"**Formel:** {formula}  →  C={nc}, H={nh}, O=1",
+        f"**Grad af umættethed:** (2×{nc} + 2 − {nh}) / 2 = **0** ✓ (mættet, ingen ringe/dobbeltbindinger)",
+        f"**Metode:** Tegn alle {nc}C-skeletter → placer –OH på hvert unikt kulstofatom",
+        "",
+    ]
+    if nc in _skels:
+        for skel_name, positions, sub_count in _skels[nc]:
+            steps.append(f"**{skel_name}** → {sub_count} alkohol{'er' if sub_count > 1 else ''}")
+            for p in positions:
+                steps.append(f"  – {p}")
+            steps.append("")
+    steps.append(f"**Total: {count} alkoholisomerer**")
+    return {"count": count, "names": names, "steps": steps, "dou": dou}
+
+
+def _count_ether_isomers(formula: str) -> dict:
+    """Count structural ether isomers (R-O-R') for CnH(2n+2)O."""
+    import re as _re
+    m = _re.match(r"C(\d+)H(\d+)O(\d*)$", formula.replace(" ", ""), _re.IGNORECASE)
+    if not m:
+        return {"error": "Ugyldig formel — forvent CₙHₘO (fx C4H10O)"}
+    nc, nh = int(m.group(1)), int(m.group(2))
+    dou = (2 * nc + 2 - nh) / 2
+    if dou != 0.0:
+        return {"error": f"Ethere kræver DoU = 0 (formel CₙH₍₂ₙ₊₂₎O). Denne formel har DoU = {dou:.1f}."}
+    if nc < 2:
+        return {"error": "Ethere kræver mindst 2 kulstofatomer (R–O–R', begge R ≥ 1C)."}
+
+    def _alkyl_count(n):
+        return {1: 1, 2: 1, 3: 2, 4: 4, 5: 8, 6: 17, 7: 39}.get(n)
+
+    def _alkyl_names(n):
+        return {
+            1: ["methyl"], 2: ["ethyl"], 3: ["n-propyl", "isopropyl"],
+            4: ["n-butyl", "sec-butyl", "isobutyl", "tert-butyl"],
+            5: ["n-pentyl", "2-methylbutyl", "3-methylbutyl", "1-methylbutyl",
+                "neopentyl", "1-ethylpropyl", "1,1-dimethylpropyl", "1,2-dimethylpropyl"],
+        }.get(n, [f"({n}C-alkyl)×{_alkyl_count(n)}"])
+
+    ethers, seen = [], set()
+    steps = [
+        f"**Formel:** {formula}  →  C={nc}, H={nh}, O=1",
+        f"**Grad af umættethed:** (2×{nc} + 2 − {nh}) / 2 = **0** ✓",
+        f"**Etherstruktur:** R–O–R', fordel {nc} C-atomer på R og R':",
+        "",
+    ]
+    for r in range(1, nc):
+        rp = nc - r
+        if rp < 1:
+            break
+        pair = (min(r, rp), max(r, rp))
+        if pair in seen:
+            continue
+        seen.add(pair)
+        na, nb = _alkyl_count(r), _alkyl_count(rp)
+        if na is None or nb is None:
+            continue
+        if r == rp:
+            combos = na * (na + 1) // 2
+            steps.append(f"- R={r}C, R'={rp}C (symmetrisk): **{combos} unikke**")
+        else:
+            combos = na * nb
+            steps.append(f"- R={r}C ({na}), R'={rp}C ({nb}): {na}×{nb} = **{combos}**")
+        r_names, rp_names = _alkyl_names(r), _alkyl_names(rp)
+        for i, rn in enumerate(r_names):
+            jstart = i if r == rp else 0
+            for jn in rp_names[jstart:]:
+                ethers.append(f"{rn}–O–{jn}")
+
+    steps.append(f"\n**Total: {len(ethers)} etherisomerer**")
+    return {"count": len(ethers), "names": ethers, "steps": steps, "dou": dou}
+
+
+def _count_aldehyde_isomers(formula: str) -> dict:
+    """Count structural aldehyde isomers (R-CHO) for CnH(2n)O."""
+    import re as _re
+    m = _re.match(r"C(\d+)H(\d+)O(\d*)$", formula.replace(" ", ""), _re.IGNORECASE)
+    if not m:
+        return {"error": "Ugyldig formel — forvent CₙHₘO (fx C4H8O)"}
+    nc, nh = int(m.group(1)), int(m.group(2))
+    dou = (2 * nc + 2 - nh) / 2
+    if dou != 1.0:
+        return {"error": f"Aldehyder kræver DoU = 1. Denne formel har DoU = {dou:.1f}."}
+
+    def _alkyl_count(n):
+        return {0: 1, 1: 1, 2: 1, 3: 2, 4: 4, 5: 8, 6: 17}.get(n)
+
+    def _alkyl_names(n):
+        return {
+            0: ["H (formaldehyd)"],
+            1: ["methyl → ethanal (acetaldehyd)"],
+            2: ["ethyl → propanal"],
+            3: ["n-propyl → butanal", "isopropyl → 2-methylpropanal"],
+            4: ["n-butyl → pentanal", "sec-butyl → 2-methylbutanal",
+                "isobutyl → 3-methylbutanal", "tert-butyl → 2,2-dimethylpropanal"],
+        }.get(n, [f"({n}C-alkyl)×{_alkyl_count(n)}"])
+
+    r_carbons = nc - 1
+    count = _alkyl_count(r_carbons)
+    if count is None:
+        return {"error": f"Tælling for n>{r_carbons + 1} understøttes ikke endnu."}
+
+    r_names = _alkyl_names(r_carbons)
+    aldehydes = [f"{rn}" for rn in r_names]
+    steps = [
+        f"**Formel:** {formula}  →  C={nc}, H={nh}, O=1",
+        f"**Grad af umættethed:** (2×{nc} + 2 − {nh}) / 2 = **1** ✓ (fra C=O i CHO)",
+        f"**Aldehydstruktur:** R–CHO — CHO er altid terminal (endekul)",
+        f"**R-gruppen har {r_carbons} C-atom{'er' if r_carbons != 1 else ''}** ({count} isomer{'er' if count > 1 else ''})",
+        "",
+    ]
+    for a in aldehydes:
+        steps.append(f"– {a}")
+    steps.append(f"\n**Total: {count} aldehydisomerer**")
+    return {"count": count, "names": aldehydes, "steps": steps, "dou": dou}
+
+
 def _render_isomer_tab():
-    st.markdown("### 🔢 Tæl isomere ketoner")
-    st.markdown(
-        "Angiv en molekylformel (CₙHₘO) og få talt alle strukturisomere ketoner "
-        "med trin-for-trin forklaring."
+    st.markdown("### 🔢 Tæl strukturisomere")
+    st.markdown("Vælg funktionel gruppe, angiv formel, og få talt alle strukturisomere med trin-for-trin forklaring.")
+
+    fg_mode = st.radio(
+        "Funktionel gruppe:",
+        ["⚗️ Ketoner (R–CO–R')", "🧪 Aldehyder (R–CHO)", "🍺 Alkoholer (R–OH)", "🔗 Ethere (R–O–R')"],
+        key="iso_fg_mode",
+        horizontal=True,
     )
+
+    _fg_map = {
+        "⚗️ Ketoner (R–CO–R')":  ("C5H10O",  "fx C4H8O, C5H10O, C6H12O",   _count_ketone_isomers,   "CₙH₍₂ₙ₎O",    "keton"),
+        "🧪 Aldehyder (R–CHO)":  ("C4H8O",   "fx C3H6O, C4H8O, C5H10O",    _count_aldehyde_isomers, "CₙH₍₂ₙ₎O",    "aldehyd"),
+        "🍺 Alkoholer (R–OH)":   ("C4H10O",  "fx C3H8O, C4H10O, C5H12O",   _count_alcohol_isomers,  "CₙH₍₂ₙ₊₂₎O", "alkohol"),
+        "🔗 Ethere (R–O–R')":    ("C4H10O",  "fx C3H8O, C4H10O, C5H12O",   _count_ether_isomers,    "CₙH₍₂ₙ₊₂₎O", "ether"),
+    }
+    default_val, placeholder, count_fn, formula_hint, label = _fg_map[fg_mode]
 
     col_inp, col_ex = st.columns([2, 1])
     with col_inp:
         formula_in = st.text_input(
-            "Molekylformel:",
-            value="C5H10O",
-            placeholder="fx C4H8O, C5H10O, C6H12O",
-            key="iso_formula",
+            f"Molekylformel ({formula_hint}):",
+            value=default_val,
+            placeholder=placeholder,
+            key=f"iso_formula_{fg_mode[:4]}",
         )
     with col_ex:
         st.markdown("**Eksempler:**")
-        st.markdown("C4H8O → 1 keton  \nC5H10O → 3 ketoner  \nC6H12O → 6 ketoner")
+        _examples = {
+            "⚗️ Ketoner (R–CO–R')": "C4H8O → 1  \nC5H10O → 3  \nC6H12O → 6",
+            "🧪 Aldehyder (R–CHO)": "C3H6O → 1  \nC4H8O → 2  \nC5H10O → 4",
+            "🍺 Alkoholer (R–OH)":  "C3H8O → 2  \nC4H10O → 4  \nC5H12O → 8",
+            "🔗 Ethere (R–O–R')":   "C3H8O → 1  \nC4H10O → 3  \nC5H12O → 6",
+        }
+        st.markdown(_examples[fg_mode])
 
     if st.button("Tæl isomere", type="primary", key="iso_btn"):
-        res = _count_ketone_isomers(formula_in.strip())
-
+        res = count_fn(formula_in.strip())
         if "error" in res:
             st.error(res["error"])
         else:
-            st.success(f"**{res['count']} ketonisomerer** med formlen {formula_in.strip()}")
-
+            count = res["count"]
+            st.success(f"**{count} {label}isomer{'er' if count != 1 else ''}** med formlen {formula_in.strip()}")
             with st.expander("📋 Trin for trin", expanded=True):
                 for s in res["steps"]:
                     st.markdown(s)
-
-            if res["ketones"]:
+            names_list = res.get("ketones") or res.get("names") or []
+            if names_list:
                 st.markdown("#### Alle strukturer:")
-                for i, k in enumerate(res["ketones"], 1):
+                for i, k in enumerate(names_list, 1):
                     st.markdown(f"{i}. {k}")
 
     st.markdown("---")
     st.markdown("#### Fremgangsmåde til eksamen")
-    st.markdown("""
-**Trin 1 – Tjek grad af umættethed**
-$$\\text{DoU} = \\frac{2C + 2 - H}{2}$$
-Ketoner har DoU = 1 (kun C=O). Hvis DoU > 1, er der også ringe eller ekstra dobbeltbindinger.
+    if fg_mode.startswith("⚗️"):
+        st.markdown("""
+**Ketoner — CₙH₂ₙO, DoU = 1**
 
-**Trin 2 – Tegn alle C-skeletter**
-For C₅: 3 skeletter (n-pentan, 2-methylbutan, neopentan)
+1. Tjek DoU = (2C+2−H)/2 = **1** ✓
+2. Tegn alle C-skeletter (n-pentan, 2-methylbutan, neopentan for C₅)
+3. Placer C=O kun på **interne** C (terminale CH₃ giver aldehyd, ikke keton)
+4. Tæl unikke strukturer (undgå spejlbilleder)
+""")
+    elif fg_mode.startswith("🧪"):
+        st.markdown("""
+**Aldehyder — CₙH₂ₙO, DoU = 1**
 
-**Trin 3 – Placer C=O**
-C=O kræver et **internt** kulstofatom med præcis **2 C-naboer**.
-Terminale C (CH₃) → aldehyd, ikke keton.
+1. Tjek DoU = **1** ✓ (CHO-gruppen indeholder C=O)
+2. CHO er **altid terminal** — kun R-gruppen varierer
+3. Tæl alle alkylgrupper med (n−1) C-atomer = antal aldehydisomerer
 
-**Trin 4 – Tæl unikke strukturer**
-Undgå at tælle spejlbilleder af samme molekyle to gange.
+*Eksempel C₄H₈O (n=4): R har 3C → n-propyl + isopropyl = **2 aldehyder***
+""")
+    elif fg_mode.startswith("🍺"):
+        st.markdown("""
+**Alkoholer — CₙH₂ₙ₊₂O, DoU = 0**
+
+1. Tjek DoU = **0** ✓ (ingen ringe eller dobbeltbindinger)
+2. Tegn alle C-skeletter (n-butan + isobutan for C₄)
+3. Placer –OH på hvert **unikt** C-atom i hvert skelet
+
+*Eksempel C₄H₁₀O:*
+- n-butan (C–C–C–C): C1 → 1-butanol, C2 → 2-butanol
+- isobutan: primær C → isobutanol, tertiær C → tert-butanol
+- **Total: 4 alkoholer** ✓
+""")
+    else:
+        st.markdown("""
+**Ethere — CₙH₂ₙ₊₂O, DoU = 0**
+
+1. Tjek DoU = **0** ✓
+2. Fordel n C-atomer på R og R' i R–O–R'
+3. Tæl unikke par (R=R' tæller kun én gang)
+
+*Eksempel C₄H₁₀O:*
+- 1C + 3C: methyl–n-propylether + methyl–isopropylether (2)
+- 2C + 2C: diethylether (1, symmetrisk)
+- **Total: 3 ethere** ✓
 """)
 
 
