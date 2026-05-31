@@ -6229,22 +6229,68 @@ def show_solubility_tab():
 
     if mode == "Opløselighed fra Ksp":
         import math
+
+        # ── Salt formula lookup table (auto-detect a, b) ──────────────────────
+        _SALT_STOICH: dict = {
+            # 1:1 salts
+            "AGCL":(1,1),"AGBR":(1,1),"AGI":(1,1),"AGSCN":(1,1),"AGCNO":(1,1),
+            "BASO4":(1,1),"CASO4":(1,1),"PBSO4":(1,1),"SRSO4":(1,1),"RASO4":(1,1),
+            "CACO3":(1,1),"MGCO3":(1,1),"FECO3":(1,1),"PBCO3":(1,1),"SRCO3":(1,1),
+            "ZNCO3":(1,1),"MNCО3":(1,1),"NICO3":(1,1),"CUCO3":(1,1),
+            "FEOH2":(1,2),"ZNOH2":(1,2),  # fallback without parens
+            # 1:2 salts
+            "CAF2":(1,2),"MGF2":(1,2),"BAF2":(1,2),"SRF2":(1,2),
+            "PBCL2":(1,2),"PBBR2":(1,2),"PBF2":(1,2),"PBCRO4":(1,1),
+            "CU(OH)2":(1,2),"CA(OH)2":(1,2),"MG(OH)2":(1,2),"ZN(OH)2":(1,2),
+            "FE(OH)2":(1,2),"NI(OH)2":(1,2),"CO(OH)2":(1,2),"MN(OH)2":(1,2),
+            "SR(OH)2":(1,2),"BA(OH)2":(1,2),"PB(OH)2":(1,2),"CD(OH)2":(1,2),
+            "HGI2":(1,2),"HGS":(1,1),
+            # 1:3 salts
+            "FE(OH)3":(1,3),"AL(OH)3":(1,3),"CR(OH)3":(1,3),"BI(OH)3":(1,3),
+            # 2:1 salts
+            "AG2SO4":(2,1),"AG2CRO4":(2,1),"AG2S":(2,1),"AG2CO3":(2,1),
+            "AG2C2O4":(2,1),"TL2S":(2,1),
+            # 3:2 salts
+            "CA3(PO4)2":(3,2),"MG3(PO4)2":(3,2),"FE3(PO4)2":(3,2),"BA3(PO4)2":(3,2),
+            "ALP O4":(1,1),"ALPO4":(1,1),
+        }
+
+        def _detect_ab(formula: str):
+            key = formula.strip().upper().replace(" ", "")
+            return _SALT_STOICH.get(key, None)
+
         st.markdown("#### Beregn molar opløselighed og opløselig masse fra Ksp")
-        st.latex(r"K_{sp} = s^a \cdot (bs)^b \quad \Rightarrow \quad m = s \cdot V \cdot M")
+
+        formula_in = st.text_input(
+            "Saltformel (valgfri – auto-udfylder a og b):",
+            placeholder="fx Cu(OH)2, CaF2, BaSO4, Ag2SO4",
+            key="sol_formula_detect",
+        )
+        detected = _detect_ab(formula_in) if formula_in.strip() else None
+        if formula_in.strip() and detected:
+            st.success(f"✅ {formula_in.strip()} → a = {detected[0]}, b = {detected[1]}  (auto-detekteret)")
+        elif formula_in.strip():
+            st.caption("Formel ikke i database — angiv a og b manuelt nedenfor.")
+
+        default_a = detected[0] if detected else 1
+        default_b = detected[1] if detected else 1
+
+        st.latex(r"K_{sp} = (a \cdot s)^a \cdot (b \cdot s)^b \quad \Rightarrow \quad s = \left(\frac{K_{sp}}{a^a \cdot b^b}\right)^{\!\frac{1}{a+b}}")
 
         col_l, col_r = st.columns(2)
         with col_l:
             ksp_da = st.number_input("Ksp:", value=1.08e-10, min_value=1e-40, format="%.3e", key="sol_ksp_da")
             molar_mass_da = st.number_input("Molarmasse (g/mol):", value=233.39, min_value=1e-3, step=0.01, key="sol_M_da",
-                                            help="BaSO₄ = 137.33+32.06+4×16.00 = 233.39 g/mol")
+                                            help="BaSO₄ = 233,39 g/mol  |  Cu(OH)₂ = 97,57 g/mol  |  CaF₂ = 78,07 g/mol")
         with col_r:
             vol_ml_da = st.number_input("Volumen (mL):", value=100.0, min_value=1e-6, step=10.0, key="sol_vol_da")
-            a_da = st.number_input("Kation-koefficient a", value=1, min_value=1, max_value=3, key="sol_a_da",
-                                   help="MX → a=1, M₂X → a=2")
-            b_da = st.number_input("Anion-koefficient b", value=1, min_value=1, max_value=3, key="sol_b_da",
-                                   help="MX → b=1, MX₂ → b=2")
+            a_da = st.number_input("Kation-koefficient a", value=default_a, min_value=1, max_value=4, key="sol_a_da",
+                                   help="Antal kationer pr. formelenhed: MX → 1, Ag₂SO₄ → 2, Ca₃(PO₄)₂ → 3")
+            b_da = st.number_input("Anion-koefficient b", value=default_b, min_value=1, max_value=4, key="sol_b_da",
+                                   help="Antal anioner pr. formelenhed: MX → 1, CaF₂ → 2, Fe(OH)₃ → 3")
 
-        st.caption("Eksempel: BaSO₄ → a=1, b=1 | CaF₂ → a=1, b=2 | Ag₂SO₄ → a=2, b=1")
+        # Show ICE preview
+        st.caption(f"ICE-tabel: Salt ⇌ {a_da} kation (s = {a_da}·s) + {b_da} anion (= {b_da}·s)  →  Ksp = ({a_da}s)^{a_da} · ({b_da}s)^{b_da} = {a_da**a_da}·{b_da**b_da}·s^{a_da+b_da}")
 
         if st.button("Beregn opløselighed", type="primary", key="sol_calc_da"):
             try:
@@ -6274,7 +6320,7 @@ def show_solubility_tab():
                 with st.expander("🔍 Trin-for-trin", expanded=True):
                     st.markdown(f"""
 **Ligevægt:** Salt ⇌ {a_da} kation + {b_da} anion
-**Ksp = (a·s)^a · (b·s)^b = {a_da}^{a_da} · {b_da}^{b_da} · s^{a_da+b_da}**
+**Ksp = ({a_da}s)^{a_da} · ({b_da}s)^{b_da} = {a_da**a_da} · {b_da**b_da} · s^{a_da+b_da}**
 
 **Trin 1 – Find s:**
 $$s = \\left(\\frac{{K_{{sp}}}}{{a^a \\cdot b^b}}\\right)^{{\\frac{{1}}{{a+b}}}} = \\left(\\frac{{{ksp_da:.3e}}}{{{a_da**a_da} \\cdot {b_da**b_da}}}\\right)^{{\\frac{{1}}{{{a_da+b_da}}}}} = \\mathbf{{{s_mol_L:.4e}\\,\\text{{mol/L}}}}$$
