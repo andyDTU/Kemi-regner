@@ -5880,7 +5880,7 @@ def show_ice_table_tab():
                     st.error(f"❌ **Fejl**: {str(e)}")
         
         except Exception as e:
-            st.error(f"❌ **Error parsing reaction**: {str(e)}")
+            st.error(f"❌ **Fejl ved parsing af reaktion**: {str(e)}")
 
 
 def _show_beregn_k_tab(mode: str):
@@ -6138,25 +6138,25 @@ def show_reaction_quotient_tab():
     
     # Input section
     reaction = st.text_input(
-        "Chemical Reaction:",
-        placeholder="e.g., A + B -> C",
-        help="Enter a balanced chemical reaction",
+        "Kemisk reaktion:",
+        placeholder="fx A + B -> C  |  N2 + 3H2 -> 2NH3",
+        help="Angiv en afstemt kemisk reaktion",
         key="eq_Q_reaction"
     )
-    
+
     if reaction:
         try:
             # Parse the reaction to get species
             from core.reaction import parse_reaction_equation
             parsed = parse_reaction_equation(reaction)
             all_species = parsed['reactants'] + parsed['products']
-            
-            st.markdown(f"**Species:** {', '.join(all_species)}")
-            
+
+            st.markdown(f"**Stoffer:** {', '.join(all_species)}")
+
             # Current concentrations
-            st.markdown("#### Current Concentrations (M)")
+            st.markdown("#### Aktuelle koncentrationer (mol/L)")
             current_concentrations = {}
-            
+
             for species in all_species:
                 value = st.number_input(
                     f"[{species}]:",
@@ -6166,35 +6166,35 @@ def show_reaction_quotient_tab():
                     key=f"quotient_current_{species}"
                 )
                 current_concentrations[species] = value
-            
+
             # Equilibrium constant
             k = st.number_input(
-                "Equilibrium constant K:",
+                "Ligevægtskonstant K:",
                 value=1.0,
                 step=0.1,
                 min_value=1e-20,
                 format="%.2e"
             )
-            
+
             # Calculate button
-            if st.button("Calculate Q", type="primary"):
+            if st.button("Beregn Q", type="primary"):
                 try:
-                    with st.spinner("Calculating..."):
+                    with st.spinner("Beregner..."):
                         result, steps, metadata = calculate_reaction_quotient_with_steps(
                             reaction, current_concentrations, k
                         )
-                    
-                    st.success("✅ **Reaction Quotient Calculated!**")
-                    
+
+                    st.success("✅ **Reaktionskvotient beregnet!**")
+
                     # Results
                     col1, col2 = st.columns(2)
                     with col1:
                         st.markdown(f"**Q = {result['Q']:.6f}**")
                         st.markdown(f"**K = {k:.6f}**")
-                    
+
                     with col2:
-                        st.markdown(f"**Comparison:** {result['comparison']}")
-                        st.markdown(f"**Direction:** {result['direction']}")
+                        st.markdown(f"**Sammenligning:** {result['comparison']}")
+                        st.markdown(f"**Retning:** {result['direction']}")
                     
                     # Steps section
                     with st.expander("🔍 Vis trin", expanded=False):
@@ -6205,12 +6205,12 @@ def show_reaction_quotient_tab():
                     st.error(f"❌ **Fejl**: {str(e)}")
         
         except Exception as e:
-            st.error(f"❌ **Error parsing reaction**: {str(e)}")
+            st.error(f"❌ **Fejl ved parsing af reaktion**: {str(e)}")
 
 
 def show_solubility_tab():
     """Display the solubility tab."""
-    st.markdown("### 💧 Solubility Calculations")
+    st.markdown("### 💧 Opløselighed & Ksp")
     
     # Mode selection
     mode = st.radio(
@@ -6293,29 +6293,29 @@ $$m = n \\cdot M = {n_mol:.4e} \\times {molar_mass_da} = \\mathbf{{{mass_str}}}$
         st.markdown("#### Beregn Ksp fra opløselighed")
         
         salt_formula = st.text_input(
-            "Salt formula:",
-            placeholder="e.g., AgCl, Ca(OH)2",
-            help="Enter the chemical formula of the salt",
+            "Saltformel:",
+            placeholder="fx AgCl, Ca(OH)2, Cu(OH)2",
+            help="Angiv saltets kemiske formel",
             key="eq_solubility_formula2"
         )
-        
+
         if salt_formula:
             solubility = st.number_input(
-                "Solubility (M):",
+                "Opløselighed (mol/L):",
                 value=1.34e-5,
                 step=1e-6,
                 min_value=1e-20,
                 format="%.2e"
             )
-            
-            if st.button("Calculate Ksp", type="primary"):
+
+            if st.button("Beregn Ksp", type="primary"):
                 try:
-                    with st.spinner("Calculating..."):
+                    with st.spinner("Beregner..."):
                         result, steps, metadata = calculate_solubility_product_with_steps(
                             salt_formula, solubility
                         )
-                    
-                    st.success("✅ **Ksp Calculated!**")
+
+                    st.success("✅ **Ksp beregnet!**")
                     
                     # Results
                     st.markdown(f"**Ksp = {result['ksp']:.2e}**")
