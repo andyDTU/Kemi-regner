@@ -9844,7 +9844,7 @@ def show_organic_chemistry_page():
 
     org_tab = st.radio(
         "Vælg:",
-        ["🔍 Funktionelle grupper", "⚗️ Reaktionsforudsigelse", "📚 Reference"],
+        ["🔍 Funktionelle grupper", "⚗️ Reaktionsforudsigelse", "🔢 Isomertælling", "📚 Reference"],
         horizontal=True,
         key="org_tab",
     )
@@ -9991,6 +9991,9 @@ def show_organic_chemistry_page():
                 )
 
     # ── Reaktionsforudsigelse ─────────────────────────────────────────────────
+    elif org_tab == "🔢 Isomertælling":
+        _render_isomer_tab()
+
     elif org_tab == "⚗️ Reaktionsforudsigelse":
         st.markdown("### ⚗️ Forudsig reaktionsprodukt")
 
@@ -10411,6 +10414,195 @@ def show_organic_chemistry_page():
                             f"**Eksempel:** *{grp['eksempel']}*"
                         )
                 st.markdown("---")
+
+
+def _generate_c_skeletons(n: int) -> list[list]:
+    """Return all unique alkane carbon skeletons with n carbons as adjacency lists."""
+    # Each skeleton is a sorted tuple of (degree_sequence) used for deduplication.
+    # We build trees (acyclic connected graphs) with n nodes.
+    from itertools import combinations
+
+    if n == 1:
+        return [[[]]]
+
+    def _canonical(adj):
+        # Simple canonical form: sorted degree sequence + sorted neighbour degrees
+        degs = tuple(sorted(len(a) for a in adj))
+        return degs
+
+    results = []
+    seen = set()
+
+    def _build(adj, remaining):
+        if remaining == 0:
+            key = _canonical(adj)
+            if key not in seen:
+                seen.add(key)
+                results.append([list(a) for a in adj])
+            return
+        cur = len(adj)
+        # Connect new node to every existing node that still has capacity (max degree 4)
+        for attach in range(cur):
+            if len(adj[attach]) < 4:
+                new_adj = [set(a) for a in adj]
+                new_adj[attach].add(cur)
+                new_adj.append({attach})
+                _build(new_adj, remaining - 1)
+
+    _build([set()], n - 1)
+    return results
+
+
+def _count_ketone_isomers(formula: str) -> dict:
+    """
+    Count structural isomers that are ketones for a given molecular formula CnHmO.
+    Returns dict with count, list of names, and step-by-step explanation.
+    """
+    import re as _re
+
+    m = _re.match(r"C(\d+)H(\d+)O(\d*)$", formula.replace(" ", ""), _re.IGNORECASE)
+    if not m:
+        return {"error": "Ugyldig formel — forvent CₙHₘO (fx C5H10O)"}
+
+    nc = int(m.group(1))
+    nh = int(m.group(2))
+    no = 1  # only one O for simple ketones
+
+    # Degree of unsaturation = (2C + 2 - H) / 2  (for CₙHₘO, O doesn't change DoU)
+    dou = (2 * nc + 2 - nh) / 2
+    if dou != 1.0:
+        return {"error": f"Formlen har {dou:.1f} grader af umættethed. Ketoner har præcis 1 (fra C=O)."}
+    if nc < 3:
+        return {"error": "Ketoner kræver mindst 3 kulstofatomer (C=O flankeret af C på begge sider)."}
+
+    # Enumerate: place C=O on an internal carbon of every possible (nc)-skeleton
+    # An internal carbon has degree ≥ 2 in the skeleton (in the final molecule incl. C=O bond,
+    # it has exactly 2 carbon neighbours).
+    # We split nc carbons into: 1 carbonyl-C + (nc-1) remaining, distributed as R and R'.
+    # Equivalent to: for each partition of (nc-1) into (r, nc-1-r) with 1 ≤ r ≤ nc-1-r,
+    # count distinct pairs (R-group, R'-group).
+
+    # For simple ketones: enumerate all (R, R') pairs where R and R' are alkyl groups.
+    # R is an alkyl group with r carbons, R' has (nc-1-r) carbons.
+    # Two ketones are the same if {R, R'} == {R'', R'''} as multisets.
+
+    def _alkyl_count(n: int) -> int:
+        """Number of distinct alkyl groups (structural isomers of CnH(2n+1)-)."""
+        # These are the number of distinct alkyl radicals:
+        # n=1: 1 (methyl), n=2: 1 (ethyl), n=3: 2 (n-propyl, isopropyl)
+        # n=4: 4 (n-butyl, sec-butyl, isobutyl, tert-butyl)
+        # n=5: 8, etc.
+        # We use the known sequence (number of alkyl radicals = number of rooted trees)
+        _table = {1: 1, 2: 1, 3: 2, 4: 4, 5: 8, 6: 17, 7: 39, 8: 89}
+        return _table.get(n, None)
+
+    def _alkyl_names(n: int) -> list[str]:
+        _names = {
+            1: ["methyl"],
+            2: ["ethyl"],
+            3: ["n-propyl", "isopropyl"],
+            4: ["n-butyl", "sec-butyl", "isobutyl", "tert-butyl"],
+            5: ["n-pentyl", "2-methylbutyl", "3-methylbutyl (isopentyl)", "1-methylbutyl", "neopentyl", "1-ethylpropyl", "1,1-dimethylpropyl", "1,2-dimethylpropyl"],
+        }
+        return _names.get(n, [f"({n}C-alkyl)×{_alkyl_count(n)}"])
+
+    ketones = []
+    steps = []
+    steps.append(f"**Formel:** {formula}  →  C={nc}, H={nh}, O=1")
+    steps.append(f"**Grad af umættethed:** (2×{nc} + 2 − {nh}) / 2 = **1** ✓ (præcis C=O)")
+    steps.append(f"**Ketonstruktur:** R–C(=O)–R', begge R og R' er C-grupper (ikke H)")
+    steps.append(f"**Fordel {nc-1} kulstofatomer på R og R':**")
+
+    seen_pairs = set()
+    for r in range(1, nc):
+        rp = nc - 1 - r
+        if rp < 1:
+            break
+        pair = (min(r, rp), max(r, rp))
+        if pair in seen_pairs:
+            continue
+        seen_pairs.add(pair)
+
+        na = _alkyl_count(r)
+        nb = _alkyl_count(rp)
+        if na is None or nb is None:
+            continue
+
+        if r == rp:
+            # symmetric: C(na, 2) + na = na*(na+1)/2 combinations
+            combos = na * (na + 1) // 2
+            r_names = _alkyl_names(r)
+            combo_list = []
+            for i in range(len(r_names)):
+                for j in range(i, len(r_names)):
+                    combo_list.append(f"{r_names[i]}–CO–{r_names[j]}")
+            steps.append(f"- R={r}C, R'={rp}C (symmetrisk): {na}×{na} kombinationer → **{combos} unikke** (da {r_names} kan parres med sig selv)")
+        else:
+            combos = na * nb
+            steps.append(f"- R={r}C ({na} isomer{'er' if na>1 else ''}), R'={rp}C ({nb} isomer{'er' if nb>1 else ''}): {na}×{nb} = **{combos}**")
+
+        for i, rn in enumerate(_alkyl_names(r)):
+            jstart = i if r == rp else 0
+            for jn in _alkyl_names(rp)[jstart:]:
+                ketones.append(f"{rn}–**CO**–{jn}")
+
+    steps.append(f"\n**Total: {len(ketones)} ketonisomerer**")
+    return {"count": len(ketones), "ketones": ketones, "steps": steps, "dou": dou}
+
+
+def _render_isomer_tab():
+    st.markdown("### 🔢 Tæl isomere ketoner")
+    st.markdown(
+        "Angiv en molekylformel (CₙHₘO) og få talt alle strukturisomere ketoner "
+        "med trin-for-trin forklaring."
+    )
+
+    col_inp, col_ex = st.columns([2, 1])
+    with col_inp:
+        formula_in = st.text_input(
+            "Molekylformel:",
+            value="C5H10O",
+            placeholder="fx C4H8O, C5H10O, C6H12O",
+            key="iso_formula",
+        )
+    with col_ex:
+        st.markdown("**Eksempler:**")
+        st.markdown("C4H8O → 1 keton  \nC5H10O → 3 ketoner  \nC6H12O → 6 ketoner")
+
+    if st.button("Tæl isomere", type="primary", key="iso_btn"):
+        res = _count_ketone_isomers(formula_in.strip())
+
+        if "error" in res:
+            st.error(res["error"])
+        else:
+            st.success(f"**{res['count']} ketonisomerer** med formlen {formula_in.strip()}")
+
+            with st.expander("📋 Trin for trin", expanded=True):
+                for s in res["steps"]:
+                    st.markdown(s)
+
+            if res["ketones"]:
+                st.markdown("#### Alle strukturer:")
+                for i, k in enumerate(res["ketones"], 1):
+                    st.markdown(f"{i}. {k}")
+
+    st.markdown("---")
+    st.markdown("#### Fremgangsmåde til eksamen")
+    st.markdown("""
+**Trin 1 – Tjek grad af umættethed**
+$$\\text{DoU} = \\frac{2C + 2 - H}{2}$$
+Ketoner har DoU = 1 (kun C=O). Hvis DoU > 1, er der også ringe eller ekstra dobbeltbindinger.
+
+**Trin 2 – Tegn alle C-skeletter**
+For C₅: 3 skeletter (n-pentan, 2-methylbutan, neopentan)
+
+**Trin 3 – Placer C=O**
+C=O kræver et **internt** kulstofatom med præcis **2 C-naboer**.
+Terminale C (CH₃) → aldehyd, ikke keton.
+
+**Trin 4 – Tæl unikke strukturer**
+Undgå at tælle spejlbilleder af samme molekyle to gange.
+""")
 
 
 def show_molecule_database_page() -> None:
