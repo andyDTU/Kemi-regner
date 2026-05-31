@@ -234,28 +234,78 @@ SEARCH_INDEX = [
     {"title": "Arrhenius (aktiveringsenergy fra k)", "keywords": ["arrhenius", "aktiveringsenergi", "ea", "k ved to temperaturer", "ln k vs 1/t", "pre-eksponentiel faktor", "a faktor"], "page": "kinetics", "tab": "📈 Arrhenius", "description": "Ea fra k₁ og k₂ ved T₁ og T₂ – Arrhenius-ligning"},
     {"title": "Integreret hastighedslov", "keywords": ["integreret hastighedslov", "integrated rate law", "1. orden", "2. orden", "0. orden", "halvliv koncentration", "ln[a] vs t", "1/[a] vs t", "[a] vs t"], "page": "kinetics", "tab": "⏱️ Integreret hastighedslov", "description": "Beregn koncentration til tid t for 0., 1. og 2. ordens reaktioner"},
     {"title": "Ionopløsning – van't Hoff faktor", "keywords": ["ionopløsning", "van't hoff faktor", "i faktor", "mol ioner", "dissolution", "opløsning ioner", "nacl ioner", "cacl2 ioner", "al2so43", "aluminiumsulfat ioner", "hvor mange ioner", "total mol ioner", "salt opløsning ioner", "dissociation"], "page": "atoms-molar", "tab": "💧 Ionopløsning", "description": "Skriv en saltformel og få opløsningsreaktion, van't Hoff i og total mol ioner"},
+    # ── Geometri / bindinger ──
+    {"title": "Intermolekylære kræfter (IMF)", "keywords": ["imf", "intermolekylær", "intermolekylære kræfter", "hydrogen binding", "hydrogenbinding", "dipol", "london", "van der waals", "dispersion", "rangér kogepunkt", "rangér damptryk", "hvilken koger lavest", "polær", "upolær", "tiltrækning", "intermolecular"], "page": "geometri", "tab": "🔗 Intermolekylære kræfter (IMF)", "description": "Identificér og rangér IMF: hydrogenbindinger, dipol-dipol, London-dispersions"},
+    {"title": "Bindingsenthalpier – ΔH fra bindinger", "keywords": ["bindingsenthalpi", "bindingsenergy", "bond enthalpy", "bond energy", "d-værdier", "d kj/mol", "brudte bindinger", "dannede bindinger", "sum af bindinger", "reaktionsenthalpi fra bindinger", "ΔH fra bindinger", "sigma pi binding", "halogens binding"], "page": "geometri", "tab": "⚡ Bindingsenthalpier – ΔH", "description": "ΔH = ΣD(brudt) − ΣD(dannet) – beregn reaktionsenthalpi fra bindingsenthalpier"},
+    # ── Opløselighed / Beer-Lambert ──
+    {"title": "Beer-Lamberts lov (absorbans)", "keywords": ["beer lambert", "beer-lambert", "absorbans", "extinktionskoefficent", "molar absorptionskoefficient", "epsilon", "ε", "vejlængde", "koncentration fra absorbans", "a=εcl", "lys absorption", "spektrofotometri", "spektrofotometer", "optisk tæthed", "find koncentration spektrofotometri"], "page": "oploselig", "tab": "🌈 Beer-Lamberts lov", "description": "A = εcl – find absorbans, koncentration, ε eller vejlængde"},
+    # ── Nuklear ──
+    {"title": "Isotoner, isobarer og isotoper", "keywords": ["isoton", "isobar", "isotop", "same neutron", "same proton", "same massenummer", "neutrontal", "protontal", "massenummer", "kernebetegnelse", "nuklid", "z n a", "atomkerne", "isotoner eksempel", "zn as ge"], "page": "nuklear", "tab": "📚 Kendte isotoper", "description": "Isotoner = samme N, isobarer = samme A, isotoper = samme Z"},
+    # ── Redox ──
+    {"title": "Oxidationstal for en art", "keywords": ["oxidationstal", "find oxidationstal", "beregn oxidationstal", "oxidationstal art", "oxidationstal molekyle", "oxidationstal ion", "ox tal", "oxidationstrin", "oxidation state", "bestem oxidationstal", "oxidationstal cu", "oxidationstal mn", "oxidationstal fe", "oxidationstal cr", "oxidationstal s", "oxidationstal n"], "page": "stoichiometry", "tab": "Redoxafstemning", "description": "Beregn oxidationstal for hvert grundstof i en art (molekyle eller ion)"},
 ]
+
+# Filler words that add noise when tokenizing — not chemistry-meaningful on their own
+# "lov" is excluded so "hess lov"→tokens=["hess"]; "gaslov" as one token still works
+_SEARCH_STOPWORDS = {"og", "af", "er", "i", "til", "fra", "for", "med", "på",
+                     "den", "det", "de", "en", "et", "at", "som", "lov"}
+
+
+def _normalize_query(s: str) -> str:
+    """Lowercase + normalize Danish chars so ø/o, æ/ae, å/a all match."""
+    return (
+        s.lower()
+        .replace("ø", "o").replace("æ", "ae").replace("å", "a")
+        .replace("é", "e").replace("ü", "u").replace("ö", "o")
+    )
 
 
 def _search_calculators(query: str) -> list:
     """Return ranked search results for a query string."""
-    q = query.lower().strip()
-    if len(q) < 2:
+    q_raw = query.lower().strip()
+    if len(q_raw) < 2:
         return []
-    results = []
+
+    q_norm = _normalize_query(q_raw)
+    # Short chemistry tokens kept (ph, ka, kb…); drop stopwords; min 3 chars otherwise
+    _CHEM_SHORT = {"ph", "ka", "kb", "kc", "kp", "kw", "ea", "dh", "dg", "ds", "dt", "q"}
+    tokens = [
+        t for t in q_norm.split()
+        if t not in _SEARCH_STOPWORDS and (len(t) >= 3 or t in _CHEM_SHORT)
+    ]
+
+    seen: dict = {}  # title → (score, entry) — keeps highest score per title
     for entry in SEARCH_INDEX:
+        title_norm = _normalize_query(entry["title"])
         score = 0
-        if q in entry["title"].lower():
-            score += 4
-        for kw in entry["keywords"]:
-            if q == kw:
-                score += 3
-            elif q in kw or kw in q:
-                score += 1
+
+        # Whole query matches title — very strong signal
+        if q_norm in title_norm or q_raw in entry["title"].lower():
+            score += 10
+
+        # Per-token scoring
+        for tok in tokens:
+            if tok in title_norm:
+                score += 4
+
+            for kw in entry["keywords"]:
+                kw_norm = _normalize_query(kw)
+                if tok == kw_norm:
+                    score += 5           # exact keyword match
+                elif len(kw_norm) >= 3 and tok in kw_norm:
+                    score += 2           # token is substring of keyword
+                elif len(kw_norm) >= 3 and kw_norm in tok:
+                    score += 2           # keyword is substring of token
+                elif len(tok) >= 5 and len(kw_norm) >= 5 and kw_norm.startswith(tok[:5]):
+                    score += 1           # conservative prefix (≥5 chars each)
+
         if score > 0:
-            results.append((score, entry))
-    results.sort(key=lambda x: -x[0])
-    return [e for _, e in results[:6]]
+            title = entry["title"]
+            if title not in seen or seen[title][0] < score:
+                seen[title] = (score, entry)
+
+    results = sorted(seen.values(), key=lambda x: -x[0])
+    return [e for _, e in results[:8]]
 
 
 _TAB_NAV_CSS = """
