@@ -4289,13 +4289,14 @@ def show_buffers_tab():
     # Mode selection
     mode = st.radio(
         "Buffer calculation mode:",
-        ["Known concentrations", "Mixing solutions", "Target pH", "📊 Bufferkapacitet β"],
+        ["Known concentrations", "Mixing solutions", "Target pH", "➕ Buffer + syre/base", "📊 Bufferkapacitet β"],
         horizontal=True
     )
     _buffer_help = {
         "Known concentrations": "💡 **Hvornår?** Du kender allerede [HA] og [A⁻] i opløsningen og vil finde pH via Henderson-Hasselbalch.",
         "Mixing solutions": "💡 **Hvornår?** Du blander en syreløsning og en baseløsning og vil finde pH af den resulterende buffer.",
         "Target pH": "💡 **Hvornår?** Du ved hvilken pH du ønsker, og vil finde det rette forhold mellem syre og base.",
+        "➕ Buffer + syre/base": "💡 **Hvornår?** Du tilsætter en mængde stærk syre (HCl) eller base (NaOH) til en eksisterende buffer og vil finde den nye pH.",
         "📊 Bufferkapacitet β": "💡 **Hvornår?** Du vil beregne, hvor meget syre/base bufferen kan optage uden stor pH-ændring. β er maksimal ved pH = pKa.",
     }
     st.info(_buffer_help[mode])
@@ -4674,6 +4675,81 @@ V_total = {v_tot_buf:.4f} L → [{_lbl_acid}] = {n_ha_new/v_tot_buf:.4f} M, [{_l
             
             except Exception as e:
                 st.error(f"❌ **Fejl**: {str(e)}")
+
+    elif mode == "➕ Buffer + syre/base":
+        import math
+        st.markdown("#### ➕ Buffer efter tilsætning af stærk syre eller base")
+        st.latex(r"\text{pH} = \text{pK}_a + \log\frac{n(A^-)_{\text{efter}}}{n(HA)_{\text{efter}}}")
+        st.markdown("Indtast bufferen som **mol** (direkte fra opgaven) *eller* som koncentration + volumen.")
+
+        _inp_mode = st.radio("Inputformat:", ["Mol (direkte)", "Koncentration + volumen (M)"],
+                             horizontal=True, key="baf_inp")
+
+        col1, col2 = st.columns(2)
+        with col1:
+            st.markdown("**Buffer (før tilsætning)**")
+            if _inp_mode == "Mol (direkte)":
+                _n_ha  = st.number_input("mol HA (svag syre)", value=0.500, min_value=1e-9, step=0.001, format="%.4f", key="baf_n_ha")
+                _n_a   = st.number_input("mol A⁻ (konjugeret base)", value=0.500, min_value=1e-9, step=0.001, format="%.4f", key="baf_n_a")
+            else:
+                _c_ha  = st.number_input("[HA] (M)", value=1.00, min_value=1e-9, step=0.01, key="baf_c_ha")
+                _c_a   = st.number_input("[A⁻] (M)", value=1.00, min_value=1e-9, step=0.01, key="baf_c_a")
+                _v_buf = st.number_input("Buffer volumen (mL)", value=500.0, min_value=0.1, step=1.0, key="baf_v_buf")
+                _n_ha  = _c_ha * (_v_buf / 1000)
+                _n_a   = _c_a  * (_v_buf / 1000)
+            ka_baf = st.number_input("Ka", value=1.80e-5, min_value=1e-20, format="%.3e", key="baf_ka")
+            pka_baf = -math.log10(ka_baf)
+            st.caption(f"pKa = {pka_baf:.4f}")
+
+        with col2:
+            st.markdown("**Tilsat stærk syre/base**")
+            _add_type = st.radio("Type:", ["NaOH (base)", "HCl (syre)"], horizontal=True, key="baf_type")
+            _c_add = st.number_input("Koncentration (M)", value=1.00, min_value=1e-9, step=0.01, key="baf_c_add")
+            _v_add = st.number_input("Volumen (mL)", value=15.0, min_value=0.0, step=0.5, key="baf_v_add")
+            _n_add = _c_add * (_v_add / 1000)
+            st.caption(f"mol tilsat = {_c_add} × {_v_add/1000:.4f} L = **{_n_add:.5f} mol**")
+
+        if st.button("Beregn ny pH", type="primary", key="baf_calc"):
+            try:
+                if _add_type == "NaOH (base)":
+                    n_ha_f = _n_ha - _n_add
+                    n_a_f  = _n_a  + _n_add
+                    rxn_txt = f"HA + OH⁻ → A⁻ + H₂O"
+                else:
+                    n_ha_f = _n_ha + _n_add
+                    n_a_f  = _n_a  - _n_add
+                    rxn_txt = f"A⁻ + H⁺ → HA"
+
+                if n_ha_f <= 0:
+                    st.error("❌ Bufferkapaciteten overskredet: al syren er neutraliseret.")
+                elif n_a_f <= 0:
+                    st.error("❌ Bufferkapaciteten overskredet: al basen er neutraliseret.")
+                else:
+                    ph_before = pka_baf + math.log10(_n_a / _n_ha)
+                    ph_after  = pka_baf + math.log10(n_a_f / n_ha_f)
+                    st.success(f"**Ny pH = {ph_after:.3f}**")
+                    c1, c2, c3 = st.columns(3)
+                    c1.metric("pH før", f"{ph_before:.3f}")
+                    c2.metric("ΔpH", f"{ph_after - ph_before:+.3f}")
+                    c3.metric("pH efter", f"{ph_after:.3f}")
+
+                    with st.expander("🔍 Trin-for-trin", expanded=True):
+                        st.markdown(f"""
+**Reaktion:** {rxn_txt}
+
+| | HA | A⁻ |
+|--|--|--|
+| Før | {_n_ha:.4f} mol | {_n_a:.4f} mol |
+| Ændring | {"−" if _add_type=="NaOH (base)" else "+"}{_n_add:.4f} | {"+" if _add_type=="NaOH (base)" else "−"}{_n_add:.4f} |
+| **Efter** | **{n_ha_f:.4f} mol** | **{n_a_f:.4f} mol** |
+
+**pKa** = −log({ka_baf:.3e}) = **{pka_baf:.4f}**
+
+**Henderson-Hasselbalch:**
+$$\\text{{pH}} = {pka_baf:.4f} + \\log\\!\\left(\\frac{{{n_a_f:.4f}}}{{{n_ha_f:.4f}}}\\right) = {pka_baf:.4f} + {math.log10(n_a_f/n_ha_f):+.4f} = \\mathbf{{{ph_after:.3f}}}$$
+""")
+            except Exception as exc:
+                st.error(f"Fejl: {exc}")
 
     elif mode == "📊 Bufferkapacitet β":
         import math
