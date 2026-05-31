@@ -2,10 +2,45 @@
 Le Chatelier's principle — Streamlit UI tab.
 """
 
+import re
 import streamlit as st
 from core.le_chatelier import (
     predict_shift, Perturbation, ShiftDirection, LeChatelierError,
 )
+
+def _parse_gas_moles(eq: str) -> tuple[float, float]:
+    """
+    Parse a reaction string and return (n_reactants_gas, n_products_gas).
+    Species marked (l) or (s) are excluded; everything else is treated as gas.
+    Supports → ⇌ -> as arrow separators.
+    """
+    arrow = None
+    for sep in ["⇌", "→", "->"]:
+        if sep in eq:
+            arrow = sep
+            break
+    if arrow is None:
+        raise ValueError("Ingen reaktionspil (→ eller ⇌) fundet")
+
+    left_str, right_str = eq.split(arrow, 1)
+
+    def _count(side: str) -> float:
+        total = 0.0
+        # split on + not inside parentheses
+        terms = re.split(r'\s*\+\s*', side.strip())
+        for term in terms:
+            term = term.strip()
+            if not term:
+                continue
+            if re.search(r'\(l\)|\(s\)', term, re.IGNORECASE):
+                continue  # liquid or solid — skip
+            m = re.match(r'^(\d+\.?\d*)\s*', term)
+            coeff = float(m.group(1)) if m else 1.0
+            total += coeff
+        return total
+
+    return _count(left_str), _count(right_str)
+
 
 _SHIFT_ARROW = {
     ShiftDirection.RIGHT: "➡️ Højre (mod produkter)",
@@ -88,11 +123,28 @@ def render_le_chatelier_tab():
 
         if perturbation in _NEEDS_DELTA_N:
             st.markdown("**Δn(gas) = mol gas (produkter) − mol gas (reaktanter):**")
+
+            # Optional reaction parser
+            rxn_input = st.text_input(
+                "Reaktionsligning (valgfri — udfylder felterne automatisk):",
+                placeholder="Fx: N₂ + 3H₂ → 2NH₃   eller   NO₂ → 2NO + O₂",
+                key="lc_rxn_str",
+                help="Skriv ligningen med → eller ⇌. Stoffer markeret (l) eller (s) tælles ikke med. Alle andre antages at være gas.",
+            )
+            if rxn_input.strip():
+                try:
+                    _nr, _np = _parse_gas_moles(rxn_input)
+                    st.session_state["lc_n_react"] = int(_nr)
+                    st.session_state["lc_n_prod"]  = int(_np)
+                    st.caption(f"Parsed: reaktanter = {_nr:.0f} gasmol, produkter = {_np:.0f} gasmol")
+                except Exception as _e:
+                    st.caption(f"Kunne ikke parse: {_e}")
+
             col_a, col_b = st.columns(2)
             with col_a:
-                n_prod = st.number_input("Mol gas (produkter):", min_value=0, value=2, step=1, key="lc_n_prod")
+                n_react = st.number_input("Mol gas (reaktanter):", min_value=0, value=st.session_state.get("lc_n_react", 1), step=1, key="lc_n_react")
             with col_b:
-                n_react = st.number_input("Mol gas (reaktanter):", min_value=0, value=1, step=1, key="lc_n_react")
+                n_prod = st.number_input("Mol gas (produkter):", min_value=0, value=st.session_state.get("lc_n_prod", 2), step=1, key="lc_n_prod")
             delta_n = int(n_prod) - int(n_react)
             st.caption(f"Δn(gas) = {n_prod} − {n_react} = **{delta_n}**")
 
