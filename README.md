@@ -16,14 +16,27 @@ cd ~/Desktop
 git clone https://github.com/andyDTU/Kemi-regner.git
 ```
 
-Programmet ligger nu i mappen **`/Users/dit-navn/Desktop/Kemi-regner`**.
+Programmet ligger nu i mappen **`~/Desktop/Kemi-regner`**.
 
 > **Har du ikke Git?**  
 > Gå til [github.com/andyDTU/Kemi-regner](https://github.com/andyDTU/Kemi-regner), klik på den grønne **Code**-knap → **Download ZIP**, pak filen ud på Skrivebordet så mappen hedder `Kemi-regner`.
 
 ---
 
-### Trin 2 – Start appen
+### Trin 2 – Download strukturbilleder (kun første gang, kræver internet)
+
+For at se 2D-strukturbilleder i Molekyle-databasen skal du køre dette **én gang** mens du har internet:
+
+```bash
+python3 ~/Desktop/Kemi-regner/scripts/download_structure_images.py
+```
+
+> Tager ~5–10 minutter og henter ~613 billeder. Behøver kun gøres én gang per computer.  
+> Bagefter virker billederne **100% offline**.
+
+---
+
+### Trin 3 – Start appen
 
 **Hver gang du vil bruge appen**, kør disse to linjer i Terminal:
 
@@ -35,21 +48,6 @@ bash run.sh
 Appen åbner automatisk i din browser på **http://localhost:8501**.
 
 > Første gang tager det 1–2 minutter mens pakkerne installeres. Næste gang starter den på få sekunder.
-
-> ⚠️ **Vigtigt:** Start altid appen med `cd ~/Desktop/Kemi-regner` først — ellers finder appen ikke sine filer (strukturbilleder m.m.).
-
----
-
-### Trin 3 – Download strukturbilleder (anbefalet, kun første gang)
-
-For at se 2D-strukturbilleder i Molekyle-databasen skal du køre dette én gang:
-
-```bash
-cd ~/Desktop/Kemi-regner
-python3 scripts/download_structure_images.py
-```
-
-> Tager ~5–10 minutter og downloader ~613 billeder. Skal kun gøres én gang per computer.
 
 ---
 
@@ -63,7 +61,7 @@ git pull
 bash run.sh
 ```
 
-> `download_structure_images.py` behøver kun køres igen hvis der er tilføjet nye stoffer.
+> Kør `download_structure_images.py` igen hvis der er tilføjet nye stoffer (scriptet springer allerede hentede billeder over).
 
 ---
 
@@ -82,7 +80,15 @@ cd %USERPROFILE%\Desktop
 git clone https://github.com/andyDTU/Kemi-regner.git
 ```
 
-### Trin 2 – Start appen
+### Trin 2 – Download strukturbilleder (kun første gang, kræver internet)
+
+```
+python %USERPROFILE%\Desktop\Kemi-regner\scripts\download_structure_images.py
+```
+
+> Tager ~5–10 minutter og henter ~613 billeder. Behøver kun gøres én gang per computer.
+
+### Trin 3 – Start appen
 
 **Hver gang du vil bruge appen:**
 
@@ -93,7 +99,7 @@ run.bat
 
 Alternativt: dobbeltklik på **`run.bat`** i File Explorer (under `Desktop\Kemi-regner`).
 
-### Opdatér til nyeste version (Windows)
+### Trin 4 – Opdatér til nyeste version (Windows)
 
 ```
 cd %USERPROFILE%\Desktop\Kemi-regner
@@ -108,20 +114,21 @@ run.bat
 Appen kører **100% offline** – den forsøger aldrig at kontakte internet under brug.  
 Forbered følgende **inden** eksamen (med internet):
 
+**Mac:**
 ```bash
 cd ~/Desktop/Kemi-regner
 git pull
 python3 scripts/download_structure_images.py
 ```
 
-Til eksamen:
-
-```bash
-cd ~/Desktop/Kemi-regner
-bash run.sh
+**Windows:**
+```
+cd %USERPROFILE%\Desktop\Kemi-regner
+git pull
+python scripts\download_structure_images.py
 ```
 
-Åbn **http://localhost:8501** i din browser. Alt virker uden internet.
+Start derefter appen som normalt. Alt virker uden internet.
 
 ---
 
@@ -175,12 +182,15 @@ Klik på **🏠 Fundamentals** for at se alle beregnere som opgavekort.
 Du er ikke i den rigtige mappe. Kør: `cd ~/Desktop/Kemi-regner` og prøv igen.
 
 **Strukturbilleder vises ikke**  
-Kør download-scriptet fra den rigtige mappe:
+Kør download-scriptet (kræver internet):
 ```bash
-cd ~/Desktop/Kemi-regner
-python3 scripts/download_structure_images.py
+# Mac
+python3 ~/Desktop/Kemi-regner/scripts/download_structure_images.py
+
+# Windows
+python %USERPROFILE%\Desktop\Kemi-regner\scripts\download_structure_images.py
 ```
-Sørg for at køre `cd ~/Desktop/Kemi-regner` først — ellers gemmes billederne det forkerte sted.
+Scriptet kan afbrydes og genstartes – allerede hentede billeder springes over.
 
 **"command not found: python"**  
 På Mac hedder kommandoen `python3`. Brug `python3 scripts/download_structure_images.py`.
