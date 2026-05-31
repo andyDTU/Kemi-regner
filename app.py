@@ -1461,8 +1461,9 @@ def show_molar_mass_page():
 
             # ── Formelle ladninger ─────────────────────────────────────────
             st.markdown("#### Formelle ladninger")
-            st.caption("FC = V − L − ½B  ·  V = valenselektroner  ·  L = frie elektroner  ·  B = bindende elektroner")
-            _fc_rows = []
+
+            # Build data once
+            _fc_atoms = []
             for _a in last_structure.atoms:
                 try:
                     _V = _valence_electrons_for_symbol(_a.symbol)
@@ -1471,22 +1472,58 @@ def show_molar_mass_page():
                 _L = 2 * _a.lone_pairs
                 _B = _bonding_electrons(_a.index, last_structure.bonds)
                 _fc = _a.formal_charge
-                _badge = "🟢" if _fc == 0 else ("🟡" if abs(_fc) == 1 else "🔴")
-                _fc_rows.append({
-                    "Atom (indeks)": f"{_a.symbol} ({_a.index})",
-                    "V": _V,
-                    "L (frie e⁻)": _L,
-                    "B (bindende e⁻)": _B,
-                    "FC": f"{_badge} {_fc:+d}",
-                })
-            import pandas as _pd
-            _fc_df = _pd.DataFrame(_fc_rows)
-            st.dataframe(_fc_df, use_container_width=True, hide_index=True)
-            _sum_fc = sum(a.formal_charge for a in last_structure.atoms)
-            _sum_abs = sum(abs(a.formal_charge) for a in last_structure.atoms)
+                _fc_atoms.append({"sym": _a.symbol, "idx": _a.index, "V": _V, "L": _L, "B": _B, "fc": _fc})
+
+            # Visual FC cards — one per atom
+            _n_atoms = len(_fc_atoms)
+            _card_cols = st.columns(min(_n_atoms, 6))
+            for _i, _atom in enumerate(_fc_atoms):
+                _fc = _atom["fc"]
+                if _fc == 0:
+                    _bg, _border, _txt = "#d5f5e3", "#27ae60", "#1a7a45"
+                elif abs(_fc) == 1:
+                    _bg, _border, _txt = "#fef9e7", "#e67e22", "#b35a00"
+                else:
+                    _bg, _border, _txt = "#fdecea", "#e74c3c", "#b03a2e"
+                _fc_str = f"+{_fc}" if _fc > 0 else str(_fc)
+                _label = f"{_atom['sym']} ({_atom['idx']})" if _n_atoms > 1 else _atom['sym']
+                with _card_cols[_i % 6]:
+                    st.markdown(
+                        f"<div style='text-align:center;padding:10px 6px;border-radius:10px;"
+                        f"background:{_bg};border:2px solid {_border};margin-bottom:4px'>"
+                        f"<div style='font-size:0.85em;color:#555;font-weight:600'>{_label}</div>"
+                        f"<div style='font-size:2em;font-weight:800;color:{_txt};line-height:1.1'>FC={_fc_str}</div>"
+                        f"</div>",
+                        unsafe_allow_html=True,
+                    )
+
+            st.markdown("")  # spacing
+
+            # Summary metrics
+            _sum_fc = sum(_a["fc"] for _a in _fc_atoms)
+            _sum_abs = sum(abs(_a["fc"]) for _a in _fc_atoms)
             _col_fc1, _col_fc2 = st.columns(2)
             _col_fc1.metric("Total ladning Σ(FC)", f"{_sum_fc:+d}")
             _col_fc2.metric("Σ|FC| (lavere = bedre)", _sum_abs)
+
+            # Detailed calculation in expander
+            with st.expander("📋 Vis beregning (FC = V − L − ½B)", expanded=False):
+                st.caption("V = valenselektroner  ·  L = frie elektroner  ·  B = bindende elektroner")
+                import pandas as _pd
+                _fc_rows = []
+                for _atom in _fc_atoms:
+                    _fc = _atom["fc"]
+                    _badge = "🟢" if _fc == 0 else ("🟡" if abs(_fc) == 1 else "🔴")
+                    _B2 = _atom["B"]
+                    _fc_rows.append({
+                        "Atom": f"{_atom['sym']} ({_atom['idx']})",
+                        "V": _atom["V"],
+                        "L (frie e⁻)": _atom["L"],
+                        "B (bindende e⁻)": _B2,
+                        "½B": _B2 // 2,
+                        "FC = V−L−½B": f"{_badge} {_fc:+d}",
+                    })
+                st.dataframe(_pd.DataFrame(_fc_rows), use_container_width=True, hide_index=True)
 
             # ── VSEPR bindingsvinkler ──────────────────────────────────────
             try:
