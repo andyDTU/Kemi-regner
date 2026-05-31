@@ -8714,7 +8714,7 @@ def _show_gibbs_inverse_tab():
 
     solve_for = st.radio(
         "Find:",
-        ["ΔH° (givet ΔG° og ΔS°)", "ΔG° (givet ΔH° og ΔS°)", "ΔS° (givet ΔH° og ΔG°)"],
+        ["ΔH° (givet ΔG° og ΔS°)", "ΔG° (givet ΔH° og ΔS°)", "ΔS° (givet ΔH° og ΔG°)", "T (givet ΔH° og ΔS°)"],
         horizontal=True,
         key="ginv_solve_for",
     )
@@ -8771,7 +8771,7 @@ $$\\Delta G° = {dh2} - ({T_K2 * ds2_kj:.3f})$$
 $$\\boxed{{\\Delta G° = {dg2:.1f}\\,\\text{{kJ/mol}}}}$$
 """)
 
-    else:  # Find ΔS°
+    elif solve_for == "ΔS° (givet ΔH° og ΔG°)":
         with col1:
             dh3 = st.number_input("ΔH° (kJ/mol):", value=-1138.0, step=1.0, key="ginv_dh3")
             dg3 = st.number_input("ΔG° (kJ/mol):", value=-1080.2, step=1.0, key="ginv_dg3")
@@ -8790,6 +8790,58 @@ $$\\Delta S° = \\frac{{{dh3 - dg3:.3f}}}{{{T_K3:.2f}}} = {ds3_kj:.5f}\\,\\text{
 $$\\boxed{{\\Delta S° = {ds3_j:.2f}\\,\\text{{J/mol·K}}}}$$
 """)
             st.success(f"✅ **ΔS° = {ds3_j:.2f} J/mol·K**")
+
+    else:  # Find T
+        st.markdown(
+            "Når **K = 1** gælder ΔG° = 0, og dermed: **T = ΔH° / ΔS°**  \n"
+            "Opgiver du en anden K-værdi bruges: **T = ΔH° / (ΔS° − R·ln K)**"
+        )
+        st.latex(r"T = \frac{\Delta H°}{\Delta S° - R \ln K}")
+
+        col1, col2 = st.columns(2)
+        with col1:
+            dh4 = st.number_input("ΔH° (kJ/mol):", value=50.0, step=1.0, key="ginv_dh4")
+            ds4 = st.number_input("ΔS° (J/mol·K):", value=67.0, step=1.0, key="ginv_ds4")
+        with col2:
+            K4 = st.number_input("K-værdi (brug 1 for K=1):", value=1.0, min_value=1e-30,
+                                 format="%.4g", step=0.1, key="ginv_K4",
+                                 help="K=1 svarer til ΔG°=0 (ligevægtstemperaturen)")
+
+        if st.button("Beregn T", type="primary", key="ginv_btn4"):
+            R = 8.314e-3  # kJ/(mol·K)
+            lnK = math.log(K4)
+            ds4_kj = ds4 / 1000.0
+            denom = ds4_kj - R * lnK
+            if abs(denom) < 1e-15:
+                st.error("ΔS° − R·ln K ≈ 0 — T er udefineret for disse værdier.")
+            else:
+                T4 = dh4 / denom
+                if T4 < 0:
+                    st.warning(f"T = {T4:.1f} K (negativ — reaktionen har ikke denne K ved nogen fysisk temperatur).")
+                else:
+                    T4_C = T4 - 273.15
+                    st.success(f"✅ **T = {T4:.1f} K  ({T4_C:.1f} °C)**")
+                    c1, c2 = st.columns(2)
+                    c1.metric("Temperatur (K)", f"{T4:.1f} K")
+                    c2.metric("Temperatur (°C)", f"{T4_C:.1f} °C")
+                    with st.expander("🔍 Trin-for-trin", expanded=True):
+                        st.markdown(f"""
+**Sammenhæng:** ΔG° = ΔH° − T·ΔS° og ΔG° = −RT·ln K
+
+Sættes lig med hinanden:
+$$\\Delta H° - T \\cdot \\Delta S° = -RT \\ln K$$
+$$T = \\frac{{\\Delta H°}}{{\\Delta S° - R \\ln K}}$$
+
+**Indsæt:**
+- ΔH° = {dh4} kJ/mol
+- ΔS° = {ds4} J/mol·K = **{ds4_kj:.5f} kJ/mol·K**
+- K = {K4}  →  ln K = {lnK:.4f}
+- R = 8.314×10⁻³ kJ/(mol·K)
+
+$$T = \\frac{{{dh4}}}{{{ds4_kj:.5f} - 8.314 \\times 10^{{-3}} \\times {lnK:.4f}}}$$
+$$T = \\frac{{{dh4}}}{{{denom:.5f}}}$$
+$$\\boxed{{T = {T4:.1f}\\,\\text{{K}} = {T4_C:.1f}\\,°\\text{{C}}}}$$
+""")
 
 
 def _show_vanthoff_tab():
