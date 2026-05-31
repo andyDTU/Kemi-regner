@@ -650,6 +650,23 @@ def show_fundamentals_page():
         _nav_card("Enhedscellevolumen", "faststofkemi", "V = ZM/(Nₐρ) – find volumen fra densitet", "fss_v")
         _nav_card("Densitet af krystal", "faststofkemi", "ρ = ZM/(Nₐa³) – find densitet fra kantlængde", "fss_r")
         _nav_card("Gitterparameter fra r", "faststofkemi", "a fra atomradius for SC, BCC og FCC", "fss_a")
+    with c10:
+        st.markdown("**🧬 Organisk kemi**")
+        _nav_card("Funktionelle grupper", "organisk", "Identificér grupper fra kondenseret formel", "org_fg", tab="🔍 Funktionelle grupper")
+        _nav_card("Reaktionsforudsigelse", "organisk", "Hydrering, halogenering, esterifikation m.fl.", "org_rp", tab="⚗️ Reaktionsforudsigelse")
+        _nav_card("Isomertælling", "organisk", "Tæl strukturisomere ketoner, alkoholer, ethere", "org_iso", tab="🔢 Isomertælling")
+    with c11:
+        st.markdown("**🌡️ Kolligative egenskaber**")
+        _nav_card("Kogepunkt / Frysepunkt", "koge-fryse", "ΔTb = Kb·m og ΔTf = Kf·m – find T eller M", "kf_tf")
+        _nav_card("Osmotisk tryk", "koge-fryse", "π = MRT – van't Hoffs lov", "kf_os")
+        _nav_card("M fra kolligative", "koge-fryse", "Find molarmasse fra ΔTf, ΔTb eller π", "kf_m")
+        _nav_card("Damptryk (Raoults lov)", "damptryk", "P_A = χ_A · P°_A – partialdamptryk", "dp")
+    with c12:
+        st.markdown("**☢️ Nuklear & spektroskopi**")
+        _nav_card("Radioaktivt henfald", "nuklear", "N(t) = N₀·(½)^(t/t½) – find N, t eller t½", "nuc_dc", tab="🔢 Henfaldskalkulator")
+        _nav_card("Foton energi (E=hc/λ)", "nuklear", "Bølgelængde ↔ energi i J, eV og kJ/mol", "nuc_ph", tab="💡 Foton energi")
+        _nav_card("Beer-Lamberts lov", "oploselig", "A = εcl – absorbans, koncentration eller ε", "bl")
+        _nav_card("Bindingsenthalpier ΔH", "geometri", "ΔH = ΣD(brudt) − ΣD(dannet)", "be", tab="⚡ Bindingsenthalpier – ΔH")
 
     st.markdown("---")
     st.caption("💡 Tip: Søg i sidepanelet øverst for at finde en specifik beregner hurtigt.")
@@ -10354,9 +10371,15 @@ def show_organic_chemistry_page():
     st.title("🧬 Organisk kemi")
     st.markdown("---")
 
+    _org_options = ["🔍 Funktionelle grupper", "⚗️ Reaktionsforudsigelse", "🔢 Isomertælling", "📚 Reference"]
+    if "nav_organisk" in st.session_state:
+        target = st.session_state.pop("nav_organisk")
+        if target in _org_options:
+            st.session_state["org_tab"] = target
+
     org_tab = st.radio(
         "Vælg:",
-        ["🔍 Funktionelle grupper", "⚗️ Reaktionsforudsigelse", "🔢 Isomertælling", "📚 Reference"],
+        _org_options,
         horizontal=True,
         key="org_tab",
     )

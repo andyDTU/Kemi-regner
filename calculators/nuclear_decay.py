@@ -40,6 +40,12 @@ def render_nuclear_decay_page():
     if "nuc_subpage" not in st.session_state and query_sub in query_to_subpage:
         st.session_state["nuc_subpage"] = query_to_subpage[query_sub]
 
+    # Support nav_nuklear deep-link from Fundamentals cards
+    if "nav_nuklear" in st.session_state:
+        target = st.session_state.pop("nav_nuklear")
+        if target in subpage_labels:
+            st.session_state["nuc_subpage"] = target
+
     st.markdown(
         """
 <style>
