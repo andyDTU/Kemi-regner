@@ -2,6 +2,8 @@
 Bond enthalpy ΔH_rxn calculator — Streamlit UI.
 """
 
+from __future__ import annotations
+
 import re
 import streamlit as st
 import pandas as pd
