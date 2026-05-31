@@ -6016,9 +6016,9 @@ def show_solubility_tab():
             return salt_name, ksp_s, cation_coeff, anion_coeff, mass_mg, molar_mass
 
         salts = []
-        salts.append(_solve_salt("Salt 1 (AgBr)", 3.3e-13, 10.0, 187.77))
+        salts.append(_solve_salt("Salt 1", 3.3e-13, 10.0, 187.77))
         if n_salts == 2:
-            salts.append(_solve_salt("Salt 2 (CuBr)", 5.3e-9, 100.0, 143.45))
+            salts.append(_solve_salt("Salt 2", 5.3e-9, 100.0, 143.45))
 
         if st.button("Beregn opløselighed", type="primary", key="fdiss_calc"):
             st.markdown("---")
