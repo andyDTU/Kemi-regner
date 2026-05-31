@@ -72,23 +72,6 @@ from core.molecule_db import (
     Substance,
 )
 
-@st.cache_data(show_spinner=False, ttl=86400)
-def _fetch_pubchem_png(name_en: str, name_da: str, formula: str) -> "bytes | None":
-    """Fetch structure image from PubChem. Cached for 24h per substance."""
-    from urllib.parse import quote
-    from urllib.request import urlopen, Request
-    from urllib.error import HTTPError, URLError
-    _URL = "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/{}/PNG?image_size=large"
-    for term in [t for t in [name_en, name_da, formula] if t]:
-        try:
-            req = Request(_URL.format(quote(term)), headers={"User-Agent": "kemi-regner/1.0"})
-            with urlopen(req, timeout=8) as r:
-                if r.status == 200 and "image" in r.headers.get("Content-Type", ""):
-                    return r.read()
-        except (HTTPError, URLError, Exception):
-            pass
-    return None
-
 # Page configuration
 st.set_page_config(
     page_title="Chemistry Calculator",
@@ -9743,22 +9726,21 @@ def _render_substance_card(s: Substance) -> None:
             st.error("❌ Ikke-plan geometri")
         else:
             st.caption("Plan geometri: —")
-        _local_img = Path(__file__).resolve().parent / "data" / "structure_images" / f"{s.id}.png"
+        _img_dir = Path(__file__).resolve().parent / "data" / "structure_images"
+        _local_img = _img_dir / f"{s.id}.png"
         if _local_img.exists() and _local_img.stat().st_size > 0:
             st.image(str(_local_img), caption=f"2D-struktur: {s.name_da}", use_container_width=False)
         else:
-            with st.spinner("Henter strukturbillede…"):
-                _png_bytes = _fetch_pubchem_png(s.name_en, s.name_da, s.formula)
-            if _png_bytes:
-                # Cache locally for next time
-                try:
-                    _local_img.parent.mkdir(parents=True, exist_ok=True)
-                    _local_img.write_bytes(_png_bytes)
-                except Exception:
-                    pass
-                st.image(_png_bytes, caption=f"2D-struktur: {s.name_da}", use_container_width=False)
+            _n_cached = sum(1 for _ in _img_dir.glob("*.png")) if _img_dir.exists() else 0
+            if _n_cached == 0:
+                st.info(
+                    "📥 **Ingen strukturbilleder fundet.**  \n"
+                    "Kør følgende kommando én gang (med internet) før eksamen:  \n"
+                    f"`python3 scripts/download_structure_images.py`  \n"
+                    f"Billeder gemmes i: `{_img_dir}`"
+                )
             else:
-                st.caption("Intet strukturbillede tilgængeligt for dette stof.")
+                st.caption(f"Intet billede for dette stof ({_n_cached} af {len(SUBSTANCES)} billeder hentet).")
 
     # ── Kemiske egenskaber ─────────────────────────────────────────────────
     chem_lines = []
