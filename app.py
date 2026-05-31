@@ -167,6 +167,7 @@ SEARCH_INDEX = [
     {"title": "Lewis-struktur", "keywords": ["lewis", "lewis-struktur", "lewis struktur", "lewis structure", "tegn lewis", "lone pair", "oktett", "resonans", "binding", "elektronstruktur", "valenselektroner tegn", "punktstruktur"], "page": "atoms-molar", "tab": "🧷 Lewis-struktur", "description": "Tegn Lewis-struktur for et molekyle eller ion"},
     {"title": "Opløselighed og Ksp", "keywords": ["opløselighed", "ksp", "solubility", "fælding", "precipitation", "mættet"], "page": "oploselig", "tab": None, "description": "Beregn opløselighed og Ksp for svagt opløselige salte"},
     {"title": "Nuklear henfald", "keywords": ["nuklear", "radioaktivitet", "henfald", "alpha", "beta", "gamma", "halvliv", "radioaktiv"], "page": "nuklear", "tab": None, "description": "Beregn radioaktivt henfald og halveringstid"},
+    {"title": "Foton energi", "keywords": ["foton", "photon", "bølgelængde", "lys", "energi", "hc", "planck", "spektrum", "elektromagnetisk", "nm", "eV", "frekvens"], "page": "nuklear", "tab": None, "description": "Beregn fotonenergi E=hc/λ fra bølgelængde eller energi"},
     {"title": "Formelsamling", "keywords": ["formel", "samling", "tabel", "oversigt", "konstanter", "alle formler"], "page": "formelsamling", "tab": None, "description": "Oversigt over alle kemiformler og konstanter"},
     {"title": "Osmotisk tryk", "keywords": ["osmose", "osmotisk", "tryk", "van't hoff", "kolligativ", "membran"], "page": "koge-fryse", "tab": None, "description": "Beregn osmotisk tryk med van't Hoffs lov"},
     # Eksamens-sprog
@@ -3154,10 +3155,13 @@ def show_redox_balancing_tab():
                     st.markdown(f"**Afstemt ligning:** {formatted_balanced}", unsafe_allow_html=True)
 
                     if metadata.get("species_order") and metadata.get("coefficients"):
+                        coeffs = metadata["coefficients"]
+                        coeff_sum = sum(coeffs)
                         st.markdown("**Koefficienter:**")
-                        for species, coeff in zip(metadata["species_order"], metadata["coefficients"]):
+                        for species, coeff in zip(metadata["species_order"], coeffs):
                             formatted_species = format_chemical_notation_html(species)
                             st.markdown(f"- {formatted_species}: {coeff}", unsafe_allow_html=True)
+                        st.info(f"**Sum af alle koefficienter = {coeff_sum}**")
 
                     try:
                         oxidation_data = analyze_oxidation_numbers(balanced_eq)

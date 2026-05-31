@@ -22,12 +22,14 @@ def render_nuclear_decay_page():
         "🔢 Henfaldskalkulator",
         "⚛️ Henfaldstyperne",
         "📚 Kendte isotoper",
+        "💡 Foton energi",
     ]
 
     subpage_to_query = {
         "🔢 Henfaldskalkulator": "decay-calc",
         "⚛️ Henfaldstyperne":    "decay-types",
         "📚 Kendte isotoper":    "isotopes",
+        "💡 Foton energi":       "photon",
     }
     query_to_subpage = {v: k for k, v in subpage_to_query.items()}
 
@@ -87,6 +89,8 @@ def render_nuclear_decay_page():
         _render_decay_types()
     elif active == "📚 Kendte isotoper":
         _render_isotopes()
+    elif active == "💡 Foton energi":
+        _render_photon_energy()
 
 
 def _render_decay_calc():
@@ -301,3 +305,152 @@ def _render_isotopes():
             f"For at **{100-pct}%** af {selected} henfalder: **t = {t_val:.3g} {t_half_u}**  "
             f"({t_val / t_half_v:.2f} halveringstider)"
         )
+
+
+def _render_photon_energy():
+    H = 6.62607015e-34   # J·s
+    C = 2.99792458e8     # m/s
+    EV = 1.602176634e-19 # J per eV
+
+    st.markdown("## 💡 Foton energi")
+    st.latex(r"E = \frac{hc}{\lambda}")
+    st.markdown(
+        f"h = 6.626×10⁻³⁴ J·s &nbsp;|&nbsp; c = 2.998×10⁸ m/s &nbsp;|&nbsp; 1 eV = 1.602×10⁻¹⁹ J",
+        unsafe_allow_html=True,
+    )
+    st.markdown("---")
+
+    mode = st.radio(
+        "Beregningsretning:",
+        ["λ → E  (bølgelængde til energi)", "E → λ  (energi til bølgelængde)"],
+        key="photon_mode",
+        horizontal=True,
+    )
+
+    if mode.startswith("λ"):
+        st.markdown("#### Indtast bølgelængde")
+        col1, col2 = st.columns([2, 1])
+        with col1:
+            lam_nm = st.number_input("Bølgelængde (nm):", min_value=0.001, value=500.0,
+                                     format="%.3f", key="photon_lam")
+        with col2:
+            st.markdown("")
+            st.markdown("")
+            lam_unit = st.selectbox("Enhed:", ["nm", "μm", "pm", "Å"], key="photon_lam_unit")
+
+        unit_to_m = {"nm": 1e-9, "μm": 1e-6, "pm": 1e-12, "Å": 1e-10}
+        lam_m = lam_nm * unit_to_m[lam_unit]
+
+        if lam_m > 0:
+            E_J = H * C / lam_m
+            E_eV = E_J / EV
+            E_kJ_mol = E_J * 6.02214076e23 / 1000
+
+            st.markdown("---")
+            st.markdown("#### Resultat")
+            r1, r2, r3 = st.columns(3)
+            with r1:
+                st.metric("Energi (J)", f"{E_J:.4e}")
+            with r2:
+                st.metric("Energi (eV)", f"{E_eV:.4f}")
+            with r3:
+                st.metric("Energi (kJ/mol)", f"{E_kJ_mol:.2f}")
+
+            # Show LaTeX with numbers
+            lam_val = lam_nm * unit_to_m[lam_unit]
+            st.latex(
+                rf"E = \frac{{hc}}{{\lambda}} = "
+                rf"\frac{{6.626 \times 10^{{-34}} \times 2.998 \times 10^8}}"
+                rf"{{{lam_nm:.3g}\ \text{{{lam_unit}}} \times 10^{{{int(math.log10(unit_to_m[lam_unit]))}}}}} "
+                rf"= {E_J:.4e}\ \text{{J}} = {E_eV:.4f}\ \text{{eV}}"
+            )
+
+            # Spectrum reference
+            st.markdown("---")
+            st.markdown("#### Elektromagnetisk spektrum (reference)")
+            lam_nm_val = lam_nm if lam_unit == "nm" else lam_m / 1e-9
+            spectrum = [
+                ("Gamma (γ)", 0, 0.01, "☢️"),
+                ("Røntgen", 0.01, 10, "🩻"),
+                ("Ultraviolet (UV)", 10, 400, "🔆"),
+                ("Synligt lys", 400, 700, "🌈"),
+                ("Infrarød (IR)", 700, 1e6, "🌡️"),
+                ("Mikrobølger", 1e6, 1e11, "📡"),
+                ("Radiobølger", 1e11, 1e15, "📻"),
+            ]
+            region = "Ukendt"
+            for name, lo, hi, icon in spectrum:
+                if lo <= lam_nm_val < hi:
+                    region = f"{icon} {name}"
+                    break
+            st.info(f"λ = {lam_nm:.3g} {lam_unit} svarer til: **{region}**")
+
+            if 400 <= lam_nm_val <= 700:
+                if lam_nm_val < 450:
+                    color = "violet"
+                elif lam_nm_val < 495:
+                    color = "blå"
+                elif lam_nm_val < 570:
+                    color = "grøn"
+                elif lam_nm_val < 590:
+                    color = "gul"
+                elif lam_nm_val < 620:
+                    color = "orange"
+                else:
+                    color = "rød"
+                st.success(f"Synlig farve: **{color}** (~{lam_nm_val:.0f} nm)")
+
+    else:
+        st.markdown("#### Indtast energi")
+        col1, col2 = st.columns([2, 1])
+        with col1:
+            E_val = st.number_input("Energi:", min_value=1e-30, value=2.5,
+                                    format="%.4f", key="photon_E_val")
+        with col2:
+            st.markdown("")
+            st.markdown("")
+            E_unit = st.selectbox("Enhed:", ["eV", "J", "kJ/mol"], key="photon_E_unit")
+
+        if E_unit == "eV":
+            E_J = E_val * EV
+        elif E_unit == "J":
+            E_J = E_val
+        else:  # kJ/mol
+            E_J = E_val * 1000 / 6.02214076e23
+
+        if E_J > 0:
+            lam_m = H * C / E_J
+            lam_nm_out = lam_m / 1e-9
+
+            st.markdown("---")
+            st.markdown("#### Resultat")
+            r1, r2, r3 = st.columns(3)
+            with r1:
+                st.metric("λ (nm)", f"{lam_nm_out:.4f}")
+            with r2:
+                st.metric("λ (m)", f"{lam_m:.4e}")
+            with r3:
+                freq = C / lam_m
+                st.metric("Frekvens (Hz)", f"{freq:.4e}")
+
+            st.latex(
+                rf"\lambda = \frac{{hc}}{{E}} = "
+                rf"\frac{{6.626 \times 10^{{-34}} \times 2.998 \times 10^8}}{{{E_J:.4e}}} "
+                rf"= {lam_m:.4e}\ \text{{m}} = {lam_nm_out:.4f}\ \text{{nm}}"
+            )
+
+            spectrum = [
+                ("Gamma (γ)", 0, 0.01, "☢️"),
+                ("Røntgen", 0.01, 10, "🩻"),
+                ("Ultraviolet (UV)", 10, 400, "🔆"),
+                ("Synligt lys", 400, 700, "🌈"),
+                ("Infrarød (IR)", 700, 1e6, "🌡️"),
+                ("Mikrobølger", 1e6, 1e11, "📡"),
+                ("Radiobølger", 1e11, 1e15, "📻"),
+            ]
+            region = "Ukendt"
+            for name, lo, hi, icon in spectrum:
+                if lo <= lam_nm_out < hi:
+                    region = f"{icon} {name}"
+                    break
+            st.info(f"λ = {lam_nm_out:.4f} nm svarer til: **{region}**")
