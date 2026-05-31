@@ -67,42 +67,68 @@ bash run.sh
 
 ## 💻 Kom i gang (Windows)
 
-### Forudsætninger
-1. Installér [Python 3.10+](https://www.python.org/downloads/) – sæt flueben ved **"Add Python to PATH"** under installationen
-2. Installér [Git](https://git-scm.com/download/win)
+### Trin 0 – Installer forudsætninger (kun første gang)
+
+> **Gør dette FØR du fortsætter — ellers virker resten ikke.**
+
+1. **Python 3.10+** → [python.org/downloads](https://www.python.org/downloads/)  
+   ⚠️ Sæt flueben ved **"Add Python to PATH"** under installationen
+
+2. **Git** → [git-scm.com/download/win](https://git-scm.com/download/win)  
+   Installer med standard-indstillinger og **genstart PowerShell bagefter**
+
+Tjek at begge er installeret ved at køre:
+```
+python --version
+git --version
+```
+Ser du versionsnumre? Så er du klar. Ser du fejl? Geninstaller og genstart.
+
+---
 
 ### Trin 1 – Hent programmet (kun første gang)
 
-Åbn **Kommandoprompt** og kør:
+Åbn **PowerShell** (søg efter "PowerShell" i startmenuen) og kør:
 
 ```
-cd %USERPROFILE%\Desktop
+cd ~\Desktop
 git clone https://github.com/andyDTU/Kemi-regner.git
 ```
+
+Programmet ligger nu i mappen **`Desktop\Kemi-regner`**.
+
+> **Har du ikke Git / vil undgå terminal?**  
+> Gå til [github.com/andyDTU/Kemi-regner](https://github.com/andyDTU/Kemi-regner), klik på den grønne **Code**-knap → **Download ZIP**, pak filen ud på Skrivebordet så mappen hedder `Kemi-regner`.
+
+---
 
 ### Trin 2 – Download strukturbilleder (kun første gang, kræver internet)
 
 ```
-python %USERPROFILE%\Desktop\Kemi-regner\scripts\download_structure_images.py
+python ~\Desktop\Kemi-regner\scripts\download_structure_images.py
 ```
 
 > Tager ~5–10 minutter og henter ~613 billeder. Behøver kun gøres én gang per computer.
+
+---
 
 ### Trin 3 – Start appen
 
 **Hver gang du vil bruge appen:**
 
 ```
-cd %USERPROFILE%\Desktop\Kemi-regner
+cd ~\Desktop\Kemi-regner
 run.bat
 ```
 
 Alternativt: dobbeltklik på **`run.bat`** i File Explorer (under `Desktop\Kemi-regner`).
 
+---
+
 ### Trin 4 – Opdatér til nyeste version (Windows)
 
 ```
-cd %USERPROFILE%\Desktop\Kemi-regner
+cd ~\Desktop\Kemi-regner
 git pull
 run.bat
 ```
@@ -121,9 +147,9 @@ git pull
 python3 scripts/download_structure_images.py
 ```
 
-**Windows:**
+**Windows (PowerShell):**
 ```
-cd %USERPROFILE%\Desktop\Kemi-regner
+cd ~\Desktop\Kemi-regner
 git pull
 python scripts\download_structure_images.py
 ```
@@ -181,14 +207,25 @@ Klik på **🏠 Fundamentals** for at se alle beregnere som opgavekort.
 **"bash: run.sh: command not found"**  
 Du er ikke i den rigtige mappe. Kør: `cd ~/Desktop/Kemi-regner` og prøv igen.
 
+**Windows: "'git' is not recognized" / "git : The term 'git' is not recognized"**  
+Git er ikke installeret. Installér fra [git-scm.com/download/win](https://git-scm.com/download/win), klik **Next** igennem med standard-indstillinger, og **genstart PowerShell** bagefter.
+
+**Windows: "Cannot find path ... %USERPROFILE%\Desktop"**  
+Du bruger PowerShell, ikke Kommandoprompt. `%USERPROFILE%` virker kun i CMD.  
+Brug i stedet `~\Desktop` — det virker i begge:
+```
+cd ~\Desktop
+git clone https://github.com/andyDTU/Kemi-regner.git
+```
+
 **Strukturbilleder vises ikke**  
 Kør download-scriptet (kræver internet):
 ```bash
 # Mac
 python3 ~/Desktop/Kemi-regner/scripts/download_structure_images.py
 
-# Windows
-python %USERPROFILE%\Desktop\Kemi-regner\scripts\download_structure_images.py
+# Windows (PowerShell)
+python ~\Desktop\Kemi-regner\scripts\download_structure_images.py
 ```
 Scriptet kan afbrydes og genstartes – allerede hentede billeder springes over.
 
@@ -196,7 +233,7 @@ Scriptet kan afbrydes og genstartes – allerede hentede billeder springes over.
 På Mac hedder kommandoen `python3`. Brug `python3 scripts/download_structure_images.py`.
 
 **"command not found: git"**  
-Installér Git fra [git-scm.com](https://git-scm.com)
+Installér Git fra [git-scm.com](https://git-scm.com) og **genstart terminalen** bagefter.
 
 **Appen åbner ikke i browseren**  
 Åbn selv [http://localhost:8501](http://localhost:8501) i din browser mens Terminal kører.
