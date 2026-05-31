@@ -5862,13 +5862,14 @@ def show_solubility_tab():
     # Mode selection
     mode = st.radio(
         "Beregningstype:",
-        ["Opløselighed fra Ksp", "Ksp fra opløselighed", "⚠️ Fældes der bundfald?"],
+        ["Opløselighed fra Ksp", "Ksp fra opløselighed", "⚠️ Fældes der bundfald?", "🧂 Opløser det fuldt ud?"],
         horizontal=True,
     )
     _sol_help = {
         "Opløselighed fra Ksp": "💡 **Hvornår?** Du kender Ksp og vil finde molar opløselighed s (mol/L).",
         "Ksp fra opløselighed": "💡 **Hvornår?** Du kender opløseligheden (fra eksperiment) og vil beregne Ksp.",
         "⚠️ Fældes der bundfald?": "💡 **Hvornår?** To opløsninger blandes – dannes der bundfald? Beregn Q og sammenlign med Ksp.",
+        "🧂 Opløser det fuldt ud?": "💡 **Hvornår?** Et eller to faste salte tilsættes til en løsning med fællesion. Finder om de opløses fuldstændigt (fællesion-effekt).",
     }
     st.info(_sol_help[mode])
 
@@ -5975,7 +5976,111 @@ def show_solubility_tab():
                 except Exception as e:
                     st.error(f"❌ **Fejl**: {str(e)}")
 
-    else:  # Fælding check
+    elif mode == "🧂 Opløser det fuldt ud?":
+        import math
+        st.markdown("#### 🧂 Fællesion-effekt – opløser det faste salt fuldstændigt?")
+        st.latex(r"K_{sp} = [M^+]^a \cdot [X^-]^b \qquad \text{ICE-tabel med fællesion}")
+        st.markdown(
+            "Givet Ksp og en startkoncentration af fællesion: beregn den maksimale opløselighed. "
+            "Sammenlign med den faktisk tilsatte masse — opløses det alt eller kun delvist?"
+        )
+        st.info("💡 Eksempel: 10 mg AgBr + 100 mg CuBr i 1 L vand med [Br⁻]₀ = 1×10⁻⁶ M")
+
+        n_salts = st.radio("Antal salte:", [1, 2], index=1, horizontal=True, key="fdiss_nsalts")
+        st.markdown("---")
+
+        _vol_L = st.number_input("Volumen af opløsning (L):", value=1.0, min_value=1e-6, step=0.1, key="fdiss_vol")
+        _ci_conc = st.number_input(
+            "Startkoncentration af fællesion [X⁻]₀ (M):",
+            value=1e-6, min_value=0.0, format="%.2e", step=1e-7, key="fdiss_ci",
+            help="Fx fra NaBr → [Br⁻]₀"
+        )
+
+        def _solve_1_1_ksp(ksp, ci0):
+            """Solve s(s + ci0) = ksp for MX (1:1). Returns s."""
+            # s^2 + ci0*s - ksp = 0
+            disc = ci0**2 + 4 * ksp
+            return (-ci0 + math.sqrt(disc)) / 2
+
+        def _solve_salt(label_key, ksp_default, mass_default, M_default):
+            st.markdown(f"##### {label_key}")
+            c1, c2 = st.columns(2)
+            with c1:
+                salt_name = st.text_input("Navn/formel", value=label_key.split()[0], key=f"fdiss_name_{label_key}")
+                ksp_s = st.number_input("Ksp", value=ksp_default, min_value=1e-40, format="%.2e", key=f"fdiss_ksp_{label_key}")
+                cation_coeff = st.number_input("Kation-koefficient a (M^a·X^b)", value=1, min_value=1, max_value=3, key=f"fdiss_a_{label_key}")
+                anion_coeff = st.number_input("Anion-koefficient b", value=1, min_value=1, max_value=3, key=f"fdiss_b_{label_key}")
+            with c2:
+                mass_mg = st.number_input("Tilsat masse (mg)", value=mass_default, min_value=1e-9, step=0.1, key=f"fdiss_mass_{label_key}")
+                molar_mass = st.number_input("Molarmasse (g/mol)", value=M_default, min_value=1e-3, step=0.01, key=f"fdiss_M_{label_key}")
+            return salt_name, ksp_s, cation_coeff, anion_coeff, mass_mg, molar_mass
+
+        salts = []
+        salts.append(_solve_salt("Salt 1 (AgBr)", 3.3e-13, 10.0, 187.77))
+        if n_salts == 2:
+            salts.append(_solve_salt("Salt 2 (CuBr)", 5.3e-9, 100.0, 143.45))
+
+        if st.button("Beregn opløselighed", type="primary", key="fdiss_calc"):
+            st.markdown("---")
+            st.markdown("#### Resultater")
+            for salt_name, ksp_s, a, b, mass_mg, M_g_mol in salts:
+                n_added = (mass_mg / 1000) / M_g_mol  # mol
+                # Use simple 1:1 solver if a=b=1, else general numeric approach
+                if a == 1 and b == 1:
+                    s_max = _solve_1_1_ksp(ksp_s, _ci_conc)
+                else:
+                    # For M_a X_b: (a*s)^a * (b*s + ci0)^b = Ksp, solve numerically
+                    from scipy.optimize import brentq
+                    try:
+                        def _f(s):
+                            return (a * s) ** a * (_ci_conc + b * s) ** b - ksp_s
+                        s_max = brentq(_f, 0, 1e3)
+                    except Exception:
+                        s_max = (ksp_s ** (1 / (a + b))) / max(_ci_conc ** (b / (a + b)), 1e-30)
+
+                mol_max = s_max * _vol_L
+                pct = min(mol_max / n_added * 100, 100) if n_added > 0 else 0
+                dissolves_completely = mol_max >= n_added
+
+                with st.expander(f"**{salt_name}**  —  {'✅ opløses fuldstændigt' if dissolves_completely else '⚠️ opløses kun delvist'}", expanded=True):
+                    col_r1, col_r2, col_r3 = st.columns(3)
+                    col_r1.metric("Max opløselighed s", f"{s_max:.3e} M")
+                    col_r2.metric("Max mol kan opløses", f"{mol_max:.3e} mol")
+                    col_r3.metric("Tilsat (mol)", f"{n_added:.3e} mol")
+
+                    if dissolves_completely:
+                        st.success(f"✅ **{salt_name} opløses fuldstændigt** — max {mol_max:.3e} mol kan opløses, kun {n_added:.3e} mol tilsat.")
+                    else:
+                        st.warning(
+                            f"⚠️ **{salt_name} opløses IKKE fuldstændigt** — "
+                            f"kun {mol_max:.3e} af {n_added:.3e} mol kan opløses ({pct:.1f}%). "
+                            f"Resten forbliver som fast stof."
+                        )
+
+                    with st.expander("🔍 Mellemregninger", expanded=False):
+                        if a == 1 and b == 1:
+                            st.markdown(f"""
+**Salt:** {salt_name} ⇌ kation + anion
+**Ksp = {ksp_s:.2e}**,  **[fællesion]₀ = {_ci_conc:.2e} M**
+
+ICE-tabel (s = mol der opløses pr. L):
+|  | Kation | Fællesion |
+|--|--------|-----------|
+| I | 0 | {_ci_conc:.2e} |
+| C | +s | +s |
+| E | s | {_ci_conc:.2e} + s |
+
+Ksp = s · ({_ci_conc:.2e} + s) = {ksp_s:.2e}
+s² + {_ci_conc:.2e}·s − {ksp_s:.2e} = 0
+→ **s = {s_max:.4e} M**
+
+Tilsat masse = {mass_mg} mg
+n_tilsat = {mass_mg/1000:.4f} g / {M_g_mol} g/mol = **{n_added:.4e} mol**
+n_max = {s_max:.4e} mol/L × {_vol_L} L = **{mol_max:.4e} mol**
+→ n_max {"≥" if dissolves_completely else "<"} n_tilsat → **{"fuldstændig" if dissolves_completely else "ufuldstændig"} opløsning**
+""")
+
+    elif mode == "⚠️ Fældes der bundfald?":  # Fælding check
         import math
         st.markdown("#### ⚠️ Fældes der bundfald? (Q vs. Ksp)")
         st.latex(r"Q = [M^{n+}]^x \cdot [X^{m-}]^y")
