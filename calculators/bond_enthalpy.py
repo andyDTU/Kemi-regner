@@ -209,9 +209,9 @@ def _render_from_equation():
 
     # ── Bond enthalpy overrides ───────────────────────────────────────────────
     st.markdown("---")
-    st.markdown("#### Bindingsentalpier")
+    st.markdown("#### Bindingsentalpier fra opgaven")
     st.caption(
-        "App-databasens standardværdier vises. Overskriv med opgavens egne værdier hvis angivet."
+        "Overskriv med opgavens værdier. Appen bruger |D| — du kan taste positive eller negative tal (begge giver korrekt resultat)."
     )
 
     override_vals: dict[str, float] = {}
@@ -253,31 +253,33 @@ def _render_from_equation():
                     "Total": f"{total_n:g}",
                 })
 
-        # Compute ΔH
+        # Compute ΔH — always use |D| so both sign conventions work
         sum_broken = 0.0
         sum_formed = 0.0
         broken_rows, formed_rows = [], []
 
         for bond, total_n in broken_map.items():
-            dh = override_vals.get(bond, lookup_bond(bond) or 0)
+            dh = abs(override_vals.get(bond, lookup_bond(bond) or 0))
             contrib = total_n * dh
             sum_broken += contrib
-            broken_rows.append({"Binding": bond, "Antal": f"{total_n:g}", "ΔH/binding": f"{dh:.0f}", "Total (kJ)": f"+{contrib:.0f}"})
+            broken_rows.append({"Binding": bond, "Antal": f"{total_n:g}", "|D| kJ/mol": f"{dh:.0f}", "Total (kJ)": f"+{contrib:.0f}"})
 
         for bond, total_n in formed_map.items():
-            dh = override_vals.get(bond, lookup_bond(bond) or 0)
+            dh = abs(override_vals.get(bond, lookup_bond(bond) or 0))
             contrib = total_n * dh
             sum_formed += contrib
-            formed_rows.append({"Binding": bond, "Antal": f"{total_n:g}", "ΔH/binding": f"{dh:.0f}", "Total (kJ)": f"−{contrib:.0f}"})
+            formed_rows.append({"Binding": bond, "Antal": f"{total_n:g}", "|D| kJ/mol": f"{dh:.0f}", "Total (kJ)": f"−{contrib:.0f}"})
 
         delta_h = sum_broken - sum_formed
 
         # Display results
         st.markdown("---")
         st.markdown("## Resultat")
+        st.latex(r"\Delta H_{rxn} = \Sigma D_{brudt} - \Sigma D_{dannet}"
+                 rf" = {sum_broken:.0f} - {sum_formed:.0f} = {delta_h:.0f}\ \text{{kJ/mol}}")
         c1, c2, c3 = st.columns(3)
-        c1.metric("Σ bindinger brudt", f"+{sum_broken:.0f} kJ")
-        c2.metric("Σ bindinger dannet", f"−{sum_formed:.0f} kJ")
+        c1.metric("Σ D brudt", f"+{sum_broken:.0f} kJ")
+        c2.metric("Σ D dannet", f"−{sum_formed:.0f} kJ")
         sign = "+" if delta_h >= 0 else ""
         c3.metric("ΔH_rxn", f"{sign}{delta_h:.0f} kJ/mol",
                   delta=("Endoterm 🔵" if delta_h > 0 else "Eksoterm 🟢"))
