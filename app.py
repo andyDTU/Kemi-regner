@@ -7690,19 +7690,77 @@ def show_electrochemistry_page():
     _ec_active = _render_styled_tab_nav(_ec_options, key="electro_tab", nav_key="nav_electrochemistry")
 
     if _ec_active == "Byg en celle":
-        from core.electrochem import load_reduction_potentials
-        df = load_reduction_potentials()
-        cath = st.selectbox("Katode (reduktion)", df['half_reaction'].tolist(), key="electro_cath")
-        an = st.selectbox("Anode (reduktion)", df['half_reaction'].tolist(), key="electro_an")
-        if st.button("Beregn E°celle", type="primary", key="electro_cell_btn"):
-            try:
-                res, steps, _ = calculate_standard_cell_with_steps(cath, an)
-                st.success(f"E°cell = {res['E0_cell_V']:.4g} V, n = {res['n']}")
-                with st.expander("Vis trin"):
-                    for s in steps:
-                        st.markdown(s)
-            except Exception as e:
-                st.error(str(e))
+        _cell_mode = st.radio(
+            "Inputmetode:",
+            ["📋 Vælg fra tabel", "✏️ Indtast E° manuelt"],
+            key="electro_cell_mode", horizontal=True,
+        )
+
+        if _cell_mode == "📋 Vælg fra tabel":
+            from core.electrochem import load_reduction_potentials
+            df = load_reduction_potentials()
+            cath = st.selectbox("Katode (reduktion)", df['half_reaction'].tolist(), key="electro_cath")
+            an = st.selectbox("Anode (oxidation — skriv som reduktionsreaktion)", df['half_reaction'].tolist(), key="electro_an")
+            if st.button("Beregn E°celle", type="primary", key="electro_cell_btn"):
+                try:
+                    res, steps, _ = calculate_standard_cell_with_steps(cath, an)
+                    st.success(f"E°cell = {res['E0_cell_V']:.4g} V, n = {res['n']}")
+                    with st.expander("Vis trin"):
+                        for s in steps:
+                            st.markdown(s)
+                except Exception as e:
+                    st.error(str(e))
+
+        else:
+            st.markdown("Indtast de to **reduktionspotentialer** som givet i opgaven. Appen finder selv katode og anode.")
+            col_a, col_b = st.columns(2)
+            with col_a:
+                _label1 = st.text_input("Halvcelle 1 (navn/formel):", value="Cr³⁺/Cr²⁺", key="ec_man_label1")
+                _e1 = st.number_input("E° halvcelle 1 (V):", value=-0.41, format="%.3f", key="ec_man_e1")
+            with col_b:
+                _label2 = st.text_input("Halvcelle 2 (navn/formel):", value="Cu²⁺/Cu⁺", key="ec_man_label2")
+                _e2 = st.number_input("E° halvcelle 2 (V):", value=+0.15, format="%.3f", key="ec_man_e2")
+
+            if st.button("Bestem katode/anode og beregn E°celle", type="primary", key="ec_man_btn"):
+                if abs(_e1 - _e2) < 1e-9:
+                    st.warning("De to E°-værdier er ens — ingen nettospænding.")
+                else:
+                    if _e1 >= _e2:
+                        _cath_lbl, _cath_e = _label1, _e1
+                        _an_lbl,   _an_e   = _label2, _e2
+                    else:
+                        _cath_lbl, _cath_e = _label2, _e2
+                        _an_lbl,   _an_e   = _label1, _e1
+
+                    _e_cell = _cath_e - _an_e
+                    _spont  = _e_cell > 0
+
+                    st.success(f"**E°celle = {_e_cell:+.3f} V** ({'spontan ✅' if _spont else 'ikke spontan ❌'})")
+
+                    col_r, col_l = st.columns(2)
+                    with col_r:
+                        st.info(
+                            f"**Katode (reduktion)**  \n"
+                            f"{_cath_lbl}  \n"
+                            f"E° = {_cath_e:+.3f} V  \n"
+                            f"→ Oxideret form **reduceres**"
+                        )
+                    with col_l:
+                        st.warning(
+                            f"**Anode (oxidation)**  \n"
+                            f"{_an_lbl}  \n"
+                            f"E° = {_an_e:+.3f} V  \n"
+                            f"→ Reduceret form **oxideres**"
+                        )
+
+                    with st.expander("📋 Vis trin for trin", expanded=True):
+                        st.markdown(f"**1. Sammenlign reduktionspotentialer:**")
+                        st.markdown(f"- {_label1}: E° = {_e1:+.3f} V")
+                        st.markdown(f"- {_label2}: E° = {_e2:+.3f} V")
+                        st.markdown(f"**2. Højeste E° = katode (reduktion):** {_cath_lbl} (E° = {_cath_e:+.3f} V)")
+                        st.markdown(f"**3. Laveste E° = anode (oxidation):** {_an_lbl} (E° = {_an_e:+.3f} V)")
+                        st.markdown(f"**4. E°celle = E°katode − E°anode**")
+                        st.latex(rf"E°_{{celle}} = {_cath_e:+.3f} - ({_an_e:+.3f}) = {_e_cell:+.3f}\ \text{{V}}")
 
         _quick_links([
             ("Nernst", "electrochemistry", "Nernst"),
