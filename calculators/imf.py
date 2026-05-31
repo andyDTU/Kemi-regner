@@ -79,21 +79,48 @@ def render_imf_tab():
                 if missing:
                     st.warning(f"Ikke genkendt (ignoreret): {', '.join(missing)}")
                 if results:
+                    n = len(results)
+
+                    # ── Visual rank cards ────────────────────────────────────
                     st.markdown("### Rangering (svageste → stærkeste IMF)")
-                    st.markdown(
-                        "**Kogepunkt-rækkefølge (lavest → højest)** er samme rækkefølge. "
-                        "**Damptryk-rækkefølge (højest → lavest)** er omvendt."
-                    )
+
+                    # Vapor pressure: rank 1 (weakest IMF) = highest VP
+                    st.markdown("#### 💨 Damptryk (højest → lavest)")
+                    vp_cols = st.columns(n)
+                    for i, (f, r) in enumerate(results):
+                        with vp_cols[i]:
+                            if i == 0:
+                                st.success(f"**#{i+1} HØJEST**\n\n### {f}")
+                            elif i == n - 1:
+                                st.error(f"**#{i+1} lavest**\n\n{f}")
+                            else:
+                                st.info(f"**#{i+1}**\n\n{f}")
+                            st.caption(r.dominant_imf.value)
+
+                    st.markdown("#### 🌡️ Kogepunkt (lavest → højest)")
+                    bp_cols = st.columns(n)
+                    for i, (f, r) in enumerate(results):
+                        with bp_cols[i]:
+                            if i == 0:
+                                st.success(f"**#{i+1} LAVEST**\n\n### {f}")
+                            elif i == n - 1:
+                                st.error(f"**#{i+1} højest**\n\n{f}")
+                            else:
+                                st.info(f"**#{i+1}**\n\n{f}")
+                            st.caption(r.dominant_imf.value)
+
+                    # ── Detail table ─────────────────────────────────────────
+                    st.markdown("---")
                     rows = []
                     for rank, (f, r) in enumerate(results, 1):
                         rows.append({
-                            "Rang (svageste IMF = 1)": rank,
+                            "IMF-rang": rank,
                             "Molekyle": f,
                             "Dominerende IMF": r.dominant_imf.value,
                             "Polær": "Ja" if r.is_polar else "Nej",
                             "H-bond donor": "Ja" if r.has_hbond_donor else "Nej",
-                            "Kogepunkt": r.boiling_point_trend,
-                            "Damptryk": r.vapor_pressure_trend,
+                            "Damptryk-rang (1=højest)": rank,
+                            "Kogepunkt-rang (1=lavest)": rank,
                         })
                     st.dataframe(pd.DataFrame(rows), use_container_width=True, hide_index=True)
 
