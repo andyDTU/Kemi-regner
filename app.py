@@ -231,6 +231,7 @@ SEARCH_INDEX = [
     {"title": "Grahams lov (diffusionshastighed)", "keywords": ["graham", "diffusion", "effusion", "gashastighed", "molare masse gas diffusion", "hurtigste gas", "letteste gas diffunderer"], "page": "gases", "tab": "🌬️ Graham", "description": "r₁/r₂ = √(M₂/M₁) – sammenlign diffusionshastigheder"},
     {"title": "Arrhenius (aktiveringsenergy fra k)", "keywords": ["arrhenius", "aktiveringsenergi", "ea", "k ved to temperaturer", "ln k vs 1/t", "pre-eksponentiel faktor", "a faktor"], "page": "kinetics", "tab": "📈 Arrhenius", "description": "Ea fra k₁ og k₂ ved T₁ og T₂ – Arrhenius-ligning"},
     {"title": "Integreret hastighedslov", "keywords": ["integreret hastighedslov", "integrated rate law", "1. orden", "2. orden", "0. orden", "halvliv koncentration", "ln[a] vs t", "1/[a] vs t", "[a] vs t"], "page": "kinetics", "tab": "⏱️ Integreret hastighedslov", "description": "Beregn koncentration til tid t for 0., 1. og 2. ordens reaktioner"},
+    {"title": "Ionopløsning – van't Hoff faktor", "keywords": ["ionopløsning", "van't hoff faktor", "i faktor", "mol ioner", "dissolution", "opløsning ioner", "nacl ioner", "cacl2 ioner", "al2so43", "aluminiumsulfat ioner", "hvor mange ioner", "total mol ioner", "salt opløsning ioner", "dissociation"], "page": "atoms-molar", "tab": "💧 Ionopløsning", "description": "Skriv en saltformel og få opløsningsreaktion, van't Hoff i og total mol ioner"},
 ]
 
 
@@ -1102,6 +1103,7 @@ def show_molar_mass_page():
         "🧷 Lewis-struktur",
         "🔋 Ionization Energy",
         "⚗️ Formel ladning",
+        "💧 Ionopløsning",
     ]
 
     subpage_to_query = {
@@ -1113,6 +1115,7 @@ def show_molar_mass_page():
         "🧷 Lewis-struktur": "lewis",
         "🔋 Ionization Energy": "ionization",
         "⚗️ Formel ladning": "formel-ladning",
+        "💧 Ionopløsning": "ion-oplosning",
     }
     query_to_subpage = {value: key for key, value in subpage_to_query.items()}
 
@@ -1576,6 +1579,193 @@ def show_molar_mass_page():
 
     if active_subpage == "⚗️ Formel ladning":
         _show_formel_ladning_tab()
+
+    elif active_subpage == "💧 Ionopløsning":
+        _show_ion_dissolution_tab()
+
+
+_ION_DB = {
+    # Format: formula_key -> (name_da, [(coeff, ion_symbol, charge_str), ...])
+    # All formulas in ASCII-style lowercase for matching
+    "nacl":         ("Natriumchlorid",        [(1,"Na⁺","+1"), (1,"Cl⁻","-1")]),
+    "kcl":          ("Kaliumchlorid",          [(1,"K⁺","+1"),  (1,"Cl⁻","-1")]),
+    "kbr":          ("Kaliumbromid",           [(1,"K⁺","+1"),  (1,"Br⁻","-1")]),
+    "ki":           ("Kaliumiodid",            [(1,"K⁺","+1"),  (1,"I⁻","-1")]),
+    "licl":         ("Lithiumchlorid",         [(1,"Li⁺","+1"), (1,"Cl⁻","-1")]),
+    "naoh":         ("Natriumhydroxid",        [(1,"Na⁺","+1"), (1,"OH⁻","-1")]),
+    "koh":          ("Kaliumhydroxid",         [(1,"K⁺","+1"),  (1,"OH⁻","-1")]),
+    "nano3":        ("Natriumnitrat",          [(1,"Na⁺","+1"), (1,"NO₃⁻","-1")]),
+    "kno3":         ("Kaliumnitrat",           [(1,"K⁺","+1"),  (1,"NO₃⁻","-1")]),
+    "nano2":        ("Natriumnitrit",          [(1,"Na⁺","+1"), (1,"NO₂⁻","-1")]),
+    "na2so4":       ("Natriumsulfat",          [(2,"Na⁺","+1"), (1,"SO₄²⁻","-2")]),
+    "k2so4":        ("Kaliumsulfat",           [(2,"K⁺","+1"),  (1,"SO₄²⁻","-2")]),
+    "na2co3":       ("Natriumcarbonat",        [(2,"Na⁺","+1"), (1,"CO₃²⁻","-2")]),
+    "k2co3":        ("Kaliumcarbonat",         [(2,"K⁺","+1"),  (1,"CO₃²⁻","-2")]),
+    "nahco3":       ("Natriumbicarbonat",      [(1,"Na⁺","+1"), (1,"HCO₃⁻","-1")]),
+    "na3po4":       ("Natriumphosphat",        [(3,"Na⁺","+1"), (1,"PO₄³⁻","-3")]),
+    "k3po4":        ("Kaliumphosphat",         [(3,"K⁺","+1"),  (1,"PO₄³⁻","-3")]),
+    "na2hpo4":      ("Dinatriumhydrogenphosphat", [(2,"Na⁺","+1"),(1,"HPO₄²⁻","-2")]),
+    "nah2po4":      ("Natriumdihydrogenphosphat", [(1,"Na⁺","+1"),(1,"H₂PO₄⁻","-1")]),
+    "ch3coona":     ("Natriumacetat",          [(1,"Na⁺","+1"), (1,"CH₃COO⁻","-1")]),
+    "ch3cook":      ("Kaliumacetat",           [(1,"K⁺","+1"),  (1,"CH₃COO⁻","-1")]),
+    "cacl2":        ("Calciumchlorid",         [(1,"Ca²⁺","+2"),(2,"Cl⁻","-1")]),
+    "mgcl2":        ("Magnesiumchlorid",       [(1,"Mg²⁺","+2"),(2,"Cl⁻","-1")]),
+    "bacl2":        ("Bariumchlorid",          [(1,"Ba²⁺","+2"),(2,"Cl⁻","-1")]),
+    "srcl2":        ("Strontiumchlorid",       [(1,"Sr²⁺","+2"),(2,"Cl⁻","-1")]),
+    "zncl2":        ("Zinkchlorid",            [(1,"Zn²⁺","+2"),(2,"Cl⁻","-1")]),
+    "cucl2":        ("Kobberklorid",           [(1,"Cu²⁺","+2"),(2,"Cl⁻","-1")]),
+    "fecl2":        ("Jern(II)chlorid",        [(1,"Fe²⁺","+2"),(2,"Cl⁻","-1")]),
+    "fecl3":        ("Jern(III)chlorid",       [(1,"Fe³⁺","+3"),(3,"Cl⁻","-1")]),
+    "alcl3":        ("Aluminiumchlorid",       [(1,"Al³⁺","+3"),(3,"Cl⁻","-1")]),
+    "caso4":        ("Calciumsulfat",          [(1,"Ca²⁺","+2"),(1,"SO₄²⁻","-2")]),
+    "mgso4":        ("Magnesiumsulfat",        [(1,"Mg²⁺","+2"),(1,"SO₄²⁻","-2")]),
+    "baso4":        ("Bariumsulfat",           [(1,"Ba²⁺","+2"),(1,"SO₄²⁻","-2")]),
+    "znso4":        ("Zinksulfat",             [(1,"Zn²⁺","+2"),(1,"SO₄²⁻","-2")]),
+    "cuso4":        ("Kobbersulfat",           [(1,"Cu²⁺","+2"),(1,"SO₄²⁻","-2")]),
+    "feso4":        ("Jern(II)sulfat",         [(1,"Fe²⁺","+2"),(1,"SO₄²⁻","-2")]),
+    "fe2(so4)3":    ("Jern(III)sulfat",        [(2,"Fe³⁺","+3"),(3,"SO₄²⁻","-2")]),
+    "al2(so4)3":    ("Aluminiumsulfat",        [(2,"Al³⁺","+3"),(3,"SO₄²⁻","-2")]),
+    "ca(oh)2":      ("Calciumhydroxid",        [(1,"Ca²⁺","+2"),(2,"OH⁻","-1")]),
+    "mg(oh)2":      ("Magnesiumhydroxid",      [(1,"Mg²⁺","+2"),(2,"OH⁻","-1")]),
+    "ba(oh)2":      ("Bariumhydroxid",         [(1,"Ba²⁺","+2"),(2,"OH⁻","-1")]),
+    "al(oh)3":      ("Aluminiumhydroxid",      [(1,"Al³⁺","+3"),(3,"OH⁻","-1")]),
+    "ca(no3)2":     ("Calciumnitrat",          [(1,"Ca²⁺","+2"),(2,"NO₃⁻","-1")]),
+    "mg(no3)2":     ("Magnesiumnitrat",        [(1,"Mg²⁺","+2"),(2,"NO₃⁻","-1")]),
+    "zn(no3)2":     ("Zinknitrat",             [(1,"Zn²⁺","+2"),(2,"NO₃⁻","-1")]),
+    "cu(no3)2":     ("Kobbernitrat",           [(1,"Cu²⁺","+2"),(2,"NO₃⁻","-1")]),
+    "fe(no3)3":     ("Jern(III)nitrat",        [(1,"Fe³⁺","+3"),(3,"NO₃⁻","-1")]),
+    "al(no3)3":     ("Aluminiumnitrat",        [(1,"Al³⁺","+3"),(3,"NO₃⁻","-1")]),
+    "ca3(po4)2":    ("Calciumphosphat",        [(3,"Ca²⁺","+2"),(2,"PO₄³⁻","-3")]),
+    "caco3":        ("Calciumcarbonat",        [(1,"Ca²⁺","+2"),(1,"CO₃²⁻","-2")]),
+    "mgco3":        ("Magnesiumcarbonat",      [(1,"Mg²⁺","+2"),(1,"CO₃²⁻","-2")]),
+    "baco3":        ("Bariumcarbonat",         [(1,"Ba²⁺","+2"),(1,"CO₃²⁻","-2")]),
+    "agno3":        ("Sølvnitrat",             [(1,"Ag⁺","+1"), (1,"NO₃⁻","-1")]),
+    "agcl":         ("Sølvchlorid",            [(1,"Ag⁺","+1"), (1,"Cl⁻","-1")]),
+    "ag2so4":       ("Sølvsulfat",             [(2,"Ag⁺","+1"), (1,"SO₄²⁻","-2")]),
+    "ag2co3":       ("Sølvcarbonat",           [(2,"Ag⁺","+1"), (1,"CO₃²⁻","-2")]),
+    "nh4cl":        ("Ammoniumchlorid",        [(1,"NH₄⁺","+1"),(1,"Cl⁻","-1")]),
+    "nh4no3":       ("Ammoniumnitrat",         [(1,"NH₄⁺","+1"),(1,"NO₃⁻","-1")]),
+    "(nh4)2so4":    ("Ammoniumsulfat",         [(2,"NH₄⁺","+1"),(1,"SO₄²⁻","-2")]),
+    "(nh4)3po4":    ("Ammoniumphosphat",       [(3,"NH₄⁺","+1"),(1,"PO₄³⁻","-3")]),
+    "mgbr2":        ("Magnesiumbromid",        [(1,"Mg²⁺","+2"),(2,"Br⁻","-1")]),
+    "cabr2":        ("Calciumbromid",          [(1,"Ca²⁺","+2"),(2,"Br⁻","-1")]),
+    "pbcl2":        ("Bly(II)chlorid",         [(1,"Pb²⁺","+2"),(2,"Cl⁻","-1")]),
+    "pbso4":        ("Bly(II)sulfat",          [(1,"Pb²⁺","+2"),(1,"SO₄²⁻","-2")]),
+    "pb(no3)2":     ("Bly(II)nitrat",          [(1,"Pb²⁺","+2"),(2,"NO₃⁻","-1")]),
+    "hgcl2":        ("Kviksølv(II)chlorid",    [(1,"Hg²⁺","+2"),(2,"Cl⁻","-1")]),
+    "k2cro4":       ("Kaliumchromat",          [(2,"K⁺","+1"),  (1,"CrO₄²⁻","-2")]),
+    "k2cr2o7":      ("Kaliumdichromat",        [(2,"K⁺","+1"),  (1,"Cr₂O₇²⁻","-2")]),
+    "kmno4":        ("Kaliumpermanganat",       [(1,"K⁺","+1"),  (1,"MnO₄⁻","-1")]),
+    "naf":          ("Natriumfluorid",         [(1,"Na⁺","+1"), (1,"F⁻","-1")]),
+    "kf":           ("Kaliumfluorid",          [(1,"K⁺","+1"),  (1,"F⁻","-1")]),
+    "caf2":         ("Calciumfluorid",         [(1,"Ca²⁺","+2"),(2,"F⁻","-1")]),
+    "mgs":          ("Magnesiumsulfid",        [(1,"Mg²⁺","+2"),(1,"S²⁻","-2")]),
+    "cas":          ("Calciumsulfid",          [(1,"Ca²⁺","+2"),(1,"S²⁻","-2")]),
+    "na2s":         ("Natriumsulfid",          [(2,"Na⁺","+1"), (1,"S²⁻","-2")]),
+    "crno33":       ("Krom(III)nitrat",        [(1,"Cr³⁺","+3"),(3,"NO₃⁻","-1")]),
+    "cr(no3)3":     ("Krom(III)nitrat",        [(1,"Cr³⁺","+3"),(3,"NO₃⁻","-1")]),
+}
+
+
+def _normalize_salt_key(formula: str) -> str:
+    """Normalise a user-typed salt formula for lookup in _ION_DB."""
+    # Remove spaces, subscript/superscript unicode, common unicode arrows
+    sup = str.maketrans("⁰¹²³⁴⁵⁶⁷⁸⁹₀₁₂₃₄₅₆₇₈₉", "01234567890123456789")
+    f = formula.translate(sup).replace(" ", "").lower()
+    return f
+
+
+def _show_ion_dissolution_tab():
+    st.markdown("### 💧 Ionopløsning")
+    st.markdown(
+        "Skriv formlen for et ionisk salt og se opløsningsreaktionen, "
+        "van't Hoff-faktoren **i** og det totale antal mol ioner."
+    )
+
+    col_in, col_ex = st.columns([2, 1])
+    with col_in:
+        salt_input = st.text_input(
+            "Saltformel:",
+            value="Al2(SO4)3",
+            placeholder="fx NaCl, CaCl2, Al2(SO4)3, (NH4)2SO4",
+            key="ion_diss_formula",
+        )
+        mol_input = st.number_input(
+            "Antal mol salt:", min_value=0.001, value=1.0, step=0.5,
+            format="%.3f", key="ion_diss_mol",
+        )
+    with col_ex:
+        st.markdown("**Eksempler:**")
+        for ex in ["NaCl", "CaCl2", "Al2(SO4)3", "(NH4)2SO4", "Ca3(PO4)2", "Fe2(SO4)3"]:
+            if st.button(ex, key=f"ion_ex_{ex}"):
+                st.session_state["ion_diss_formula"] = ex
+                st.rerun()
+
+    if st.button("Vis opløsning", type="primary", key="ion_diss_btn"):
+        key = _normalize_salt_key(salt_input.strip())
+        entry = _ION_DB.get(key)
+
+        if entry is None:
+            st.error(
+                f"Formlen **{salt_input}** kendes ikke endnu.  \n"
+                "Prøv fx: NaCl, CaCl2, MgSO4, Al2(SO4)3, Ca(NO3)2, (NH4)2SO4"
+            )
+        else:
+            name_da, ions = entry
+            i_factor = sum(c for c, _, _ in ions)
+            total_mol = mol_input * i_factor
+
+            st.success(f"**{salt_input}** — {name_da}")
+
+            # Dissolution equation
+            lhs = f"{mol_input:g} mol {salt_input}"
+            rhs_parts = [f"{mol_input * c:g} mol {sym}" for c, sym, _ in ions]
+            rhs = " + ".join(rhs_parts)
+            st.markdown(f"**Opløsningsreaktion:**")
+            st.latex(
+                rf"{salt_input} \rightarrow "
+                + " + ".join(
+                    (f"{c}\\ " if c > 1 else "") + sym.replace("⁺", "^+").replace("⁻", "^-")
+                    .replace("²⁺","^{2+}").replace("³⁺","^{3+}")
+                    .replace("²⁻","^{2-}").replace("³⁻","^{3-}")
+                    .replace("₃","_3").replace("₄","_4").replace("₂","_2")
+                    for c, sym, _ in ions
+                )
+            )
+
+            # Metrics
+            cols = st.columns(len(ions) + 2)
+            cols[0].metric("van't Hoff i", i_factor)
+            cols[1].metric("Total mol ioner", f"{total_mol:g}")
+            for idx, (c, sym, charge) in enumerate(ions):
+                cols[idx + 2].metric(f"mol {sym}", f"{mol_input * c:g}")
+
+            # Steps
+            with st.expander("📋 Trin for trin", expanded=True):
+                st.markdown(f"**1. Formel:** {salt_input} = {name_da}")
+                st.markdown(f"**2. Opløsning giver {len(ions)} typer ioner:**")
+                for c, sym, charge in ions:
+                    st.markdown(f"   - {c} × {sym} (ladning {charge})")
+                st.markdown(f"**3. Van't Hoff faktor:** i = {' + '.join(str(c) for c,_,_ in ions)} = **{i_factor}**")
+                st.markdown(f"**4. Total ioner for {mol_input:g} mol salt:**")
+                st.latex(rf"n_{{ioner}} = {mol_input:g} \times {i_factor} = {total_mol:g}\ \text{{mol}}")
+
+    st.markdown("---")
+    with st.expander("📚 Hurtig reference — van't Hoff faktorer"):
+        import pandas as _pd
+        _ref = [
+            ["NaCl, KCl, NaOH, AgNO₃", "2", "1 kation + 1 anion"],
+            ["CaCl₂, MgCl₂, BaCl₂", "3", "1 kation + 2 anioner"],
+            ["AlCl₃, FeCl₃, Al(NO₃)₃", "4", "1 kation + 3 anioner"],
+            ["Na₂SO₄, K₂SO₄, (NH₄)₂SO₄", "3", "2 kationer + 1 anion"],
+            ["Na₃PO₄, K₃PO₄", "4", "3 kationer + 1 anion"],
+            ["Al₂(SO₄)₃, Fe₂(SO₄)₃", "5", "2 kationer + 3 anioner"],
+            ["Ca₃(PO₄)₂", "5", "3 kationer + 2 anioner"],
+        ]
+        st.dataframe(
+            _pd.DataFrame(_ref, columns=["Salt-type", "i", "Fordeling"]),
+            use_container_width=True, hide_index=True,
+        )
 
 
 def _show_reverse_ec_tab():
