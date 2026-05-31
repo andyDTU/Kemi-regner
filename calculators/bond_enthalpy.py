@@ -4,6 +4,7 @@ Bond enthalpy ΔH_rxn calculator — Streamlit UI.
 
 from __future__ import annotations
 
+import hashlib
 import re
 import streamlit as st
 import pandas as pd
@@ -126,42 +127,45 @@ def _render_from_equation():
             st.error(products)
         return
 
+    # Hash of equation drives all widget keys — changing the equation resets all inputs
+    eq_hash = hashlib.md5(eq.strip().encode()).hexdigest()[:8]
+
     # ── Collect bonds per molecule ────────────────────────────────────────────
     st.markdown("---")
     all_bond_types: set[str] = set()
     species_data = []  # [{formula, coeff, side, bonds_per_mol}]
 
-    def _species_section(title: str, species_list):
-        st.markdown(f"#### {title}")
+    def _species_section(side: str, species_list):
+        label = "Reaktanter (brudte bindinger)" if side == "R" else "Produkter (dannede bindinger)"
+        st.markdown(f"#### {label}")
         for formula, coeff in species_list:
             known = _get_mol_bonds(formula)
             coeff_int = int(coeff) if coeff == int(coeff) else coeff
             st.markdown(f"**{formula}** (koefficient: {coeff_int})")
 
+            bonds_per_mol = {}
             if known:
-                st.caption(f"Bindinger pr. molekyle (auto-detekteret):")
-                bonds_per_mol = {}
+                st.caption("Bindinger pr. molekyle (auto-detekteret):")
                 for bond, cnt in known.items():
                     c1, c2 = st.columns([2, 1])
                     with c1:
-                        st.write(f"{bond}")
+                        total = int(coeff * cnt)
+                        st.write(f"{bond} &nbsp; *(total: {coeff_int}×{cnt} = {total})*")
                     with c2:
                         n = st.number_input(
                             "antal",
                             value=cnt, min_value=0, max_value=20,
-                            key=f"be_{title[:3]}_{formula}_{bond}",
+                            key=f"be_{eq_hash}_{side}_{formula}_{bond}",
                             label_visibility="collapsed",
                         )
                     bonds_per_mol[bond] = n
                     all_bond_types.add(bond)
             else:
-                st.caption(f"Ikke i database — angiv bindinger manuelt:")
-                # Let user add bonds for unknown molecules
-                row_key = f"be_custom_{title[:3]}_{formula}"
+                st.caption("Ikke i database — angiv bindinger manuelt (pr. molekyle):")
+                row_key = f"be_custom_{eq_hash}_{side}_{formula}"
                 if row_key not in st.session_state:
                     st.session_state[row_key] = [{"bond": "", "count": 1}]
                 known_bonds = list_available_bonds()
-                bonds_per_mol = {}
                 to_del = None
                 for i, row in enumerate(st.session_state[row_key]):
                     c1, c2, c3 = st.columns([3, 1, 0.5])
@@ -193,15 +197,15 @@ def _render_from_equation():
 
             species_data.append({
                 "formula": formula, "coeff": coeff,
-                "side": title[:3], "bonds_per_mol": bonds_per_mol,
+                "side": side, "bonds_per_mol": bonds_per_mol,
             })
             st.markdown("")
 
     col_r, col_p = st.columns(2)
     with col_r:
-        _species_section("Reaktanter (brudte bindinger)", reactants)
+        _species_section("R", reactants)
     with col_p:
-        _species_section("Produkter (dannede bindinger)", products)
+        _species_section("P", products)
 
     # ── Bond enthalpy overrides ───────────────────────────────────────────────
     st.markdown("---")
@@ -221,7 +225,7 @@ def _render_from_equation():
                 v = st.number_input(
                     f"{bond} kJ/mol {hint}",
                     value=default, step=1.0,
-                    key=f"be_ov_{bond}",
+                    key=f"be_ov_{eq_hash}_{bond}",
                 )
                 override_vals[bond] = v
 
@@ -236,7 +240,7 @@ def _render_from_equation():
 
         for sp in species_data:
             coeff = sp["coeff"]
-            is_reactant = sp["side"] == "Rea"
+            is_reactant = sp["side"] == "R"
             target = broken_map if is_reactant else formed_map
             bdown = breakdown_broken if is_reactant else breakdown_formed
             for bond, n_per_mol in sp["bonds_per_mol"].items():
